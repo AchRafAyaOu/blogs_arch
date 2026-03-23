@@ -217,9 +217,13 @@
   var navbar = document.getElementById('navbar');
 
   window.addEventListener('scroll', function () {
-    var st = document.documentElement.scrollTop || document.body.scrollTop || 0;
-    var h  = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    if (bar) bar.style.width = (h > 0 ? (st / h) * 100 : 0) + '%';
+    var st  = document.documentElement.scrollTop || document.body.scrollTop || 0;
+    var h   = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    var pct = h > 0 ? (st / h) * 100 : 0;
+    if (bar) {
+      bar.style.width = pct + '%';
+      bar.setAttribute('aria-valuenow', Math.round(pct));
+    }
     if (navbar) { navbar.classList.toggle('scrolled', st > 50); }
     if (btt)    { btt.classList.toggle('visible', st > 400); }
   }, { passive: true });
@@ -322,18 +326,31 @@
   if (searchBtn)      searchBtn.addEventListener('click', function () { setSearch(!searchPanel.classList.contains('active')); });
   if (searchCloseBtn) searchCloseBtn.addEventListener('click', function () { setSearch(false); });
 
+  /* XSS-safe: build DOM nodes instead of injecting HTML strings */
   var renderResults = function (items) {
     if (!searchResults) return;
+    searchResults.textContent = ''; /* clears all children safely */
     if (!items.length) {
-      searchResults.innerHTML = "<div style='padding:1rem;text-align:center;color:var(--muted)'>لا توجد نتائج مطابقة</div>";
+      var noRes = document.createElement('div');
+      noRes.style.cssText = 'padding:1rem;text-align:center;color:var(--muted)';
+      noRes.textContent = 'لا توجد نتائج مطابقة';
+      searchResults.appendChild(noRes);
       return;
     }
-    searchResults.innerHTML = items.map(function (it) {
-      return "<a class='search-item' href='" + it.url + "'>" +
-        "<strong class='arabic-text'>" + it.title + "</strong>" +
-        "<span class='arabic-text'>" + it.snippet + "</span>" +
-      "</a>";
-    }).join('');
+    items.forEach(function (it) {
+      var a      = document.createElement('a');
+      a.className = 'search-item';
+      a.href      = it.url;
+      var strong  = document.createElement('strong');
+      strong.className = 'arabic-text';
+      strong.textContent = it.title;
+      var span   = document.createElement('span');
+      span.className = 'arabic-text';
+      span.textContent = it.snippet;
+      a.appendChild(strong);
+      a.appendChild(span);
+      searchResults.appendChild(a);
+    });
   };
 
   var doSearch = function (q) {
@@ -407,6 +424,140 @@
     if (modal && modal.classList.contains('open')) closeAbout();
     if (drawer && drawer.classList.contains('active')) closeDrawer();
   });
+
+  /* ══════════════════════════════════════════════
+     DROPDOWN ARIA-EXPANDED MANAGEMENT
+     Updates aria-expanded on desktop hover/focus
+  ══════════════════════════════════════════════ */
+  var desktopDropdownToggle = document.getElementById('nav-dropdown-toggle');
+  var desktopDropdown = desktopDropdownToggle && desktopDropdownToggle.closest('.dropdown');
+  if (desktopDropdown && desktopDropdownToggle) {
+    desktopDropdown.addEventListener('mouseenter', function () {
+      desktopDropdownToggle.setAttribute('aria-expanded', 'true');
+    });
+    desktopDropdown.addEventListener('mouseleave', function () {
+      desktopDropdownToggle.setAttribute('aria-expanded', 'false');
+    });
+    desktopDropdown.addEventListener('focusin', function () {
+      desktopDropdownToggle.setAttribute('aria-expanded', 'true');
+    });
+    desktopDropdown.addEventListener('focusout', function (e) {
+      if (!desktopDropdown.contains(e.relatedTarget)) {
+        desktopDropdownToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  /* Mobile dropdown aria-expanded (toggle on click) */
+  var mobileDropdownToggle = document.getElementById('mobile-dropdown-toggle');
+  if (mobileDropdown && mobileDropdownToggle) {
+    var dtoggle2 = mobileDropdown.querySelector('.dropdown-toggle');
+    if (dtoggle2) {
+      var origClick = dtoggle2.onclick;
+      dtoggle2.addEventListener('click', function () {
+        var expanded = mobileDropdown.classList.contains('active');
+        mobileDropdownToggle.setAttribute('aria-expanded', String(expanded));
+      });
+    }
+  }
+
+  /* ══════════════════════════════════════════════
+     CONTACT FORM — Google Apps Script v4
+     ─────────────────────────────────────────────
+     خطوات الإعداد:
+     1. افتح script.google.com وأنشئ مشروعاً جديداً
+     2. الصق كود GAS الكامل (Code.gs) في المشروع
+     3. افتح Project Settings > Script Properties وأضف:
+           SPREADSHEET_ID  ← ID الـ Google Sheet
+           SECRET_KEY      ← مفتاح سري من اختيارك (مثال: abc123xyz)
+           ADMIN_EMAIL     ← بريدك الإلكتروني
+     4. انشر: Deploy > New deployment > Web App
+           Execute as: Me | Who has access: Anyone
+     5. انسخ رابط النشر في GAS_URL
+     6. انسخ نفس المفتاح السري في GAS_SECRET_KEY
+  ══════════════════════════════════════════════ */
+  var GAS_URL        = 'YOUR_GOOGLE_APPS_SCRIPT_DEPLOYMENT_URL_HERE';
+  var GAS_SECRET_KEY = 'YOUR_SECRET_KEY_HERE'; /* يجب أن يطابق قيمة SECRET_KEY في Script Properties */
+
+  /* رسائل الخادم المترجمة — fallback للرسائل العربية */
+  var GAS_MESSAGES = {
+    SERVICE_BUSY:        'الخادم مشغول، يرجى المحاولة لاحقاً.',
+    VALIDATION_ERROR:    '',  /* يُستخدم message من الخادم مباشرة */
+    UNAUTHORIZED:        'حدث خطأ في الإعداد. يرجى التواصل مع المسؤول.',
+    RATE_LIMITED:        'أرسلت رسالة مؤخراً، يرجى الانتظار قليلاً.',
+    SPAM_DETECTED:       'تم رفض الرسالة لأسباب أمنية.',
+    DUPLICATE_MESSAGE:   'يبدو أنك أرسلت هذه الرسالة مسبقاً.',
+    SERVER_ERROR:        'حدث خطأ في الخادم، يرجى المحاولة لاحقاً.',
+    SUCCESS:             '✓ تم إرسال رسالتك بنجاح! سأتواصل معك في أقرب وقت.'
+  };
+
+  function showContactFeedback(success, serverMessage) {
+    var el = document.getElementById('contact-feedback');
+    if (!el) return;
+    el.className = 'contact-feedback ' + (success ? 'success' : 'error');
+    el.textContent = serverMessage || (success
+      ? GAS_MESSAGES.SUCCESS
+      : 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.');
+    el.style.display = 'block';
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    setTimeout(function () { el.style.display = 'none'; }, 7000);
+  }
+
+  var contactFormEl    = document.getElementById('contact-form');
+  var contactSubmitBtn = document.getElementById('contact-submit-btn');
+
+  if (contactFormEl) {
+    contactFormEl.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      if (!contactFormEl.checkValidity()) {
+        contactFormEl.reportValidity();
+        return;
+      }
+
+      var nameVal    = (document.getElementById('contact-name')    || {}).value || '';
+      var emailVal   = (document.getElementById('contact-email')   || {}).value || '';
+      var messageVal = (document.getElementById('contact-message') || {}).value || '';
+
+      if (!nameVal || !emailVal || !messageVal) return;
+
+      if (contactSubmitBtn) {
+        contactSubmitBtn.disabled    = true;
+        contactSubmitBtn.textContent = 'جاري الإرسال...';
+      }
+
+      /* GAS v4 يتوقع JSON مع مفتاح الأمان */
+      fetch(GAS_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          name:    nameVal.trim(),
+          email:   emailVal.trim(),
+          message: messageVal.trim(),
+          key:     GAS_SECRET_KEY
+        })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          var isOk = res && res.status === 200 && res.code === 'SUCCESS';
+          /* استخدام الرسالة من الخادم مباشرة عند توفرها */
+          var msg  = res && res.message
+            ? (isOk ? '✓ ' : '✗ ') + res.message
+            : (GAS_MESSAGES[res && res.code] || '');
+          showContactFeedback(isOk, msg);
+          if (isOk) contactFormEl.reset();
+        })
+        .catch(function () {
+          showContactFeedback(false, '✗ تعذّر الاتصال بالخادم. تحقق من اتصالك بالإنترنت.');
+        })
+        .finally(function () {
+          if (contactSubmitBtn) {
+            contactSubmitBtn.disabled    = false;
+            contactSubmitBtn.textContent = 'إرسال الرسالة';
+          }
+        });
+    });
+  }
 
   /* ══════════════════════════════════════════════
      INIT
