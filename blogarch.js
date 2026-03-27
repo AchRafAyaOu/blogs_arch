@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   BlogArch v4 — Complete JavaScript
+   BlogArch v— Complete JavaScript
    Features: Theme Engine × 5 · TOC · Relative Dates · Text Share
              Contact Form (Web3Forms) · Read Time · Lazy Load
              Mobile Drawer · Search · About Modal · Scroll FX
