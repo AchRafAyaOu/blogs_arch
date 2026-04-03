@@ -530,6 +530,25 @@
   });
 
   /* ══════════════════════════════════════════════════════
+     15. CLICKABLE POST CARDS
+  ══════════════════════════════════════════════════════ */
+  function initClickableCards() {
+    document.querySelectorAll('.fin-clickable-card').forEach(function (card) {
+      card.addEventListener('click', function (e) {
+        if (e.target.closest('a') || e.target.closest('button')) return;
+        var url = card.getAttribute('data-url');
+        if (url) window.location.href = url;
+      });
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════
+     16. FOOTER YEAR AUTO-UPDATE
+  ══════════════════════════════════════════════════════ */
+  var yearEl = document.getElementById('fin-year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  /* ══════════════════════════════════════════════════════
      INIT
   ══════════════════════════════════════════════════════ */
   document.addEventListener('DOMContentLoaded', function () {
@@ -540,6 +559,7 @@
     initRelativeDates();
     initTextShare();
     initContactForm();
+    initClickableCards();
     syncSwitcherUI(savedTheme, savedDark);
   });
 
