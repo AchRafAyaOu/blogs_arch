@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E8F1F8"/>
+      <stop offset="100%" stop-color="#D0E0EB"/>
+    </linearGradient>
+    <radialGradient id="bgShine" cx="25%" cy="20%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#D0E0EB" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="capGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#475569"/>
+      <stop offset="38%" stop-color="#CBD5E1"/>
+      <stop offset="62%" stop-color="#94A3B8"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+    <linearGradient id="barrel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#94A3B8"/>
+      <stop offset="28%" stop-color="#FFFFFF"/>
+      <stop offset="60%" stop-color="#E2E8F0"/>
+      <stop offset="100%" stop-color="#64748B"/>
+    </linearGradient>
+    <linearGradient id="grip" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="40%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#92680a"/>
+      <stop offset="35%" stop-color="#FFD700"/>
+      <stop offset="65%" stop-color="#FFC200"/>
+      <stop offset="100%" stop-color="#7a5608"/>
+    </linearGradient>
+    <linearGradient id="nib" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7a5608"/>
+      <stop offset="28%" stop-color="#FFD700"/>
+      <stop offset="55%" stop-color="#FFB800"/>
+      <stop offset="100%" stop-color="#6b4a06"/>
+    </linearGradient>
+    <linearGradient id="nibFace" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFE566" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#D4930A" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="clip" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#475569"/>
+      <stop offset="50%" stop-color="#CBD5E1"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="48" height="48" rx="12" ry="12" fill="url(#bg)" filter="url(#shadow)"/>
+  <rect width="48" height="48" rx="12" ry="12" fill="url(#bgShine)"/>
+  <rect x="0.7" y="0.7" width="46.6" height="46.6" rx="11.4" ry="11.4" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+  <g transform="rotate(-42, 24, 24)">
+    <rect x="29.8" y="7.5" width="2" height="20" rx="1" fill="url(#clip)"/>
+    <rect x="29.8" y="7.5" width="0.6" height="20" rx="0.3" fill="rgba(255,255,255,0.18)"/>
+    <circle cx="30.8" cy="27.8" r="1.5" fill="url(#clip)"/>
+    <path d="M19 6 Q19 5 24 5 Q29 5 29 6 L29 15 L19 15 Z" fill="url(#capGrad)" rx="2"/>
+    <rect x="19" y="5" width="10" height="10" rx="2.5" ry="2.5" fill="url(#capGrad)"/>
+    <rect x="21" y="5.5" width="2.2" height="9" rx="1" fill="rgba(255,255,255,0.28)" opacity="0.8"/>
+    <rect x="18.8" y="14.2" width="10.4" height="2.4" rx="1" ry="1" fill="url(#gold)"/>
+    <rect x="19.4" y="14.2" width="3" height="1" fill="rgba(255,255,255,0.4)" rx="0.4"/>
+    <rect x="19" y="16.4" width="10" height="12" rx="1.5" ry="1.5" fill="url(#barrel)"/>
+    <rect x="20.8" y="16.6" width="2.8" height="11.6" rx="1" fill="rgba(255,255,255,0.38)" opacity="0.75"/>
+    <rect x="27" y="16.4" width="2" height="12" rx="0" fill="rgba(0,0,0,0.08)"/>
+    <rect x="18.8" y="28.2" width="10.4" height="1.8" rx="0.9" ry="0.9" fill="url(#gold)" opacity="0.9"/>
+    <rect x="19.2" y="29.8" width="9.6" height="5" rx="1.4" ry="1.4" fill="url(#grip)"/>
+    <line x1="19.2" y1="31.2" x2="28.8" y2="31.2" stroke="rgba(255,255,255,0.07)" stroke-width="0.7"/>
+    <line x1="19.2" y1="32.5" x2="28.8" y2="32.5" stroke="rgba(255,255,255,0.07)" stroke-width="0.7"/>
+    <line x1="19.2" y1="33.8" x2="28.8" y2="33.8" stroke="rgba(255,255,255,0.07)" stroke-width="0.7"/>
+    <rect x="19.2" y="34.6" width="9.6" height="1.4" rx="0.7" fill="url(#gold)" opacity="0.85"/>
+    <path d="M20 36 L28 36 L25.6 43.5 L22.4 43.5 Z" fill="url(#nib)" filter="url(#glow)"/>
+    <path d="M20 36 L28 36 L25.6 43.5 L22.4 43.5 Z" fill="url(#nibFace)" opacity="0.5"/>
+    <line x1="24" y1="36.8" x2="24" y2="43.5" stroke="#3d2200" stroke-width="0.85" stroke-linecap="round"/>
+    <line x1="20" y1="36.5" x2="22.4" y2="43.5" stroke="rgba(100,60,0,0.35)" stroke-width="0.5"/>
+    <line x1="28" y1="36.5" x2="25.6" y2="43.5" stroke="rgba(100,60,0,0.35)" stroke-width="0.5"/>
+    <circle cx="24" cy="43.5" r="1.1" fill="#FFE566" opacity="0.95"/>
+  </g>
+</svg>
