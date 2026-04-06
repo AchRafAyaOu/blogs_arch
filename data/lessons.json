@@ -1,0 +1,218 @@
+[
+  {
+    "level": "beg",
+    "levelLabel": "مبتدئ",
+    "icon": "fas fa-font",
+    "title": "الحروف الإنجليزية",
+    "sub": "26 حرفًا — كبيرة وصغيرة",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/alphabet.html"
+  },
+  {
+    "level": "beg",
+    "levelLabel": "مبتدئ",
+    "icon": "fas fa-handshake",
+    "title": "التحيات والسلام",
+    "sub": "عبارات التعارف والتقديم",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/greetings.html"
+  },
+  {
+    "level": "beg",
+    "levelLabel": "مبتدئ",
+    "icon": "fas fa-palette",
+    "title": "الألوان والأشكال",
+    "sub": "Colors & Shapes",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/colors-shapes.html"
+  },
+  {
+    "level": "beg",
+    "levelLabel": "مبتدئ",
+    "icon": "fas fa-house-chimney",
+    "title": "العائلة والمنزل",
+    "sub": "Family & Home",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/family-home.html"
+  },
+  {
+    "level": "beg",
+    "levelLabel": "مبتدئ",
+    "icon": "fas fa-clock",
+    "title": "الوقت والتاريخ",
+    "sub": "Time & Date",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/time-date.html"
+  },
+  {
+    "level": "beg",
+    "levelLabel": "مبتدئ",
+    "icon": "fas fa-user",
+    "title": "عني — التعريف بالنفس",
+    "sub": "How to introduce yourself",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/aboutme.html"
+  },
+  {
+    "level": "mid",
+    "levelLabel": "متوسط",
+    "icon": "fas fa-running",
+    "title": "الأفعال الأساسية",
+    "sub": "أهم الأفعال في الجمل اليومية",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/basic_virbs.html"
+  },
+  {
+    "level": "mid",
+    "levelLabel": "متوسط",
+    "icon": "fas fa-circle-question",
+    "title": "كلمات الاستفهام",
+    "sub": "Who, What, Where, When, Why, How",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Question_words.html"
+  },
+  {
+    "level": "mid",
+    "levelLabel": "متوسط",
+    "icon": "fas fa-link",
+    "title": "الأفعال المساعدة",
+    "sub": "Auxiliary Verbs — be, do, have",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Auxliary_verb.html"
+  },
+  {
+    "level": "mid",
+    "levelLabel": "متوسط",
+    "icon": "fas fa-book",
+    "title": "المفردات اليومية",
+    "sub": "Daily Vocabulary",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Dailyvocabulary.html"
+  },
+  {
+    "level": "mid",
+    "levelLabel": "متوسط",
+    "icon": "fas fa-highlighter",
+    "title": "الصفات",
+    "sub": "Adjectives — وصف الأشياء والأشخاص",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/adjective.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-lightbulb",
+    "title": "التعبيرات الاصطلاحية",
+    "sub": "Idioms — كيف يتحدث الأمريكيون",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Idioms.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-comments",
+    "title": "المحادثة المتقدمة",
+    "sub": "حوارات وسياقات طبيعية متقدمة",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/advanced-conversation.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-quote-left",
+    "title": "الكلام المنقول",
+    "sub": "Reported Speech",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Reported_Speech.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-check-double",
+    "title": "المضارع التام البسيط والمستمر",
+    "sub": "Present Perfect Simple & Continuous",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Present_Perfect_Simple.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-puzzle-piece",
+    "title": "الأفعال المركبة",
+    "sub": "Phrasal Verbs الشائعة",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Phrasal_Verbs.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-code-compare",
+    "title": "الماضي البسيط مقابل المستمر",
+    "sub": "Past Simple vs Past Continuous",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Past_simple_vs.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-volume-xmark",
+    "title": "المبني للمجهول",
+    "sub": "Passive Voice — البنية والاستخدام",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Passive_Voice.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-wand-magic-sparkles",
+    "title": "الأفعال الناقصة",
+    "sub": "Modal Verbs — can, could, must, should",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Modal_verbs.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-forward",
+    "title": "أزمنة المستقبل والمضارع المستمر",
+    "sub": "Future Tenses & Present Continuous",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Future_times.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-link",
+    "title": "كلمات الربط في الجمل",
+    "sub": "Linking Words — however, therefore, moreover",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/LinkingWords.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-briefcase",
+    "title": "الإنجليزية في مقابلات العمل",
+    "sub": "Job Interview English",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Job_interview.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-arrows-split-up-and-left",
+    "title": "الفرق بين Gerund و Infinitive",
+    "sub": "متى نستخدم -ing ومتى نستخدم to + verb",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Gerund_Infinitive.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-ban",
+    "title": "قواعد النفي المزدوج",
+    "sub": "Double Negatives — الأخطاء الشائعة",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Double_Negatives.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-compress",
+    "title": "الاختصارات الشائعة",
+    "sub": "Common Contractions — don't, can't, won't",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Common_Contractions.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-cubes",
+    "title": "التركيب الأساسي للجملة",
+    "sub": "Basic Sentence Structure — SVO",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Basic_Structure.html"
+  },
+  {
+    "level": "adv",
+    "levelLabel": "متقدم",
+    "icon": "fas fa-spell-check",
+    "title": "Articles: A, An, The",
+    "sub": "أدوات التعريف والنكرة — متى نستخدم كلًا منها",
+    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Articles.html"
+  }
+]
