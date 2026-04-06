@@ -1,0 +1,43 @@
+[
+  {
+    "num": "الحلقة 01",
+    "icon": "fas fa-feather-alt",
+    "category": "ثقافية",
+    "title": "لماذا يجب أن تكتب؟",
+    "desc": "الكتابة ليست موهبة، بل عادة يبنيها من يريد أن يترك أثراً.",
+    "duration": "32 دقيقة",
+    "url": "https://www.youtube.com/@AchrafAyaou"
+  },
+  {
+    "num": "الحلقة 02",
+    "icon": "fas fa-laptop-code",
+    "category": "تقنية",
+    "title": "أدوات الكاتب الرقمي في 2025",
+    "desc": "جولة في أبرز الأدوات التي يستخدمها كتّاب المحتوى الرقمي اليوم.",
+    "duration": "28 دقيقة",
+    "url": "https://www.youtube.com/@AchrafAyaou"
+  },
+  {
+    "num": "الحلقة 03",
+    "icon": "fas fa-brain",
+    "category": "أفكار",
+    "title": "الفرق بين الانتشار والتأثير",
+    "desc": "هل يعني المليون مشاهدة أنك أثّرت؟",
+    "duration": "41 دقيقة",
+    "url": "https://www.youtube.com/@AchrafAyaou"
+  },
+  {
+    "num": "الحلقة 04",
+    "icon": "fas fa-book-open",
+    "category": "ثقافية",
+    "title": "القراءة كممارسة يومية",
+    "desc": "كيف تجعل القراءة عادةً راسخة لا تنكسر حتى في أصعب الأوقات.",
+    "duration": "37 دقيقة",
+    "url": "https://www.youtube.com/@AchrafAyaou"
+  },
+  {
+    "num": "الحلقة 05",
+    "icon": "fas fa-robot",
+    "category": "تقنية",
+    "title": "الذكاء الاصطناعي وصانع المحتوى",
+    "desc": "هل يُهدّد الذكاء الاصطناعي مستقبل الكتّاب؟ أم أنه مجرد أداة
