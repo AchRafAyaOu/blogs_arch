@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "category": "web",
+    "featured": true,
+    "title": "أكاديمية إتقان الإنجليزية",
+    "titleEn": "English Mastery Academy",
+    "description": "منصة تعليمية تفاعلية لتعلم اللغة الإنجليزية تضم 27 درساً منظّماً بمستويات مبتدئ ومتوسط ومتقدم، مع فلتر المستويات ومودال العرض والتنقل بين الدروس.",
+    "tags": ["HTML", "CSS", "JavaScript", "تعليم"],
+    "icon": "fas fa-graduation-cap",
+    "color": "#4361ee",
+    "link": "https://achrafayaou.github.io/english-lessons/",
+    "github": "https://github.com/AchRafAyaOu/english-lessons",
+    "status": "live"
+  },
+  {
+    "id": 2,
+    "category": "web",
+    "featured": true,
+    "title": "قالب بلوغر AchRaf",
+    "titleEn": "AchRaf Blogger Template",
+    "description": "قالب بلوغر متكامل بتصميم عصري يدعم الوضع المظلم والـ RTL وتحميل المحتوى من JSON، مع Mini Cards للتواصل وعرض الدروس والبودكاست.",
+    "tags": ["Blogger", "XML", "CSS", "JavaScript"],
+    "icon": "fas fa-blog",
+    "color": "#7c3aed",
+    "link": "#",
+    "github": "https://github.com/AchRafAyaOu/blogs_arch",
+    "status": "live"
+  },
+  {
+    "id": 3,
+    "category": "content",
+    "featured": false,
+    "title": "محتوى تعليمي - يوتيوب",
+    "titleEn": "Educational Content — YouTube",
+    "description": "قناة يوتيوب تضم دروساً ومحتوى تعليمياً باللغة العربية في مجالات اللغة الإنجليزية والتقنية.",
+    "tags": ["YouTube", "تعليم", "محتوى"],
+    "icon": "fab fa-youtube",
+    "color": "#ef4444",
+    "link": "https://www.youtube.com/@AchRafAyaOu",
+    "github": null,
+    "status": "live"
+  },
+  {
+    "id": 4,
+    "category": "web",
+    "featured": false,
+    "title": "مشروع — قيد الإنشاء",
+    "titleEn": "Project — Coming Soon",
+    "description": "مشروع جديد قيد التطوير سيُعلن عنه قريباً. ابقَ على تواصل.",
+    "tags": ["قريباً"],
+    "icon": "fas fa-rocket",
+    "color": "#059669",
+    "link": null,
+    "github": null,
+    "status": "wip"
+  },
+  {
+    "id": 5,
+    "category": "design",
+    "featured": false,
+    "title": "تصاميم وهوية بصرية",
+    "titleEn": "Designs & Visual Identity",
+    "description": "مجموعة من التصاميم الجرافيكية والهوية البصرية التي تمّ إنجازها لمشاريع ومنصات متعددة.",
+    "tags": ["تصميم", "Figma", "SVG"],
+    "icon": "fas fa-pen-nib",
+    "color": "#f59e0b",
+    "link": null,
+    "github": null,
+    "status": "wip"
+  }
+]
