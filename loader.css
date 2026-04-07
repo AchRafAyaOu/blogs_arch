@@ -1,0 +1,194 @@
+/* ═══════════════════════════════════════════════
+   AchRafAyaOu — Branded Loader
+   Use:  <link href="...blogs_arch@main/loader/loader.css?v=1" rel="stylesheet"/>
+   Then place  <div id="fin-loader" class="fin-loader">...</div>  in your page
+   ═══════════════════════════════════════════════ */
+
+.fin-loader {
+  position: fixed; inset: 0; z-index: 99999;
+  display: grid; place-items: center;
+  background: linear-gradient(160deg, #07101e 0%, #0d1b2a 55%, #111827 100%);
+  transition: opacity .45s ease, visibility .45s ease;
+}
+.fin-loader.fin-loader-hidden {
+  opacity: 0; visibility: hidden; pointer-events: none;
+}
+
+.fl-stage {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 24px;
+  transform: translateY(-6px);
+  text-align: center;
+}
+
+/* ── Logo ring wrapper ── */
+.fl-logo-wrap {
+  position: relative;
+  width: 175px; height: 175px;
+  display: grid; place-items: center;
+}
+
+/* Ambient glow */
+.fl-logo-wrap::before {
+  content: "";
+  position: absolute;
+  width: 130px; height: 130px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(109,95,255,.22), transparent 68%);
+  filter: blur(12px);
+  animation: fl-glow 2.8s ease-in-out infinite;
+}
+
+/* Outer conic spinner */
+.fl-ring-outer {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(109, 95,255,.00)  0deg,
+    rgba(109, 95,255,.12)  70deg,
+    rgba(123,111,255,.95) 140deg,
+    rgba(167,139,250,1.0) 200deg,
+    rgba( 79, 70,229,.08) 290deg,
+    rgba(109, 95,255,.00) 360deg
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+  animation: fl-spin-cw 2.4s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(109,95,255,.38));
+}
+
+/* Inner counter-spin ring */
+.fl-ring-inner {
+  position: absolute; inset: 18px; border-radius: 50%;
+  background: conic-gradient(
+    from 180deg,
+    rgba(167,139,250,.00)  0deg,
+    rgba(167,139,250,.55)  90deg,
+    rgba(109, 95,255,.80) 160deg,
+    rgba(109, 95,255,.00) 260deg,
+    rgba(167,139,250,.00) 360deg
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  animation: fl-spin-ccw 3.6s linear infinite;
+  opacity: .7;
+}
+
+/* A core */
+.fl-a-core {
+  position: relative;
+  width: 92px; height: 92px;
+  display: grid; place-items: center;
+  animation: fl-float 3.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px rgba(109,95,255,.36));
+}
+.fl-a-core svg { width: 100%; height: 100%; overflow: visible; }
+
+.fl-shell {
+  fill: rgba(255,255,255,.03);
+  stroke: rgba(255,255,255,.07);
+  stroke-width: 1;
+}
+.fl-shine { fill: url(#fl-shineG); opacity: .22; }
+
+.fl-a-mark {
+  fill: none;
+  stroke: url(#fl-aGrad);
+  stroke-width: 5.8;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 248; stroke-dashoffset: 0;
+  animation: fl-draw 3.4s ease-in-out infinite;
+}
+
+.fl-liq-group {
+  clip-path: url(#fl-clipA);
+  animation: fl-liq 3.4s ease-in-out infinite alternate;
+}
+.fl-liq-base { fill: url(#fl-liqG); opacity: .78; }
+.fl-wave1 { fill: rgba(255,255,255,.20); animation: fl-wave 4.6s linear infinite; }
+.fl-wave2 { fill: rgba(255,255,255,.32); animation: fl-wave 3.0s linear infinite reverse; }
+.fl-bbl   { fill: rgba(255,255,255,.60); animation: fl-bbl 3.6s ease-in-out infinite; }
+.fl-bbl2  { animation-delay: .8s; opacity: .55; }
+.fl-bbl3  { animation-delay: 1.6s; opacity: .40; }
+
+/* ── Name ── */
+.fl-name {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(2rem,5.5vw,3rem);
+  font-weight: 500;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  line-height: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.95) 0%,
+    rgba(220,210,255,.58) 55%,
+    rgba(255,255,255,.18) 100%
+  );
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fl-name-fade 2.8s ease-in-out infinite;
+  user-select: none;
+}
+
+/* ── Progress line ── */
+.fl-line {
+  width: 100px; height: 1.5px; border-radius: 99px;
+  background: rgba(255,255,255,.07); overflow: hidden; position: relative;
+}
+.fl-line::before {
+  content: "";
+  position: absolute; inset: 0;
+  width: 40%; border-radius: inherit;
+  background: linear-gradient(90deg,#7b6fff,#a78bfa);
+  box-shadow: 0 0 14px rgba(109,95,255,.55);
+  animation: fl-line-slide 1.9s ease-in-out infinite;
+}
+
+/* ── Keyframes ── */
+@keyframes fl-spin-cw  { to { transform: rotate(360deg); } }
+@keyframes fl-spin-ccw { to { transform: rotate(-360deg); } }
+@keyframes fl-glow {
+  0%,100% { transform: scale(.94); opacity: .60; }
+  50%      { transform: scale(1.10); opacity: 1; }
+}
+@keyframes fl-float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+@keyframes fl-draw {
+  0%   { stroke-dashoffset: 248; opacity: .80; }
+  42%  { stroke-dashoffset: 0;   opacity: 1; }
+  100% { stroke-dashoffset: -248; opacity: .85; }
+}
+@keyframes fl-liq {
+  0%   { transform: translateY(6px); }
+  100% { transform: translateY(-5px); }
+}
+@keyframes fl-wave {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-64px); }
+}
+@keyframes fl-bbl {
+  0%   { transform: translateY(8px); opacity: 0; }
+  15%  { opacity: .7; }
+  100% { transform: translateY(-52px); opacity: 0; }
+}
+@keyframes fl-name-fade {
+  0%,100% { opacity: .18; transform: translateY(0) scale(.986); filter: blur(.5px); }
+  50%      { opacity: .88; transform: translateY(-2px) scale(1); filter: blur(0); }
+}
+@keyframes fl-line-slide {
+  0%   { transform: translateX(-140%); }
+  100% { transform: translateX(280%); }
+}
+
+@media (max-width:480px) {
+  .fl-logo-wrap { width: 145px; height: 145px; }
+  .fl-a-core    { width: 78px; height: 78px; }
+  .fl-name      { font-size: 1.9rem; letter-spacing: .14em; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .fin-loader *, .fin-loader *::before, .fin-loader *::after {
+    animation: none !important;
+  }
+}
