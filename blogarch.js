@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════
-   BlogArch v4 — Complete JavaScript
+   BlogArch v10 — Complete JavaScript
    Features: Theme Engine × 5 · TOC · Relative Dates · Text Share
-             Contact Form (Web3Forms) · Read Time · Lazy Load
+             Contact Form (Web3Forms) · Read Time · Lazy Load (Enhanced)
              Mobile Drawer · Search · About Modal · Scroll FX
-   https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/blogarch_v4.js
+             Lessons Viewer (iframe) · Prev/Next Nav · Swipe Support
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -21,6 +21,7 @@
     midnight: { name: 'منتصف الليل',   desc: 'أرجواني داكن',           bg: '#09090b', bgDark: '#09090b' },
   };
 
+  // ✅ FIX #1: مفتاح موحد 'ba-theme' / 'ba-dark' — لا تعارض مع script.js
   var savedTheme = localStorage.getItem('ba-theme') || 'default';
   var savedDark  = localStorage.getItem('ba-dark') === '1';
 
@@ -28,14 +29,14 @@
     if (theme === 'midnight') dark = true;
     if (theme === 'default')  body.removeAttribute('data-theme');
     else                      body.setAttribute('data-theme', theme);
-    if (dark) { body.setAttribute('data-dark', ''); body.classList.add('dark-mode'); }
-    else      { body.removeAttribute('data-dark');   body.classList.remove('dark-mode'); }
 
-    // Update theme-color meta
+    // ✅ FIX #2: data-dark فقط — حذف dark-mode class الزائد
+    if (dark) { body.setAttribute('data-dark', ''); }
+    else      { body.removeAttribute('data-dark'); }
+
     var meta = document.getElementById('meta-theme-color');
     if (meta) meta.content = dark ? THEMES[theme].bgDark : THEMES[theme].bg;
 
-    // Update theme icon
     var icon = document.getElementById('theme-icon');
     if (icon) icon.className = dark ? 'fas fa-sun' : 'fas fa-moon';
 
@@ -65,16 +66,13 @@
     if (label) label.textContent = (THEMES[theme] || THEMES.default).name;
   }
 
-  // Apply on load
   applyTheme(savedTheme, savedDark);
 
-  // Legacy dark toggle button
   var themeToggleBtn = document.getElementById('theme-toggle');
   if (themeToggleBtn) themeToggleBtn.addEventListener('click', function () {
     setTheme(savedTheme, !savedDark);
   });
 
-  // Build Desktop Switcher
   function buildDesktopSwitcher() {
     var c = document.getElementById('theme-switcher-desktop');
     if (!c) return;
@@ -119,7 +117,6 @@
     syncSwitcherUI(savedTheme, savedDark);
   }
 
-  // Build Mobile Drawer Switcher
   function buildMobileSwitcher() {
     var c = document.getElementById('drawer-theme-section');
     if (!c) return;
@@ -200,7 +197,6 @@
     if (!relContainer || !relVal) return;
 
     var dateStr = metaDate ? (metaDate.getAttribute('content') || metaDate.getAttribute('datetime')) : null;
-    // Fallback: try to parse from the displayed date in post-meta
     if (!dateStr) {
       var metaSpan = document.querySelector('.post-meta span:first-child');
       if (metaSpan) dateStr = metaSpan.textContent.replace(/[^\d\-\/\s]/g, '').trim();
@@ -222,22 +218,21 @@
     if (!container || !nav || !postBody) return;
 
     var headings = postBody.querySelectorAll('h2, h3');
-    if (headings.length < 3) return; // Only show TOC for longer posts
+    if (headings.length < 3) return;
 
     tocHeadings = [];
     var html = '';
     headings.forEach(function (h, idx) {
       if (!h.id) h.id = 'heading-' + idx;
-      var isH3   = h.tagName === 'H3';
-      var cls    = isH3 ? 'toc-h3' : 'toc-h2';
-      var text   = h.textContent || h.innerText || '';
+      var isH3 = h.tagName === 'H3';
+      var cls  = isH3 ? 'toc-h3' : 'toc-h2';
+      var text = h.textContent || h.innerText || '';
       html += '<a href="#' + h.id + '" class="' + cls + '" data-heading-id="' + h.id + '">' + text + '</a>';
       tocHeadings.push(h);
     });
     nav.innerHTML = html;
     container.style.display = 'block';
 
-    // Smooth scroll on TOC click
     nav.querySelectorAll('a').forEach(function (a) {
       a.addEventListener('click', function (e) {
         e.preventDefault();
@@ -246,7 +241,6 @@
       });
     });
 
-    // Toggle button
     var toggleBtn = document.getElementById('toc-toggle');
     if (toggleBtn) toggleBtn.addEventListener('click', function () {
       container.classList.toggle('collapsed');
@@ -277,7 +271,7 @@
 
     var selectedText = '';
 
-    document.addEventListener('mouseup', function (e) {
+    document.addEventListener('mouseup', function () {
       setTimeout(function () {
         var sel = window.getSelection();
         selectedText = sel ? sel.toString().trim() : '';
@@ -311,10 +305,12 @@
       if (navigator.share) {
         navigator.share({ title: document.title, text: selectedText, url: url });
       } else {
-        var twitterUrl = 'https://twitter.com/intent/tweet?text=' +
+        window.open(
+          'https://twitter.com/intent/tweet?text=' +
           encodeURIComponent('"' + selectedText.slice(0, 200) + '"') +
-          '&url=' + encodeURIComponent(url);
-        window.open(twitterUrl, '_blank', 'width=600,height=400');
+          '&url=' + encodeURIComponent(url),
+          '_blank', 'width=600,height=400'
+        );
       }
       tooltip.classList.remove('show');
     });
@@ -358,30 +354,74 @@
   }
 
   /* ══════════════════════════════════════════════════════
-     8. LAZY LOADING
+     8. LAZY LOADING — Enhanced
+     ✅ blur placeholder → full image
+     ✅ threshold لتحسين التوقيت
+     ✅ معالجة فشل التحميل (placeholder)
+     ✅ دعم الصور المُضافة ديناميكياً عبر lazyObserver
   ══════════════════════════════════════════════════════ */
+  var lazyObserver = null;
+
+  function observeImage(img) {
+    if (lazyObserver) {
+      lazyObserver.observe(img);
+    } else {
+      // Fallback: لا يوجد IntersectionObserver
+      loadImage(img);
+    }
+  }
+
+  function loadImage(img) {
+    var src = img.dataset.src;
+    if (!src) return;
+
+    // إضافة blur مؤقت أثناء التحميل
+    img.style.filter = 'blur(8px)';
+    img.style.transition = 'filter 0.4s ease';
+
+    var tempImg = new Image();
+    tempImg.onload = function () {
+      img.src = src;
+      img.style.filter = '';
+      img.classList.add('loaded');
+      var wrapper = img.closest('.card-image-wrapper');
+      if (wrapper) wrapper.classList.add('loaded');
+    };
+    tempImg.onerror = function () {
+      // عرض placeholder عند فشل التحميل
+      img.style.filter = '';
+      img.classList.add('loaded', 'img-error');
+      img.alt = img.alt || 'تعذّر تحميل الصورة';
+      // يمكن تعيين صورة بديلة هنا إن وُجدت
+      var placeholder = img.dataset.placeholder;
+      if (placeholder) img.src = placeholder;
+      var wrapper = img.closest('.card-image-wrapper');
+      if (wrapper) wrapper.classList.add('loaded', 'img-error');
+    };
+    tempImg.src = src;
+  }
+
   function initLazy() {
     var imgs = document.querySelectorAll('img.lazy');
+
     if ('IntersectionObserver' in window) {
-      var obs = new IntersectionObserver(function (entries) {
+      lazyObserver = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
           if (e.isIntersecting) {
-            var img = e.target;
-            img.src = img.dataset.src;
-            img.onload = function () {
-              img.classList.add('loaded');
-              var wrapper = img.closest('.card-image-wrapper');
-              if (wrapper) wrapper.classList.add('loaded');
-            };
-            obs.unobserve(img);
+            loadImage(e.target);
+            lazyObserver.unobserve(e.target);
           }
         });
-      }, { rootMargin: '200px' });
-      imgs.forEach(function (img) { obs.observe(img); });
+      }, {
+        rootMargin: '200px',
+        threshold: 0.01  // ✅ يبدأ التحميل بمجرد ظهور 1% من الصورة
+      });
+      imgs.forEach(function (img) { lazyObserver.observe(img); });
     } else {
-      imgs.forEach(function (img) { img.src = img.dataset.src; img.classList.add('loaded'); });
+      imgs.forEach(loadImage);
     }
-    // Post body images
+
+    // صور محتوى المنشور
     document.querySelectorAll('.post-body img:not(.lazy)').forEach(function (img) {
       img.setAttribute('loading', 'lazy');
       var mark = function () { img.classList.add('loaded'); };
@@ -390,7 +430,59 @@
   }
 
   /* ══════════════════════════════════════════════════════
-     9. MOBILE DRAWER
+     9. SECTION ANIMATIONS — Enhanced Intersection Observer
+     ✅ fade-up للأقسام الرئيسية
+     ✅ fade-in للبطاقات
+     ✅ slide-in-right/left لأقسام About وWorks
+     ✅ stagger تأخير تدريجي للبطاقات المتعددة
+  ══════════════════════════════════════════════════════ */
+  function initSectionAnimations() {
+    if (!('IntersectionObserver' in window)) {
+      // Fallback: اظهار كل شيء مباشرة
+      document.querySelectorAll(
+        '.fade-in-section, .fade-up-section, .fade-in-card, .slide-in-right, .slide-in-left'
+      ).forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+
+    var sectionObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          sectionObs.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -60px 0px', threshold: 0.1 });
+
+    // Sections الرئيسية (fade-up)
+    document.querySelectorAll('.fade-in-section, .fade-up-section').forEach(function (el) {
+      sectionObs.observe(el);
+    });
+
+    // slide-in-right / slide-in-left
+    document.querySelectorAll('.slide-in-right, .slide-in-left').forEach(function (el) {
+      sectionObs.observe(el);
+    });
+
+    // البطاقات — stagger تأخير تدريجي
+    var cardObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          cardObs.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -40px 0px', threshold: 0.05 });
+
+    document.querySelectorAll('.fade-in-card').forEach(function (el, idx) {
+      // تأخير تدريجي حتى 500ms
+      el.style.transitionDelay = Math.min(idx * 80, 500) + 'ms';
+      cardObs.observe(el);
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════
+     10. MOBILE DRAWER
   ══════════════════════════════════════════════════════ */
   var drawer    = document.getElementById('mobile-drawer');
   var overlay   = document.getElementById('menu-overlay');
@@ -416,7 +508,6 @@
     l.addEventListener('click', closeDrawer);
   });
 
-  // Mobile dropdown
   var mobileDropdown = document.getElementById('mobile-dropdown');
   if (mobileDropdown) {
     var dtoggle = mobileDropdown.querySelector('.dropdown-toggle');
@@ -428,14 +519,13 @@
     });
   }
 
-  // About from drawer
   var aboutOpenMobile = document.getElementById('about-open-mobile');
   if (aboutOpenMobile) aboutOpenMobile.addEventListener('click', function (e) {
     e.preventDefault(); closeDrawer(); openAbout();
   });
 
   /* ══════════════════════════════════════════════════════
-     10. SEARCH PANEL
+     11. SEARCH PANEL
   ══════════════════════════════════════════════════════ */
   var searchPanel    = document.getElementById('search-panel');
   var searchInput    = document.getElementById('search-input');
@@ -486,7 +576,7 @@
   });
 
   /* ══════════════════════════════════════════════════════
-     11. ABOUT MODAL
+     12. ABOUT MODAL
   ══════════════════════════════════════════════════════ */
   var modal = document.getElementById('about-modal');
   function openAbout()  { if (modal) { modal.classList.add('open');    body.style.overflow = 'hidden'; } }
@@ -498,7 +588,175 @@
   if (modal)      modal.addEventListener('click', function (e) { if (e.target === modal) closeAbout(); });
 
   /* ══════════════════════════════════════════════════════
-     12. PILLS ACTIVE STATE
+     13. LESSONS VIEWER — من script.js
+     ✅ iframe من GitHub Pages
+     ✅ Loading spinner أثناء تحميل الـ iframe
+     ✅ معالجة الخطأ إذا فشل التحميل
+     ✅ التنقل prev/next بين الدروس
+     ✅ Swipe support على الموبايل
+  ══════════════════════════════════════════════════════ */
+  var currentLessonIndex   = 0;
+  var filteredLessonsCache = [];
+  var lessonTouchStartX    = 0;
+  var lessonTouchEndX      = 0;
+
+  /* --- Spinner HTML helper --- */
+  function iframeSpinner() {
+    return '<div class="lesson-spinner" style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:1rem;">' +
+      '<div style="width:48px;height:48px;border:4px solid var(--border,#e2e8f0);border-top-color:var(--accent,#3b82f6);border-radius:50%;animation:ba-spin 0.8s linear infinite;"></div>' +
+      '<span style="color:var(--muted,#94a3b8);font-size:.9rem;">جاري التحميل...</span>' +
+    '</div>';
+  }
+
+  /* --- كشف إضافة <style> للـ animation إن لم تكن موجودة --- */
+  (function ensureSpinnerStyle() {
+    if (document.getElementById('ba-spinner-style')) return;
+    var s = document.createElement('style');
+    s.id = 'ba-spinner-style';
+    s.textContent = '@keyframes ba-spin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(s);
+  })();
+
+  function openLessonModal(lesson, index) {
+    currentLessonIndex = index;
+
+    var lessonModal = document.getElementById('lesson-modal');
+    if (!lessonModal) return;
+
+    var titleEl = document.getElementById('lesson-modal-title');
+    var bodyEl  = document.getElementById('lesson-modal-body');
+
+    if (titleEl) titleEl.textContent = lesson.title + (lesson.titleEn ? ' — ' + lesson.titleEn : '');
+    if (bodyEl)  bodyEl.innerHTML = iframeSpinner();
+
+    lessonModal.classList.add('open');
+    body.style.overflow = 'hidden';
+    updateLessonNavButtons();
+
+    // بناء الـ iframe بعد عرض الـ modal
+    if (bodyEl && lesson.githubPath) {
+      var iframe = document.createElement('iframe');
+      iframe.src    = lesson.githubPath;
+      iframe.style.cssText = 'width:100%;height:100%;border:none;display:none;';
+      iframe.setAttribute('loading', 'lazy');
+      iframe.setAttribute('title', lesson.title);
+
+      iframe.addEventListener('load', function () {
+        bodyEl.innerHTML = '';
+        iframe.style.display = 'block';
+        bodyEl.appendChild(iframe);
+      });
+
+      iframe.addEventListener('error', function () {
+        bodyEl.innerHTML =
+          '<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:1rem;">' +
+            '<i class="fas fa-exclamation-triangle" style="font-size:2.5rem;color:var(--danger,#ef4444);"></i>' +
+            '<p style="color:var(--muted,#94a3b8);text-align:center">تعذّر تحميل الدرس.<br>تحقق من اتصالك أو افتح الدرس في تبويب جديد.</p>' +
+            '<a href="' + lesson.githubPath + '" target="_blank" rel="noopener" ' +
+              'style="padding:.5rem 1.2rem;background:var(--accent,#3b82f6);color:#fff;border-radius:.5rem;text-decoration:none;font-size:.9rem;">' +
+              'فتح في تبويب جديد</a>' +
+          '</div>';
+      });
+
+      // إرفاق الـ iframe بالـ DOM لبدء التحميل
+      bodyEl.appendChild(iframe);
+
+      // timeout احتياطي — إذا لم يُطلق load بعد 15 ثانية
+      var loadTimeout = setTimeout(function () {
+        if (bodyEl.querySelector('.lesson-spinner')) {
+          // لا يزال يعرض الـ spinner → أظهر iframe على أي حال
+          bodyEl.innerHTML = '';
+          iframe.style.display = 'block';
+          bodyEl.appendChild(iframe);
+        }
+      }, 15000);
+
+      iframe.addEventListener('load', function () { clearTimeout(loadTimeout); }, { once: true });
+    }
+
+    // Swipe support
+    lessonModal.addEventListener('touchstart', function (e) {
+      lessonTouchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    lessonModal.addEventListener('touchend', function (e) {
+      lessonTouchEndX = e.changedTouches[0].screenX;
+      var diff = lessonTouchStartX - lessonTouchEndX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) navigateToNextLesson();
+        else          navigateToPrevLesson();
+      }
+    }, { passive: true });
+  }
+
+  function closeLessonModal() {
+    var lessonModal = document.getElementById('lesson-modal');
+    if (lessonModal) {
+      lessonModal.classList.remove('open');
+      body.style.overflow = '';
+      var bodyEl = document.getElementById('lesson-modal-body');
+      if (bodyEl) bodyEl.innerHTML = ''; // تحرير الـ iframe من الذاكرة
+    }
+  }
+
+  function navigateToPrevLesson() {
+    if (currentLessonIndex > 0)
+      openLessonModal(filteredLessonsCache[currentLessonIndex - 1], currentLessonIndex - 1);
+  }
+
+  function navigateToNextLesson() {
+    if (currentLessonIndex < filteredLessonsCache.length - 1)
+      openLessonModal(filteredLessonsCache[currentLessonIndex + 1], currentLessonIndex + 1);
+  }
+
+  function updateLessonNavButtons() {
+    var prevBtn = document.getElementById('lesson-prev-btn');
+    var nextBtn = document.getElementById('lesson-next-btn');
+    if (prevBtn) {
+      prevBtn.disabled      = currentLessonIndex === 0;
+      prevBtn.style.opacity = currentLessonIndex === 0 ? '0.4' : '1';
+    }
+    if (nextBtn) {
+      var atEnd = currentLessonIndex === filteredLessonsCache.length - 1;
+      nextBtn.disabled      = atEnd;
+      nextBtn.style.opacity = atEnd ? '0.4' : '1';
+    }
+  }
+
+  function initLessonsViewer() {
+    var lessonModal = document.getElementById('lesson-modal');
+    if (!lessonModal) return;
+
+    // إغلاق بالنقر على الخلفية
+    lessonModal.addEventListener('click', function (e) {
+      if (e.target === lessonModal) closeLessonModal();
+    });
+
+    // زر الإغلاق
+    var closeBtn = document.getElementById('lesson-modal-close');
+    if (closeBtn) closeBtn.addEventListener('click', closeLessonModal);
+
+    // أزرار التنقل
+    var prevBtn = document.getElementById('lesson-prev-btn');
+    var nextBtn = document.getElementById('lesson-next-btn');
+    if (prevBtn) prevBtn.addEventListener('click', navigateToPrevLesson);
+    if (nextBtn) nextBtn.addEventListener('click', navigateToNextLesson);
+
+    // بطاقات الدروس
+    document.querySelectorAll('[data-lesson-id]').forEach(function (card) {
+      card.addEventListener('click', function () {
+        var id = parseInt(card.getAttribute('data-lesson-id'), 10);
+        // ابحث عن الدرس في filteredLessonsCache أو أي مصفوفة عامة
+        if (window.lessonsData) {
+          filteredLessonsCache = window.lessonsData;
+          var idx = filteredLessonsCache.findIndex(function (l) { return l.id === id; });
+          if (idx !== -1) openLessonModal(filteredLessonsCache[idx], idx);
+        }
+      });
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════
+     14. PILLS ACTIVE STATE
   ══════════════════════════════════════════════════════ */
   var currentPath = window.location.pathname;
   document.querySelectorAll('.pills .pill').forEach(function (pill) {
@@ -510,7 +768,7 @@
   });
 
   /* ══════════════════════════════════════════════════════
-     13. ACTIVE NAV HIGHLIGHTING
+     15. ACTIVE NAV HIGHLIGHTING
   ══════════════════════════════════════════════════════ */
   document.querySelectorAll('.nav-menu .nav-link, .mobile-drawer .nav-link').forEach(function (a) {
     try {
@@ -520,17 +778,20 @@
   });
 
   /* ══════════════════════════════════════════════════════
-     14. KEYBOARD SHORTCUTS
+     16. KEYBOARD SHORTCUTS
   ══════════════════════════════════════════════════════ */
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
     if (searchPanel && searchPanel.classList.contains('active')) setSearch(false);
     if (modal && modal.classList.contains('open')) closeAbout();
     if (drawer && drawer.classList.contains('active')) closeDrawer();
+    // Lesson modal
+    var lessonModal = document.getElementById('lesson-modal');
+    if (lessonModal && lessonModal.classList.contains('open')) closeLessonModal();
   });
 
   /* ══════════════════════════════════════════════════════
-     15. CLICKABLE POST CARDS
+     17. CLICKABLE POST CARDS
   ══════════════════════════════════════════════════════ */
   function initClickableCards() {
     document.querySelectorAll('.fin-clickable-card').forEach(function (card) {
@@ -543,7 +804,7 @@
   }
 
   /* ══════════════════════════════════════════════════════
-     16. FOOTER YEAR AUTO-UPDATE
+     18. FOOTER YEAR AUTO-UPDATE
   ══════════════════════════════════════════════════════ */
   var yearEl = document.getElementById('fin-year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -553,6 +814,7 @@
   ══════════════════════════════════════════════════════ */
   document.addEventListener('DOMContentLoaded', function () {
     initLazy();
+    initSectionAnimations();
     buildDesktopSwitcher();
     buildMobileSwitcher();
     buildTOC();
@@ -560,7 +822,21 @@
     initTextShare();
     initContactForm();
     initClickableCards();
+    initLessonsViewer();
     syncSwitcherUI(savedTheme, savedDark);
   });
+
+  /* ══════════════════════════════════════════════════════
+     PUBLIC API — للاستخدام من الصفحات الأخرى
+  ══════════════════════════════════════════════════════ */
+  window.BlogArch = {
+    openLesson: function (lesson, index, cache) {
+      if (cache) filteredLessonsCache = cache;
+      openLessonModal(lesson, index);
+    },
+    closeLesson:      closeLessonModal,
+    observeNewImage:  observeImage,   // لدعم الصور المُضافة ديناميكياً
+    setTheme:         setTheme,
+  };
 
 })();
