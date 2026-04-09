@@ -153,9 +153,20 @@
   window.addEventListener('scroll', function () {
     var st = document.documentElement.scrollTop || document.body.scrollTop || 0;
     var h  = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+
+    /* شريط القراءة */
     if (bar) bar.style.width = (h > 0 ? (st / h) * 100 : 0) + '%';
-    if (navbar) navbar.classList.toggle('scrolled', st > 50);
-    if (btt)    btt.classList.toggle('visible', st > 400);
+
+    /* ✅ FIX: scrolled فقط إذا كانت الصفحة قابلة للتمرير فعلاً
+       — يمنع التأثير على الصفحات الثابتة (iframe) حيث body.overflow=hidden
+       — يمنع الخط الجزئي على الكمبيوتر عند عدم وجود محتوى كافٍ للتمرير */
+    if (navbar) {
+      var pageIsScrollable = h > 10 && document.body.style.overflow !== 'hidden';
+      navbar.classList.toggle('scrolled', pageIsScrollable && st > 50);
+      if (!pageIsScrollable) navbar.classList.remove('scrolled');
+    }
+
+    if (btt) btt.classList.toggle('visible', st > 400);
     updateTocActiveHeading();
   }, { passive: true });
 
