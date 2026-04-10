@@ -3,7 +3,8 @@
    Features: Theme Engine × 5 · TOC · Relative Dates · Text Share
              Contact Form (Web3Forms) · Read Time · Lazy Load (Enhanced)
              Mobile Drawer · Search · About Modal · Scroll FX
-             Lessons Viewer (iframe) · Prev/Next Nav · Swipe Support
+             Lessons Viewer (iframe) · Quotes Carousel · Podcast Grid
+             Prev/Next Nav · Swipe Support
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -21,7 +22,6 @@
     midnight: { name: 'منتصف الليل',   desc: 'أرجواني داكن',           bg: '#09090b', bgDark: '#09090b' },
   };
 
-  // ✅ FIX #1: مفتاح موحد 'ba-theme' / 'ba-dark' — لا تعارض مع script.js
   var savedTheme = localStorage.getItem('ba-theme') || 'default';
   var savedDark  = localStorage.getItem('ba-dark') === '1';
 
@@ -30,7 +30,6 @@
     if (theme === 'default')  body.removeAttribute('data-theme');
     else                      body.setAttribute('data-theme', theme);
 
-    // ✅ FIX #2: data-dark فقط — حذف dark-mode class الزائد
     if (dark) { body.setAttribute('data-dark', ''); }
     else      { body.removeAttribute('data-dark'); }
 
@@ -154,9 +153,22 @@
   window.addEventListener('scroll', function () {
     var st = document.documentElement.scrollTop || document.body.scrollTop || 0;
     var h  = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+
+    /* شريط القراءة */
     if (bar) bar.style.width = (h > 0 ? (st / h) * 100 : 0) + '%';
-    if (navbar) navbar.classList.toggle('scrolled', st > 50);
-    if (btt)    btt.classList.toggle('visible', st > 400);
+
+    /* ✅ FIX: scrolled فقط إذا كانت الصفحة قابلة للتمرير فعلاً
+       — يستخدم getComputedStyle لقراءة overflow الحقيقي (CSS rules + inline)
+       — يمنع التأثير على الصفحات الثابتة (iframe) حيث body overflow=hidden
+       — يمنع الخط الجزئي على الكمبيوتر عند عدم وجود محتوى كافٍ للتمرير */
+    if (navbar) {
+      var bodyOverflow    = window.getComputedStyle(document.body).overflow;
+      var pageIsScrollable = h > 10 && bodyOverflow !== 'hidden';
+      navbar.classList.toggle('scrolled', pageIsScrollable && st > 50);
+      if (!pageIsScrollable) navbar.classList.remove('scrolled');
+    }
+
+    if (btt) btt.classList.toggle('visible', st > 400);
     updateTocActiveHeading();
   }, { passive: true });
 
@@ -355,10 +367,6 @@
 
   /* ══════════════════════════════════════════════════════
      8. LAZY LOADING — Enhanced
-     ✅ blur placeholder → full image
-     ✅ threshold لتحسين التوقيت
-     ✅ معالجة فشل التحميل (placeholder)
-     ✅ دعم الصور المُضافة ديناميكياً عبر lazyObserver
   ══════════════════════════════════════════════════════ */
   var lazyObserver = null;
 
@@ -366,7 +374,6 @@
     if (lazyObserver) {
       lazyObserver.observe(img);
     } else {
-      // Fallback: لا يوجد IntersectionObserver
       loadImage(img);
     }
   }
@@ -375,7 +382,6 @@
     var src = img.dataset.src;
     if (!src) return;
 
-    // إضافة blur مؤقت أثناء التحميل
     img.style.filter = 'blur(8px)';
     img.style.transition = 'filter 0.4s ease';
 
@@ -388,11 +394,9 @@
       if (wrapper) wrapper.classList.add('loaded');
     };
     tempImg.onerror = function () {
-      // عرض placeholder عند فشل التحميل
       img.style.filter = '';
       img.classList.add('loaded', 'img-error');
       img.alt = img.alt || 'تعذّر تحميل الصورة';
-      // يمكن تعيين صورة بديلة هنا إن وُجدت
       var placeholder = img.dataset.placeholder;
       if (placeholder) img.src = placeholder;
       var wrapper = img.closest('.card-image-wrapper');
@@ -414,14 +418,13 @@
         });
       }, {
         rootMargin: '200px',
-        threshold: 0.01  // ✅ يبدأ التحميل بمجرد ظهور 1% من الصورة
+        threshold: 0.01
       });
       imgs.forEach(function (img) { lazyObserver.observe(img); });
     } else {
       imgs.forEach(loadImage);
     }
 
-    // صور محتوى المنشور
     document.querySelectorAll('.post-body img:not(.lazy)').forEach(function (img) {
       img.setAttribute('loading', 'lazy');
       var mark = function () { img.classList.add('loaded'); };
@@ -430,15 +433,10 @@
   }
 
   /* ══════════════════════════════════════════════════════
-     9. SECTION ANIMATIONS — Enhanced Intersection Observer
-     ✅ fade-up للأقسام الرئيسية
-     ✅ fade-in للبطاقات
-     ✅ slide-in-right/left لأقسام About وWorks
-     ✅ stagger تأخير تدريجي للبطاقات المتعددة
+     9. SECTION ANIMATIONS
   ══════════════════════════════════════════════════════ */
   function initSectionAnimations() {
     if (!('IntersectionObserver' in window)) {
-      // Fallback: اظهار كل شيء مباشرة
       document.querySelectorAll(
         '.fade-in-section, .fade-up-section, .fade-in-card, .slide-in-right, .slide-in-left'
       ).forEach(function (el) { el.classList.add('is-visible'); });
@@ -454,17 +452,14 @@
       });
     }, { rootMargin: '0px 0px -60px 0px', threshold: 0.1 });
 
-    // Sections الرئيسية (fade-up)
     document.querySelectorAll('.fade-in-section, .fade-up-section').forEach(function (el) {
       sectionObs.observe(el);
     });
 
-    // slide-in-right / slide-in-left
     document.querySelectorAll('.slide-in-right, .slide-in-left').forEach(function (el) {
       sectionObs.observe(el);
     });
 
-    // البطاقات — stagger تأخير تدريجي
     var cardObs = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (e.isIntersecting) {
@@ -475,7 +470,6 @@
     }, { rootMargin: '0px 0px -40px 0px', threshold: 0.05 });
 
     document.querySelectorAll('.fade-in-card').forEach(function (el, idx) {
-      // تأخير تدريجي حتى 500ms
       el.style.transitionDelay = Math.min(idx * 80, 500) + 'ms';
       cardObs.observe(el);
     });
@@ -588,93 +582,73 @@
   if (modal)      modal.addEventListener('click', function (e) { if (e.target === modal) closeAbout(); });
 
   /* ══════════════════════════════════════════════════════
-     13. LESSONS VIEWER — من script.js
-     ✅ iframe من GitHub Pages
-     ✅ Loading spinner أثناء تحميل الـ iframe
-     ✅ معالجة الخطأ إذا فشل التحميل
+     13. LESSONS VIEWER
+     ✅ يستخدم IDs الموجودة في XML: fin-learn-modal
+     ✅ URL كامل من GitHub CDN
+     ✅ Spinner أثناء التحميل
      ✅ التنقل prev/next بين الدروس
      ✅ Swipe support على الموبايل
   ══════════════════════════════════════════════════════ */
+  var LESSONS_BASE_URL = 'https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/';
+
   var currentLessonIndex   = 0;
   var filteredLessonsCache = [];
   var lessonTouchStartX    = 0;
   var lessonTouchEndX      = 0;
 
-  /* --- Spinner HTML helper --- */
-  function iframeSpinner() {
-    return '<div class="lesson-spinner" style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:1rem;">' +
-      '<div style="width:48px;height:48px;border:4px solid var(--border,#e2e8f0);border-top-color:var(--accent,#3b82f6);border-radius:50%;animation:ba-spin 0.8s linear infinite;"></div>' +
-      '<span style="color:var(--muted,#94a3b8);font-size:.9rem;">جاري التحميل...</span>' +
-    '</div>';
-  }
-
-  /* --- كشف إضافة <style> للـ animation إن لم تكن موجودة --- */
+  /* --- Spinner CSS --- */
   (function ensureSpinnerStyle() {
     if (document.getElementById('ba-spinner-style')) return;
     var s = document.createElement('style');
     s.id = 'ba-spinner-style';
-    s.textContent = '@keyframes ba-spin{to{transform:rotate(360deg)}}';
+    s.textContent = '@keyframes ba-spin{to{transform:rotate(360deg)}}' +
+      '.ba-spinner{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:1rem}' +
+      '.ba-spinner-ring{width:48px;height:48px;border:4px solid var(--border,#e2e8f0);border-top-color:var(--primary-color,#4361ee);border-radius:50%;animation:ba-spin 0.8s linear infinite}' +
+      '.ba-spinner-text{color:var(--muted,#94a3b8);font-size:.9rem}';
     document.head.appendChild(s);
   })();
 
+  /* ✅ FIX: يستخدم fin-learn-iframe و fin-learn-modal-label الموجودَين في XML */
   function openLessonModal(lesson, index) {
     currentLessonIndex = index;
 
-    var lessonModal = document.getElementById('lesson-modal');
+    var lessonModal = document.getElementById('fin-learn-modal');
     if (!lessonModal) return;
 
-    var titleEl = document.getElementById('lesson-modal-title');
-    var bodyEl  = document.getElementById('lesson-modal-body');
+    var titleEl = document.getElementById('fin-learn-modal-label');
+    var iframe  = document.getElementById('fin-learn-iframe');
+    var extLink = document.getElementById('fin-learn-modal-ext');
+
+    var fullUrl = LESSONS_BASE_URL + lesson.githubPath;
 
     if (titleEl) titleEl.textContent = lesson.title + (lesson.titleEn ? ' — ' + lesson.titleEn : '');
-    if (bodyEl)  bodyEl.innerHTML = iframeSpinner();
+    if (extLink) extLink.href = fullUrl;
+
+    /* عرض spinner مؤقت قبل تحميل الـ iframe */
+    if (iframe) {
+      var spinnerDiv = document.createElement('div');
+      spinnerDiv.className = 'ba-spinner';
+      spinnerDiv.id = 'ba-iframe-spinner';
+      spinnerDiv.innerHTML = '<div class="ba-spinner-ring"></div><span class="ba-spinner-text">جاري تحميل الدرس...</span>';
+      iframe.parentNode.insertBefore(spinnerDiv, iframe);
+
+      iframe.style.display = 'none';
+      iframe.src = '';
+      /* تأخير بسيط لإعطاء فرصة للـ spinner يظهر أولاً */
+      setTimeout(function () { iframe.src = fullUrl; }, 30);
+
+      iframe.onload = function () {
+        var sp = document.getElementById('ba-iframe-spinner');
+        if (sp) sp.parentNode.removeChild(sp);
+        iframe.style.display = 'block';
+      };
+    }
 
     lessonModal.classList.add('open');
     body.style.overflow = 'hidden';
     updateLessonNavButtons();
 
-    // بناء الـ iframe بعد عرض الـ modal
-    if (bodyEl && lesson.githubPath) {
-      var iframe = document.createElement('iframe');
-      iframe.src    = lesson.githubPath;
-      iframe.style.cssText = 'width:100%;height:100%;border:none;display:none;';
-      iframe.setAttribute('loading', 'lazy');
-      iframe.setAttribute('title', lesson.title);
-
-      iframe.addEventListener('load', function () {
-        bodyEl.innerHTML = '';
-        iframe.style.display = 'block';
-        bodyEl.appendChild(iframe);
-      });
-
-      iframe.addEventListener('error', function () {
-        bodyEl.innerHTML =
-          '<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:1rem;">' +
-            '<i class="fas fa-exclamation-triangle" style="font-size:2.5rem;color:var(--danger,#ef4444);"></i>' +
-            '<p style="color:var(--muted,#94a3b8);text-align:center">تعذّر تحميل الدرس.<br>تحقق من اتصالك أو افتح الدرس في تبويب جديد.</p>' +
-            '<a href="' + lesson.githubPath + '" target="_blank" rel="noopener" ' +
-              'style="padding:.5rem 1.2rem;background:var(--accent,#3b82f6);color:#fff;border-radius:.5rem;text-decoration:none;font-size:.9rem;">' +
-              'فتح في تبويب جديد</a>' +
-          '</div>';
-      });
-
-      // إرفاق الـ iframe بالـ DOM لبدء التحميل
-      bodyEl.appendChild(iframe);
-
-      // timeout احتياطي — إذا لم يُطلق load بعد 15 ثانية
-      var loadTimeout = setTimeout(function () {
-        if (bodyEl.querySelector('.lesson-spinner')) {
-          // لا يزال يعرض الـ spinner → أظهر iframe على أي حال
-          bodyEl.innerHTML = '';
-          iframe.style.display = 'block';
-          bodyEl.appendChild(iframe);
-        }
-      }, 15000);
-
-      iframe.addEventListener('load', function () { clearTimeout(loadTimeout); }, { once: true });
-    }
-
-    // Swipe support
+    /* Swipe support */
     lessonModal.addEventListener('touchstart', function (e) {
       lessonTouchStartX = e.changedTouches[0].screenX;
     }, { passive: true });
@@ -689,12 +663,15 @@
   }
 
   function closeLessonModal() {
-    var lessonModal = document.getElementById('lesson-modal');
+    var lessonModal = document.getElementById('fin-learn-modal');
     if (lessonModal) {
       lessonModal.classList.remove('open');
       body.style.overflow = '';
-      var bodyEl = document.getElementById('lesson-modal-body');
-      if (bodyEl) bodyEl.innerHTML = ''; // تحرير الـ iframe من الذاكرة
+      /* تحرير الـ iframe من الذاكرة */
+      var iframe = document.getElementById('fin-learn-iframe');
+      if (iframe) { iframe.src = ''; iframe.style.display = 'none'; }
+      var sp = document.getElementById('ba-iframe-spinner');
+      if (sp) sp.parentNode.removeChild(sp);
     }
   }
 
@@ -722,37 +699,205 @@
     }
   }
 
+  /* ✅ FIX: يستخدم fin-learn-modal بدل lesson-modal */
   function initLessonsViewer() {
-    var lessonModal = document.getElementById('lesson-modal');
+    var lessonModal = document.getElementById('fin-learn-modal');
     if (!lessonModal) return;
 
-    // إغلاق بالنقر على الخلفية
     lessonModal.addEventListener('click', function (e) {
       if (e.target === lessonModal) closeLessonModal();
     });
 
-    // زر الإغلاق
-    var closeBtn = document.getElementById('lesson-modal-close');
+    var closeBtn = document.getElementById('fin-learn-modal-close');
     if (closeBtn) closeBtn.addEventListener('click', closeLessonModal);
 
-    // أزرار التنقل
     var prevBtn = document.getElementById('lesson-prev-btn');
     var nextBtn = document.getElementById('lesson-next-btn');
     if (prevBtn) prevBtn.addEventListener('click', navigateToPrevLesson);
     if (nextBtn) nextBtn.addEventListener('click', navigateToNextLesson);
+  }
 
-    // بطاقات الدروس
-    document.querySelectorAll('[data-lesson-id]').forEach(function (card) {
-      card.addEventListener('click', function () {
-        var id = parseInt(card.getAttribute('data-lesson-id'), 10);
-        // ابحث عن الدرس في filteredLessonsCache أو أي مصفوفة عامة
-        if (window.lessonsData) {
-          filteredLessonsCache = window.lessonsData;
-          var idx = filteredLessonsCache.findIndex(function (l) { return l.id === id; });
-          if (idx !== -1) openLessonModal(filteredLessonsCache[idx], idx);
-        }
+  /* ══════════════════════════════════════════════════════
+     13b. LESSONS GRID — الرئيسية ← lessons.json
+     ✅ يملأ #fin-learn-grid بأول 6 دروس
+     ✅ يعرض بطاقات بالمستوى والأيقونة
+     ✅ عند النقر يفتح الـ modal بالدرس المطلوب
+  ══════════════════════════════════════════════════════ */
+  function initLessonsGrid() {
+    var grid = document.getElementById('fin-learn-grid');
+    if (!grid) return;
+
+    function renderGrid(lessons) {
+      filteredLessonsCache = lessons;
+      window.lessonsData   = lessons;
+
+      var display = lessons.slice(0, 6);
+      grid.innerHTML = display.map(function (lesson, idx) {
+        var levelClass = lesson.level === 'beginner' ? 'beg' : lesson.level === 'intermediate' ? 'mid' : 'adv';
+        var levelLabel = lesson.level === 'beginner' ? 'مبتدئ' : lesson.level === 'intermediate' ? 'متوسط' : 'متقدم';
+        return '<div class="fin-learn-card fade-in-card" data-lesson-id="' + lesson.id + '" style="cursor:pointer;transition-delay:' + Math.min(idx * 80, 400) + 'ms">' +
+          '<span class="fin-learn-level ' + levelClass + '">' + levelLabel + '</span>' +
+          '<div class="fin-learn-icon"><i class="' + (lesson.icon || 'fas fa-book') + '"></i></div>' +
+          '<h3 class="fin-learn-title arabic-text">' + (lesson.title || '') + '</h3>' +
+          '<p class="fin-learn-sub arabic-text">' + (lesson.description || '') + '</p>' +
+          '<span class="fin-learn-link arabic-text">ابدأ الدرس <i class="fas fa-arrow-left"></i></span>' +
+        '</div>';
+      }).join('');
+
+      /* ربط أحداث النقر */
+      grid.querySelectorAll('[data-lesson-id]').forEach(function (card) {
+        card.addEventListener('click', function () {
+          var id  = parseInt(card.getAttribute('data-lesson-id'), 10);
+          var idx = lessons.findIndex(function (l) { return l.id === id; });
+          if (idx !== -1) openLessonModal(lessons[idx], idx);
+        });
       });
-    });
+
+      /* تفعيل animation */
+      if ('IntersectionObserver' in window) {
+        var obs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); }
+          });
+        }, { rootMargin: '0px 0px -40px 0px', threshold: 0.05 });
+        grid.querySelectorAll('.fade-in-card').forEach(function (c) { obs.observe(c); });
+      } else {
+        grid.querySelectorAll('.fade-in-card').forEach(function (c) { c.classList.add('is-visible'); });
+      }
+    }
+
+    /* استخدام window.lessonsData إذا كانت متوفرة محلياً، وإلا جلب من JSON */
+    if (window.lessonsData && window.lessonsData.length) {
+      renderGrid(window.lessonsData);
+    } else {
+      fetch('https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/data/lessons.json')
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          renderGrid(Array.isArray(data) ? data : (data.lessons || []));
+        })
+        .catch(function () {
+          grid.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--muted)">تعذّر تحميل الدروس. تحقق من اتصالك.</p>';
+        });
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     13c. QUOTES CAROUSEL — quotes.json
+     ✅ يجلب الاقتباسات من JSON
+     ✅ كاروسيل بأزرار prev/next ونقاط
+     ✅ دوران تلقائي كل 6 ثوانٍ
+  ══════════════════════════════════════════════════════ */
+  function initQuotes() {
+    var textEl   = document.getElementById('fin-quote-text');
+    var sourceEl = document.getElementById('fin-quote-source');
+    var dotsEl   = document.getElementById('fin-quote-dots');
+    var prevBtn  = document.getElementById('fin-quote-prev');
+    var nextBtn  = document.getElementById('fin-quote-next');
+    if (!textEl) return;
+
+    var quotes = [];
+    var qIdx   = 0;
+    var qTimer = null;
+
+    function showQuote(i) {
+      if (!quotes.length) return;
+      qIdx = ((i % quotes.length) + quotes.length) % quotes.length;
+
+      textEl.style.opacity   = '0';
+      if (sourceEl) sourceEl.style.opacity = '0';
+
+      setTimeout(function () {
+        var q = quotes[qIdx];
+        textEl.textContent   = q.text || q.quote || q.content || '';
+        if (sourceEl) sourceEl.textContent = q.source || q.author || '';
+        textEl.style.opacity   = '1';
+        if (sourceEl) sourceEl.style.opacity = '1';
+
+        if (dotsEl) dotsEl.querySelectorAll('.fin-quote-dot').forEach(function (d, di) {
+          d.classList.toggle('active', di === qIdx);
+        });
+      }, 350);
+    }
+
+    function buildDots(count) {
+      if (!dotsEl) return;
+      dotsEl.innerHTML = '';
+      for (var i = 0; i < count; i++) {
+        var d = document.createElement('button');
+        d.className = 'fin-quote-dot' + (i === 0 ? ' active' : '');
+        d.setAttribute('aria-label', 'اقتباس ' + (i + 1));
+        (function (idx) {
+          d.addEventListener('click', function () { showQuote(idx); resetTimer(); });
+        })(i);
+        dotsEl.appendChild(d);
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(qTimer);
+      qTimer = setInterval(function () { showQuote(qIdx + 1); }, 6000);
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { showQuote(qIdx - 1); resetTimer(); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { showQuote(qIdx + 1); resetTimer(); });
+
+    fetch('https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/data/quotes.json')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        quotes = Array.isArray(data) ? data : (data.quotes || data.items || []);
+        if (!quotes.length) { if (textEl) textEl.textContent = 'لا توجد اقتباسات بعد.'; return; }
+        buildDots(Math.min(quotes.length, 7));
+        showQuote(0);
+        resetTimer();
+      })
+      .catch(function () {
+        if (textEl) textEl.textContent = 'تعذّر تحميل الاقتباسات.';
+      });
+  }
+
+  /* ══════════════════════════════════════════════════════
+     13d. PODCAST GRID — podcast.json
+     ✅ يجلب الحلقات من JSON
+     ✅ يعرض أول 4 حلقات في #fin-podcast-grid
+  ══════════════════════════════════════════════════════ */
+  function initPodcast() {
+    var grid = document.getElementById('fin-podcast-grid');
+    if (!grid) return;
+
+    fetch('https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/data/podcast.json')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var episodes = Array.isArray(data) ? data : (data.episodes || data.items || []);
+        if (!episodes.length) { grid.innerHTML = '<p style="text-align:center;color:var(--muted);padding:2rem">لا توجد حلقات بعد.</p>'; return; }
+
+        grid.innerHTML = episodes.slice(0, 4).map(function (ep, i) {
+          var epNum = ep.episode || ep.number || ep.ep || (i + 1);
+          var cat   = ep.category || ep.label || ep.cat || 'بودكاست';
+          var title = ep.title || ep.name || '';
+          var desc  = ep.description || ep.desc || ep.summary || '';
+          var dur   = ep.duration || ep.length || '';
+          var url   = ep.url || ep.link || ep.audio || '#';
+
+          return '<div class="fin-podcast-ep fade-in-card">' +
+            '<div class="fin-podcast-ep-art">' +
+              '<i class="fas fa-podcast" style="font-size:1.6rem;opacity:.9"></i>' +
+              '<span class="fin-podcast-ep-num arabic-text">الحلقة ' + epNum + '</span>' +
+            '</div>' +
+            '<div class="fin-podcast-ep-body">' +
+              '<div class="fin-podcast-ep-cat arabic-text"><i class="fas fa-tag"></i> ' + cat + '</div>' +
+              '<h3 class="fin-podcast-ep-title arabic-text">' + title + '</h3>' +
+              '<p class="fin-podcast-ep-desc arabic-text">' + desc + '</p>' +
+              '<div class="fin-podcast-ep-footer">' +
+                (dur ? '<span class="fin-podcast-ep-dur arabic-text"><i class="far fa-clock"></i> ' + dur + '</span>' : '<span></span>') +
+                '<a class="fin-podcast-ep-play arabic-text" href="' + url + '" target="_blank" rel="noopener">استمع <i class="fas fa-arrow-left"></i></a>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+      })
+      .catch(function () {
+        grid.innerHTML = '<p style="text-align:center;color:var(--muted);padding:2rem">تعذّر تحميل حلقات البودكاست.</p>';
+      });
   }
 
   /* ══════════════════════════════════════════════════════
@@ -785,8 +930,7 @@
     if (searchPanel && searchPanel.classList.contains('active')) setSearch(false);
     if (modal && modal.classList.contains('open')) closeAbout();
     if (drawer && drawer.classList.contains('active')) closeDrawer();
-    // Lesson modal
-    var lessonModal = document.getElementById('lesson-modal');
+    var lessonModal = document.getElementById('fin-learn-modal');
     if (lessonModal && lessonModal.classList.contains('open')) closeLessonModal();
   });
 
@@ -823,20 +967,24 @@
     initContactForm();
     initClickableCards();
     initLessonsViewer();
+    /* ✅ NEW: تهيئة الأقسام الديناميكية */
+    initLessonsGrid();
+    initQuotes();
+    initPodcast();
     syncSwitcherUI(savedTheme, savedDark);
   });
 
   /* ══════════════════════════════════════════════════════
-     PUBLIC API — للاستخدام من الصفحات الأخرى
+     PUBLIC API
   ══════════════════════════════════════════════════════ */
   window.BlogArch = {
-    openLesson: function (lesson, index, cache) {
+    openLesson:      function (lesson, index, cache) {
       if (cache) filteredLessonsCache = cache;
       openLessonModal(lesson, index);
     },
-    closeLesson:      closeLessonModal,
-    observeNewImage:  observeImage,   // لدعم الصور المُضافة ديناميكياً
-    setTheme:         setTheme,
+    closeLesson:     closeLessonModal,
+    observeNewImage: observeImage,
+    setTheme:        setTheme,
   };
 
 })();
