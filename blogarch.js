@@ -158,10 +158,12 @@
     if (bar) bar.style.width = (h > 0 ? (st / h) * 100 : 0) + '%';
 
     /* ✅ FIX: scrolled فقط إذا كانت الصفحة قابلة للتمرير فعلاً
-       — يمنع التأثير على الصفحات الثابتة (iframe) حيث body.overflow=hidden
+       — يستخدم getComputedStyle لقراءة overflow الحقيقي (CSS rules + inline)
+       — يمنع التأثير على الصفحات الثابتة (iframe) حيث body overflow=hidden
        — يمنع الخط الجزئي على الكمبيوتر عند عدم وجود محتوى كافٍ للتمرير */
     if (navbar) {
-      var pageIsScrollable = h > 10 && document.body.style.overflow !== 'hidden';
+      var bodyOverflow    = window.getComputedStyle(document.body).overflow;
+      var pageIsScrollable = h > 10 && bodyOverflow !== 'hidden';
       navbar.classList.toggle('scrolled', pageIsScrollable && st > 50);
       if (!pageIsScrollable) navbar.classList.remove('scrolled');
     }
