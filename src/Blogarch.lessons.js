@@ -1,5 +1,18 @@
 /* ═══════════════════════════════════════════════════════════════
    BlogArch — Lessons Module  v2.0  (blogarch.lessons.js)
+   يُحمَّل بعد blogarch.js مباشرةً
+
+   ميزات v2.0:
+     • iframe.src مباشرة — GitHub Pages — لا srcdoc ولا fetch للمحتوى
+     • فلتر المستويات (beg / mid / adv / all)
+     • تبديل العرض grid ↔ list
+     • نظام المفضلة (localStorage)
+     • تحديد الدروس كمكتملة (localStorage)
+     • إحصائيات مباشرة (إجمالي / مكتملة)
+     • سبينر تحميل حقيقي داخل إطار المودال
+     • تنقل لوحة المفاتيح ← →  Esc
+     • Swipe على الموبايل
+     • تكامل كامل مع Theme Engine في blogarch.js
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
