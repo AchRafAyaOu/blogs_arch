@@ -1,245 +1,299 @@
 [
   {
+    "id": 1,
     "level": "beg", "levelLabel": "مبتدئ",
     "icon": "fas fa-font",
     "title": "الحروف الإنجليزية",
     "titleEn": "English Alphabet",
     "description": "تعلم الأبجدية الإنجليزية والنطق الصحيح لكل حرف مع أمثلة تطبيقية",
     "sub": "26 حرفًا — كبيرة وصغيرة",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/alphabet.html"
+    "githubPath": "alphabet.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/alphabet.html"
   },
   {
+    "id": 2,
     "level": "beg", "levelLabel": "مبتدئ",
     "icon": "fas fa-handshake",
     "title": "التحيات والسلام",
     "titleEn": "Greetings",
     "description": "تعلم طرق الترحيب والسلام المختلفة في المواقف الرسمية وغير الرسمية",
     "sub": "عبارات التعارف والتقديم",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/greetings.html"
+    "githubPath": "greetings.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/greetings.html"
   },
   {
+    "id": 3,
     "level": "beg", "levelLabel": "مبتدئ",
     "icon": "fas fa-palette",
     "title": "الألوان والأشكال",
     "titleEn": "Colors & Shapes",
     "description": "تعلم أسماء الألوان الأساسية والأشكال الهندسية مع الاستخدام العملي",
     "sub": "Colors & Shapes",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/colors-shapes.html"
+    "githubPath": "colors-shapes.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/colors-shapes.html"
   },
   {
+    "id": 4,
     "level": "beg", "levelLabel": "مبتدئ",
     "icon": "fas fa-house-chimney",
     "title": "العائلة والمنزل",
     "titleEn": "Family & Home",
     "description": "مفردات أفراد العائلة والمنزل وطريقة وصف العلاقات الأسرية",
     "sub": "Family & Home",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/family-home.html"
+    "githubPath": "family-home.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/family-home.html"
   },
   {
+    "id": 5,
     "level": "beg", "levelLabel": "مبتدئ",
     "icon": "fas fa-clock",
     "title": "الوقت والتاريخ",
     "titleEn": "Time & Date",
     "description": "تعلم قراءة الساعة والتعبير عن التواريخ والأوقات بطريقة صحيحة",
     "sub": "Time & Date",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/time-date.html"
+    "githubPath": "time-date.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/time-date.html"
   },
   {
+    "id": 6,
     "level": "beg", "levelLabel": "مبتدئ",
     "icon": "fas fa-user",
     "title": "عني — التعريف بالنفس",
     "titleEn": "Introducing Yourself",
     "description": "تعلم كيف تقدّم نفسك بالإنجليزية في المواقف اليومية والرسمية",
     "sub": "How to introduce yourself",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/aboutme.html"
+    "githubPath": "aboutme.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/aboutme.html"
   },
   {
+    "id": 7,
     "level": "beg", "levelLabel": "مبتدئ",
     "icon": "fas fa-cubes",
     "title": "التركيب الأساسي للجملة",
     "titleEn": "Basic Sentence Structure",
-    "description": "تعلم التركيب الأساسي للجملة الإنجليزية وأجزائها الرئيسية — الفاعل والفعل والمفعول",
+    "description": "تعلم التركيب الأساسي للجملة الإنجليزية — الفاعل والفعل والمفعول",
     "sub": "Basic Sentence Structure — SVO",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Basic_Structure.html"
+    "githubPath": "ls.v1/Basic_Structure.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/ls.v1/Basic_Structure.html"
   },
   {
+    "id": 8,
     "level": "beg", "levelLabel": "مبتدئ",
     "icon": "fas fa-spell-check",
     "title": "Articles: A, An, The",
     "titleEn": "Articles",
-    "description": "فهم استخدام أدوات التعريف والنكرة — متى نستخدم a, an, the في الجملة",
-    "sub": "أدوات التعريف والنكرة — متى نستخدم كلًا منها",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Articles.html"
+    "description": "فهم استخدام أدوات التعريف والنكرة — متى نستخدم a, an, the",
+    "sub": "أدوات التعريف والنكرة",
+    "githubPath": "ls.v1/Articles.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/ls.v1/Articles.html"
   },
   {
+    "id": 9,
     "level": "beg", "levelLabel": "مبتدئ",
     "icon": "fas fa-compress",
     "title": "الاختصارات الشائعة",
     "titleEn": "Common Contractions",
-    "description": "تعلم الاختصارات الشائعة مثل I'm وyou're وdon't وغيرها في السياق اليومي",
+    "description": "تعلم الاختصارات الشائعة مثل I'm وyou're وdon't في السياق اليومي",
     "sub": "Common Contractions — don't, can't, won't",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Common_Contractions.html"
+    "githubPath": "ls.v1/Common_Contractions.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/ls.v1/Common_Contractions.html"
   },
   {
+    "id": 10,
     "level": "mid", "levelLabel": "متوسط",
     "icon": "fas fa-running",
     "title": "الأفعال الأساسية",
     "titleEn": "Basic Verbs",
     "description": "تعلم الأفعال الأساسية والأكثر استخداماً في اللغة الإنجليزية اليومية",
     "sub": "أهم الأفعال في الجمل اليومية",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/basic_virbs.html"
+    "githubPath": "basic_virbs.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/basic_virbs.html"
   },
   {
+    "id": 11,
     "level": "mid", "levelLabel": "متوسط",
     "icon": "fas fa-circle-question",
     "title": "كلمات الاستفهام",
     "titleEn": "Question Words",
-    "description": "تعلم كلمات الاستفهام وكيفية تكوين الأسئلة بطريقة صحيحة ومناسبة للسياق",
+    "description": "تعلم كلمات الاستفهام وكيفية تكوين الأسئلة بطريقة صحيحة",
     "sub": "Who, What, Where, When, Why, How",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Question_words.html"
+    "githubPath": "Question_words.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/Question_words.html"
   },
   {
+    "id": 12,
     "level": "mid", "levelLabel": "متوسط",
     "icon": "fas fa-link",
     "title": "الأفعال المساعدة",
     "titleEn": "Auxiliary Verbs",
-    "description": "فهم واستخدام الأفعال المساعدة في تكوين الجمل والأزمنة المختلفة",
+    "description": "فهم واستخدام الأفعال المساعدة في تكوين الجمل والأزمنة",
     "sub": "Auxiliary Verbs — be, do, have",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Auxliary_verb.html"
+    "githubPath": "Auxliary_verb.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/Auxliary_verb.html"
   },
   {
+    "id": 13,
     "level": "mid", "levelLabel": "متوسط",
     "icon": "fas fa-book",
     "title": "المفردات اليومية",
     "titleEn": "Daily Vocabulary",
-    "description": "مفردات الحياة اليومية والكلمات الأكثر استخداماً في المحادثات العادية",
+    "description": "مفردات الحياة اليومية والكلمات الأكثر استخداماً في المحادثات",
     "sub": "Daily Vocabulary",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Dailyvocabulary.html"
+    "githubPath": "Dailyvocabulary.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/Dailyvocabulary.html"
   },
   {
+    "id": 14,
     "level": "mid", "levelLabel": "متوسط",
     "icon": "fas fa-highlighter",
     "title": "الصفات",
     "titleEn": "Adjectives",
-    "description": "تعلم الصفات الأساسية وكيفية استخدامها لوصف الأشياء والأشخاص بدقة",
+    "description": "تعلم الصفات الأساسية وكيفية استخدامها لوصف الأشياء والأشخاص",
     "sub": "Adjectives — وصف الأشياء والأشخاص",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/adjective.html"
+    "githubPath": "adjective.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/adjective.html"
   },
   {
+    "id": 15,
     "level": "mid", "levelLabel": "متوسط",
     "icon": "fas fa-link",
     "title": "كلمات الربط في الجمل",
     "titleEn": "Linking Words",
-    "description": "كيفية ربط الأفكار والجمل باستخدام كلمات الربط — however وtherefore وmoreover",
+    "description": "كيفية ربط الأفكار والجمل — however وtherefore وmoreover",
     "sub": "Linking Words — however, therefore, moreover",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/LinkingWords.html"
+    "githubPath": "ls.v1/LinkingWords.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/ls.v1/LinkingWords.html"
   },
   {
+    "id": 16,
     "level": "mid", "levelLabel": "متوسط",
     "icon": "fas fa-ban",
     "title": "قواعد النفي المزدوج",
     "titleEn": "Double Negatives",
-    "description": "فهم قواعد النفي المزدوج في اللغة الإنجليزية والأخطاء الشائعة التي يجب تجنّبها",
+    "description": "فهم قواعد النفي المزدوج والأخطاء الشائعة التي يجب تجنّبها",
     "sub": "Double Negatives — الأخطاء الشائعة",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Double_Negatives.html"
+    "githubPath": "ls.v1/Double_Negatives.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/ls.v1/Double_Negatives.html"
   },
   {
+    "id": 17,
     "level": "adv", "levelLabel": "متقدم",
     "icon": "fas fa-lightbulb",
     "title": "التعبيرات الاصطلاحية",
     "titleEn": "Idioms",
-    "description": "تعلم التعبيرات الاصطلاحية الشائعة ومعانيها — كيف يتحدث الأمريكيون في الحياة اليومية",
+    "description": "تعلم التعبيرات الاصطلاحية الشائعة — كيف يتحدث الأمريكيون في الحياة اليومية",
     "sub": "Idioms — كيف يتحدث الأمريكيون",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Idioms.html"
+    "githubPath": "ls.v1/Idioms.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/ls.v1/Idioms.html"
   },
   {
+    "id": 18,
     "level": "adv", "levelLabel": "متقدم",
     "icon": "fas fa-comments",
     "title": "المحادثة المتقدمة",
     "titleEn": "Advanced Conversation",
-    "description": "محادثات معقدة وتعبيرات متقدمة للمواقف المختلفة — حوارات وسياقات طبيعية",
+    "description": "محادثات معقدة وتعبيرات متقدمة — حوارات وسياقات طبيعية",
     "sub": "حوارات وسياقات طبيعية متقدمة",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/advanced-conversation.html"
+    "githubPath": "advanced-conversation.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/advanced-conversation.html"
   },
   {
+    "id": 19,
     "level": "adv", "levelLabel": "متقدم",
     "icon": "fas fa-quote-left",
     "title": "الكلام المنقول",
     "titleEn": "Reported Speech",
     "description": "تعلم قواعد الكلام المنقول وكيفية نقل أقوال الآخرين بالصيغة الصحيحة",
     "sub": "Reported Speech",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Reported_Speech.html"
+    "githubPath": "Reported_Speech.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/Reported_Speech.html"
   },
   {
+    "id": 20,
     "level": "adv", "levelLabel": "متقدم",
     "icon": "fas fa-check-double",
     "title": "المضارع التام البسيط والمستمر",
     "titleEn": "Present Perfect Simple & Continuous",
     "description": "إتقان استخدام المضارع التام في صيغتيه البسيطة والمستمرة والفرق بينهما",
     "sub": "Present Perfect Simple & Continuous",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Present_Perfect_Simple.html"
+    "githubPath": "Present_Perfect_Simple.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/Present_Perfect_Simple.html"
   },
   {
+    "id": 21,
     "level": "adv", "levelLabel": "متقدم",
     "icon": "fas fa-puzzle-piece",
     "title": "الأفعال المركبة",
     "titleEn": "Phrasal Verbs",
     "description": "استكشاف الأفعال المركبة الشائعة ومعانيها المختلفة حسب السياق",
     "sub": "Phrasal Verbs الشائعة",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Phrasal_Verbs.html"
+    "githubPath": "Phrasal_Verbs.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/Phrasal_Verbs.html"
   },
   {
+    "id": 22,
     "level": "adv", "levelLabel": "متقدم",
     "icon": "fas fa-code-compare",
     "title": "الماضي البسيط مقابل المستمر",
     "titleEn": "Past Simple vs Past Continuous",
-    "description": "فهم الفروق بين الماضي البسيط والماضي المستمر واستخدام كلٍّ في سياقه الصحيح",
+    "description": "فهم الفروق بين الماضي البسيط والماضي المستمر واستخدام كلٍّ في سياقه",
     "sub": "Past Simple vs Past Continuous",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Past_simple_vs.html"
+    "githubPath": "Past_simple_vs.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/Past_simple_vs.html"
   },
   {
+    "id": 23,
     "level": "adv", "levelLabel": "متقدم",
     "icon": "fas fa-volume-xmark",
     "title": "المبني للمجهول",
     "titleEn": "Passive Voice",
-    "description": "فهم بنية المبني للمجهول واستخدامه في السياقات الرسمية والعلمية والأدبية",
+    "description": "فهم بنية المبني للمجهول واستخدامه في السياقات الرسمية والعلمية",
     "sub": "Passive Voice — البنية والاستخدام",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Passive_Voice.html"
+    "githubPath": "Passive_Voice.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/Passive_Voice.html"
   },
   {
+    "id": 24,
     "level": "adv", "levelLabel": "متقدم",
     "icon": "fas fa-wand-magic-sparkles",
     "title": "الأفعال الناقصة",
     "titleEn": "Modal Verbs",
-    "description": "تعلم الأفعال الناقصة ومعانيها المختلفة في السياق — can, could, must, should",
+    "description": "تعلم الأفعال الناقصة ومعانيها — can, could, must, should",
     "sub": "Modal Verbs — can, could, must, should",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Modal_verbs.html"
+    "githubPath": "Modal_verbs.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/Modal_verbs.html"
   },
   {
+    "id": 25,
     "level": "adv", "levelLabel": "متقدم",
     "icon": "fas fa-forward",
     "title": "أزمنة المستقبل والمضارع المستمر",
     "titleEn": "Future Tenses & Present Continuous",
-    "description": "إتقان استخدام أزمنة المستقبل المختلفة والمضارع المستمر للتعبير عن المستقبل",
+    "description": "إتقان استخدام أزمنة المستقبل المختلفة والمضارع المستمر",
     "sub": "Future Tenses & Present Continuous",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/Future_times.html"
+    "githubPath": "Future_times.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/Future_times.html"
   },
   {
+    "id": 26,
     "level": "adv", "levelLabel": "متقدم",
     "icon": "fas fa-briefcase",
     "title": "الإنجليزية في مقابلات العمل",
     "titleEn": "Job Interview English",
-    "description": "نصائح وتعبيرات أساسية لإجراء مقابلات عمل ناجحة بالإنجليزية بثقة واحترافية",
+    "description": "نصائح وتعبيرات أساسية لإجراء مقابلات عمل ناجحة بالإنجليزية",
     "sub": "Job Interview English",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Job_interview.html"
+    "githubPath": "ls.v1/Job_interview.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/ls.v1/Job_interview.html"
   },
   {
+    "id": 27,
     "level": "adv", "levelLabel": "متقدم",
     "icon": "fas fa-arrows-split-up-and-left",
     "title": "الفرق بين Gerund و Infinitive",
     "titleEn": "Gerund vs Infinitive",
-    "description": "فهم الفرق بين الجرند والإنفينيتيف — متى نستخدم -ing ومتى نستخدم to + verb",
+    "description": "فهم الفرق — متى نستخدم -ing ومتى نستخدم to + verb",
     "sub": "متى نستخدم -ing ومتى نستخدم to + verb",
-    "url": "https://cdn.jsdelivr.net/gh/AchRafAyaOu/english-lessons@main/lessons/ls.v1/Gerund_Infinitive.html"
+    "githubPath": "ls.v1/Gerund_Infinitive.html",
+    "url": "https://achrafayaou.github.io/english-lessons/lessons/ls.v1/Gerund_Infinitive.html"
   }
 ]
