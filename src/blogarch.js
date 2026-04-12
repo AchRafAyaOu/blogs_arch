@@ -1,10 +1,13 @@
 /* ═══════════════════════════════════════════════════════════════
-   BlogArch v11 — Complete JavaScript
+   BlogArch v11 — Core JavaScript
    Features: Theme Engine × 5 · TOC · Relative Dates · Text Share
              Contact Form (Web3Forms) · Read Time · Lazy Load (Enhanced)
              Mobile Drawer · Search · About Modal · Scroll FX
-             Lessons Viewer (iframe) · Quotes Carousel · Podcast Grid
-             Prev/Next Nav · Swipe Support
+             Quotes Carousel · Podcast Grid · Prev/Next Nav · Swipe Support
+   ───────────────────────────────────────────────────────────────
+   ترتيب التحميل الصحيح:
+     1. blogarch.js     ← هذا الملف (Core)
+     2. blogarch.lessons.js ← وحدة الدروس (تُحمَّل بعده)
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -789,12 +792,14 @@
 
   /* ══════════════════════════════════════════════════════
      PUBLIC API
+     ── نمط التوسيع الآمن بدلاً من الاستبدال الكلي ──
+     يحمي دوال blogarch.lessons.js إن سبق تحميله
   ══════════════════════════════════════════════════════ */
-  window.BlogArch = {
-    /* openLesson / closeLesson ← مُعرَّفان في blogarch.lessons.js */
-    observeNewImage: observeImage,
-    setTheme:        setTheme,
-    CDN_BASE:        CDN_BASE,       /* يقرأه blogarch.lessons.js */
-  };
+  window.BlogArch = window.BlogArch || {};
+  window.BlogArch.observeNewImage = observeImage;
+  window.BlogArch.setTheme        = setTheme;
+  window.BlogArch.CDN_BASE        = CDN_BASE;   /* يقرأه blogarch.lessons.js */
+  /* openLesson / closeLesson / navigatePrevLesson / navigateNextLesson
+     ← تُضاف بواسطة blogarch.lessons.js بعد تحميله */
 
 })();
