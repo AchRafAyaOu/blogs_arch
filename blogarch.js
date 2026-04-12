@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   BlogArch v10 — Complete JavaScript
+   BlogArch v11 — Complete JavaScript
    Features: Theme Engine × 5 · TOC · Relative Dates · Text Share
              Contact Form (Web3Forms) · Read Time · Lazy Load (Enhanced)
              Mobile Drawer · Search · About Modal · Scroll FX
@@ -10,6 +10,9 @@
   'use strict';
 
   var body = document.body;
+
+  /* ── v11: متغير CDN مركزي — عدّله في مكان واحد فقط ── */
+  var CDN_BASE = 'https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main';
 
   /* ══════════════════════════════════════════════════════
      1. THEME ENGINE — 5 identities × dark variant
@@ -486,7 +489,9 @@
     if (drawer)    drawer.classList.add('active');
     if (overlay)   overlay.classList.add('active');
     if (hamburger) hamburger.classList.add('active');
-    body.style.overflow = 'hidden';
+    /* v11: آمن مع static_page_embed — لا يُعطّل overflow إذا كانت الصفحة ثابتة */
+    if (window.getComputedStyle(body).overflow !== 'hidden')
+      body.style.overflow = 'hidden';
   }
   function closeDrawer() {
     if (drawer)    drawer.classList.remove('active');
@@ -770,7 +775,7 @@
     if (window.lessonsData && window.lessonsData.length) {
       renderGrid(window.lessonsData);
     } else {
-      fetch('https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/data/lessons.json')
+      fetch(CDN_BASE + '/data/lessons.json')
         .then(function (r) { return r.json(); })
         .then(function (data) {
           renderGrid(Array.isArray(data) ? data : (data.lessons || []));
@@ -841,7 +846,7 @@
     if (prevBtn) prevBtn.addEventListener('click', function () { showQuote(qIdx - 1); resetTimer(); });
     if (nextBtn) nextBtn.addEventListener('click', function () { showQuote(qIdx + 1); resetTimer(); });
 
-    fetch('https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/data/quotes.json')
+    fetch(CDN_BASE + '/data/quotes.json')
       .then(function (r) { return r.json(); })
       .then(function (data) {
         quotes = Array.isArray(data) ? data : (data.quotes || data.items || []);
@@ -864,7 +869,7 @@
     var grid = document.getElementById('fin-podcast-grid');
     if (!grid) return;
 
-    fetch('https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/data/podcast.json')
+    fetch(CDN_BASE + '/data/podcast.json')
       .then(function (r) { return r.json(); })
       .then(function (data) {
         var episodes = Array.isArray(data) ? data : (data.episodes || data.items || []);
