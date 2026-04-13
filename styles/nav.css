@@ -1,0 +1,674 @@
+/* ══════════════════════════════════════
+   1. NAVBAR — الشريط العلوي الثابت
+══════════════════════════════════════ */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10000;
+  width: 100%;
+  background: rgba(248, 250, 252, 0.92);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border-bottom: none;
+  padding: 0;
+  transition: all 0.25s ease, min-height 0.3s ease;
+}
+
+/* خط gradient سفلي */
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(to left, var(--accent), var(--primary-color));
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+.navbar.scrolled::after { opacity: 1; }
+
+/* Dark mode */
+body[data-dark]    .navbar { background: rgba(12, 18, 34, 0.92); }
+body[data-theme="ocean"][data-dark]    .navbar { background: rgba(7,  26, 46, 0.92); }
+body[data-theme="sunset"][data-dark]   .navbar { background: rgba(26, 14,  2, 0.92); }
+body[data-theme="forest"][data-dark]   .navbar { background: rgba(6,  26, 16, 0.92); }
+body[data-theme="midnight"]            .navbar { background: rgba(9,   9, 11, 0.94); }
+
+.navbar.scrolled { box-shadow: var(--shadow-lg); }
+
+/* ── داخل Navbar ── */
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 68px;
+  max-width: min(92vw, 1120px);
+  margin-inline: auto;
+  padding-inline: clamp(0.85rem, 2.5vw, 1.5rem);
+  transition: min-height 0.3s ease;
+}
+
+/* Compact عند التمرير */
+.navbar.scrolled .navbar-inner  { min-height: 56px; }
+.navbar.scrolled .brand-tag     {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s, max-height 0.3s;
+}
+
+
+/* ══════════════════════════════════════
+   2. BRAND — العلامة التجارية
+══════════════════════════════════════ */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text);
+  text-decoration: none;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.brand:hover { transform: scale(1.02); }
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.1;
+}
+.brand-title {
+  font-weight: 700;
+  font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+  line-height: 1.2;
+}
+.brand-tag {
+  font-size: 0.75rem;
+  color: var(--text-soft);
+  font-weight: 600;
+}
+
+/* نقطة الهوية */
+.brand .dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.brand:hover .dot { transform: scale(1.25); }
+
+/* تأثير الثيم على النقطة */
+body[data-theme="ocean"]    .brand .dot { box-shadow: 0 0 0 3px rgba(6,182,212,.18); background: var(--accent); }
+body[data-theme="sunset"]   .brand .dot { box-shadow: 0 0 0 3px rgba(245,158,11,.18); background: var(--accent); }
+body[data-theme="forest"]   .brand .dot { box-shadow: 0 0 0 3px rgba(82,183,136,.18); background: var(--accent); }
+body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252,.18); background: var(--accent); }
+
+
+/* ══════════════════════════════════════
+   3. DESKTOP NAV MENU
+══════════════════════════════════════ */
+.nav-menu {
+  display: none;
+  list-style: none;
+  margin: 0; padding: 0;
+}
+
+@media (min-width: 820px) {
+  .nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-inline: auto;
+  }
+
+  .nav-item { position: relative; }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 14px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    position: relative;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .nav-link:hover {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+  }
+
+  /* Active link */
+  .nav-link.active,
+  .nav-link.fin-active {
+    color: var(--primary-color);
+    font-weight: 700;
+  }
+  .nav-link.active::after,
+  .nav-link.fin-active::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    right: 14px;
+    width: calc(100% - 28px);
+    height: 3px;
+    background: linear-gradient(to left, var(--accent), var(--primary-color));
+    border-radius: 2px;
+    box-shadow: 0 1px 4px rgba(var(--primary-rgb), 0.25);
+  }
+
+  /* Dropdown */
+  .dropdown-toggle svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.22s ease;
+  }
+  .dropdown:hover .dropdown-toggle svg,
+  .dropdown.active  .dropdown-toggle svg { transform: rotate(180deg); }
+
+  .dropdown-content {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--card);
+    min-width: 220px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border);
+    padding: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: all 0.22s ease;
+    z-index: 10001;
+  }
+  .dropdown:hover .dropdown-content,
+  .dropdown:focus-within .dropdown-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .dropdown-item {
+    display: block;
+    padding: 10px 14px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: var(--radius-xs);
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .dropdown-item:hover {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    padding-right: 18px;
+  }
+
+  /* CTA pill */
+  .nav-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 7px 1rem;
+    background: var(--accent);
+    color: var(--accent-fg, #fff) !important;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.28);
+    white-space: nowrap;
+  }
+  .nav-cta:hover {
+    filter: brightness(1.08);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.38);
+  }
+}
+
+
+/* ══════════════════════════════════════
+   4. NAV ACTIONS — أزرار الجانب
+══════════════════════════════════════ */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+.nav-actions .btn-icon {
+  border: 1px solid transparent;
+  color: var(--text-soft);
+}
+.nav-actions .btn-icon:hover {
+  border-color: var(--border);
+  color: var(--text);
+  background: var(--muted-bg);
+}
+
+
+/* ══════════════════════════════════════
+   5. HAMBURGER
+══════════════════════════════════════ */
+.hamburger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px; height: 38px;
+  background: var(--muted-bg, #f1f5f9);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+  transition: background 0.22s;
+}
+.hamburger:hover { background: var(--primary-light); }
+
+.hamburger-icon,
+.hamburger-icon::before,
+.hamburger-icon::after {
+  display: block;
+  width: 18px; height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: all 0.28s ease;
+}
+.hamburger-icon { position: relative; }
+.hamburger-icon::before,
+.hamburger-icon::after {
+  content: '';
+  position: absolute;
+}
+.hamburger-icon::before { top: -6px; }
+.hamburger-icon::after  { top:  6px; }
+
+/* X state */
+.hamburger.active .hamburger-icon             { background: transparent; }
+.hamburger.active .hamburger-icon::before     { transform: rotate(45deg);  top: 0; }
+.hamburger.active .hamburger-icon::after      { transform: rotate(-45deg); top: 0; }
+
+@media (min-width: 820px) { .hamburger { display: none; } }
+
+
+/* ══════════════════════════════════════
+   6. COLLAPSE BUTTON (Desktop sidebar toggle — Nav3 inspired)
+      يظهر في حال تحويل Nav إلى sidebar مستقبلاً
+══════════════════════════════════════ */
+.nav-collapse-btn {
+  width: 28px; height: 28px;
+  border: 1px solid var(--border);
+  background: var(--muted-bg, #f1f5f9);
+  border-radius: 8px;
+  cursor: pointer;
+  display: none; /* مخفي الآن — يُفعَّل عند تحويل Nav لـ sidebar */
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-soft);
+  transition: background 0.22s, color 0.22s, transform 0.3s;
+}
+.nav-collapse-btn:hover   { background: var(--primary-light); color: var(--primary-color); }
+.nav-collapse-btn svg     { width: 14px; height: 14px; transition: transform 0.3s; }
+.nav-collapsed .nav-collapse-btn svg { transform: rotate(180deg); }
+
+
+/* ══════════════════════════════════════
+   7. MENU OVERLAY — خلفية Drawer
+══════════════════════════════════════ */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  z-index: 9998;
+}
+.menu-overlay.active { opacity: 1; visibility: visible; }
+
+
+/* ══════════════════════════════════════
+   8. MOBILE DRAWER — الدرج الجانبي
+══════════════════════════════════════ */
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: min(300px, 82vw);
+  height: 100vh;
+  background: var(--card);
+  border-left: 1px solid var(--border);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-xl);
+  transition: right 0.35s cubic-bezier(.77, 0, .175, 1);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.mobile-drawer.active { right: 0; }
+
+/* Header الدرج */
+.mobile-drawer-header {
+  padding: 90px 22px 18px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.drawer-caption {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.75;
+  margin: 0.75rem 0 0;
+}
+
+/* روابط الدرج */
+.mobile-drawer .nav-items { flex: 1; padding: 6px 0; }
+.mobile-drawer .nav-item  { width: 100%; padding: 0 22px; }
+.mobile-drawer .nav-link  {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.15s, color 0.15s;
+  text-decoration: none;
+}
+.mobile-drawer .nav-link:hover {
+  background: var(--primary-light);
+  color: var(--primary-color);
+  transform: none;
+}
+.mobile-drawer .nav-link.active { color: var(--primary-color); }
+
+/* Dropdown داخل الدرج */
+.mobile-drawer .dropdown-content {
+  position: static;
+  opacity: 1; visibility: visible;
+  transform: none;
+  box-shadow: none; border: none;
+  background: transparent;
+  padding: 6px 14px 6px 0;
+  display: none;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.mobile-drawer .dropdown.active .dropdown-content {
+  display: block;
+  max-height: 280px;
+}
+.mobile-drawer .dropdown-item {
+  padding: 9px 14px;
+  margin: 3px 0;
+  border-radius: var(--radius-xs);
+}
+
+/* Staggered animation لعناصر الدرج */
+.mobile-drawer.active .nav-item {
+  animation: navDrawerIn 0.3s ease forwards;
+  opacity: 0;
+}
+.mobile-drawer.active .nav-item:nth-child(1)        { animation-delay: .06s; }
+.mobile-drawer.active .nav-item:nth-child(2)        { animation-delay: .10s; }
+.mobile-drawer.active .nav-item:nth-child(3)        { animation-delay: .14s; }
+.mobile-drawer.active .nav-item:nth-child(4)        { animation-delay: .18s; }
+.mobile-drawer.active .nav-item:nth-child(5)        { animation-delay: .22s; }
+.mobile-drawer.active .nav-item:nth-child(6)        { animation-delay: .26s; }
+.mobile-drawer.active .nav-item:nth-child(7)        { animation-delay: .30s; }
+.mobile-drawer.active .nav-item:nth-child(8)        { animation-delay: .34s; }
+.mobile-drawer.active .drawer-settings-section      {
+  animation: navDrawerIn 0.3s ease forwards;
+  animation-delay: .38s;
+  opacity: 0;
+}
+
+@keyframes navDrawerIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ══════════════════════════════════════
+   9. SETTINGS PANEL (Nav3 inspired)
+      لوحة إعدادات المظهر — داخل الدرج وكذلك Desktop
+══════════════════════════════════════ */
+.drawer-settings-section {
+  padding: 16px 22px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.drawer-settings-title {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted, #94a3b8);
+  margin-bottom: 12px;
+}
+
+/* شبكة الثيمات — نمط Nav3 (label + dot) */
+.theme-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.theme-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--muted-bg, #f1f5f9);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-light);
+  white-space: nowrap;
+  transition: border-color 0.22s, background 0.22s, color 0.22s;
+  font-family: inherit;
+}
+.theme-btn:hover {
+  border-color: var(--primary-color);
+  background: var(--primary-light);
+}
+.theme-btn.selected {
+  border-color: var(--primary-color);
+  background: var(--primary-light);
+  color: var(--primary-color);
+}
+
+/* نقطة لون الثيم */
+.theme-dot {
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.theme-btn[data-pick="default"]  .theme-dot { background: linear-gradient(135deg, #059669, #4361ee); }
+.theme-btn[data-pick="ocean"]    .theme-dot { background: linear-gradient(135deg, #06b6d4, #0284c7); }
+.theme-btn[data-pick="sunset"]   .theme-dot { background: linear-gradient(135deg, #f59e0b, #f97316); }
+.theme-btn[data-pick="forest"]   .theme-dot { background: linear-gradient(135deg, #52b788, #2d6a4f); }
+.theme-btn[data-pick="midnight"] .theme-dot { background: linear-gradient(135deg, #c084fc, #18181b); }
+
+/* صف الوضع الليلي */
+.drawer-dark-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.drawer-dark-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.drawer-dark-label i { color: var(--muted); font-size: 0.82rem; }
+
+/* Palette style القديم (متوافق مع blogarch.js) */
+.drawer-theme-btn {
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.drawer-theme-btn:hover { transform: scale(1.06); }
+.drawer-theme-btn.active {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+.drawer-theme-btn[data-pick="default"]  { background: linear-gradient(135deg,#059669,#4361ee); }
+.drawer-theme-btn[data-pick="ocean"]    { background: linear-gradient(135deg,#06b6d4,#0284c7); }
+.drawer-theme-btn[data-pick="sunset"]   { background: linear-gradient(135deg,#f59e0b,#f97316); }
+.drawer-theme-btn[data-pick="forest"]   { background: linear-gradient(135deg,#52b788,#2d6a4f); }
+.drawer-theme-btn[data-pick="midnight"] { background: linear-gradient(135deg,#c084fc,#18181b); }
+.drawer-theme-btn .active-check {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 0.68rem;
+  opacity: 0; transition: opacity 0.2s;
+  text-shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+.drawer-theme-btn.active .active-check { opacity: 1; }
+
+
+/* ══════════════════════════════════════
+   10. SEARCH PANEL — لوحة البحث العائمة
+══════════════════════════════════════ */
+.search-panel {
+  position: fixed;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  width: min(88%, 560px);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-xl);
+  z-index: 10020;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+}
+.search-panel.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+#search-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1.05rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+#search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.1);
+}
+#search-input::placeholder { color: var(--muted); }
+
+.search-item {
+  display: block;
+  padding: 0.75rem;
+  border-radius: var(--radius-xs);
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.search-item:last-child { border-bottom: none; }
+.search-item:hover      { background: var(--muted-bg); }
+.search-item strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 0.15rem;
+}
+.search-item span { font-size: 0.83rem; color: var(--text-soft); }
+
+/* Mobile search bar (Nav3 slide-down style) */
+.mobile-search-bar {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: var(--card);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  z-index: 9997;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  animation: searchSlideDown 0.2s ease;
+}
+.mobile-search-bar.visible { display: block; }
+
+@keyframes searchSlideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mobile-search-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--muted-bg, #f1f5f9);
+  border-radius: 10px;
+  padding: 0 14px;
+}
+.mobile-search-inner svg   { width: 16px; height: 16px; color: var(--muted); flex-shrink: 0; }
+.mobile-search-inner input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 4px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+}
+.mobile-search-inner input::placeholder { color: var(--muted); }
+
+
+/* ══════════════════════════════════════
+   11. RESPONSIVE — شاشات صغيرة
+══════════════════════════════════════ */
+@media (max-width: 819px) {
+  .navbar        { padding: 0.5rem 0; }
+  .brand-tag     { display: none; }
+  .nav-collapse-btn { display: none !important; }
+}
