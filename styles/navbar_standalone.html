@@ -1,0 +1,120 @@
+<!-- ═══════════════════════════════════════════
+     ② HTML — Navbar + Drawer
+     ═══════════════════════════════════════════ -->
+
+<!-- ─── Navbar الرئيسي ─── -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+
+    <!-- العلامة التجارية -->
+    <a class="brand arabic-text" href="/">
+      <span class="dot"></span>
+      <span class="brand-copy">
+        <span class="brand-title">أشرف أياو</span>
+        <span class="brand-tag">أفكار · بودكاست · تعلّم</span>
+      </span>
+    </a>
+
+    <!-- روابط التنقل — Desktop -->
+    <ul class="nav-menu" id="nav-menu">
+      <li class="nav-item">
+        <a class="nav-link arabic-text" href="/">الرئيسية</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link arabic-text" href="/search">المدونة</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link arabic-text" href="/p/blog-page_73.html">مقولات</a>
+      </li>
+
+      <!-- Dropdown: المزيد -->
+      <li class="nav-item dropdown" tabindex="0">
+        <a class="nav-link dropdown-toggle arabic-text" href="javascript:void(0)">
+          المزيد
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"
+               style="width:14px;height:14px;vertical-align:middle;margin-right:2px">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </a>
+        <div class="dropdown-content">
+          <a class="dropdown-item arabic-text" href="/p/blog-page_52.html">
+            <i class="fas fa-graduation-cap" style="margin-left:8px;color:var(--accent)"></i> تعلّم
+          </a>
+          <a class="dropdown-item arabic-text" href="/p/blog-page_54.html">
+            <i class="fas fa-podcast" style="margin-left:8px;color:var(--accent)"></i> بودكاست
+          </a>
+          <a class="dropdown-item arabic-text" href="/p/blog-page_96.html">
+            <i class="fas fa-briefcase" style="margin-left:8px;color:var(--accent)"></i> أعمالي
+          </a>
+          <a class="dropdown-item arabic-text" href="/search/label/مقالات">
+            <i class="fas fa-newspaper" style="margin-left:8px;color:var(--accent)"></i> مقالات
+          </a>
+          <a class="dropdown-item arabic-text" href="/search/label/تقنية">
+            <i class="fas fa-code" style="margin-left:8px;color:var(--accent)"></i> تقنية
+          </a>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link arabic-text" href="javascript:void(0)" id="nav-about-open">عني</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-cta arabic-text" href="javascript:void(0)" id="nav-contact-open">
+          <i class="fas fa-paper-plane" style="margin-left:.35rem"></i>راسلني
+        </a>
+      </li>
+    </ul>
+
+    <!-- أدوات الـ Navbar: مبدّل المظهر / بحث / وضع ليلي / هامبرغر -->
+    <div class="nav-actions">
+      <!-- مبدّل المظهر — يملؤه blogarch.js تلقائياً -->
+      <div class="theme-switcher" id="theme-switcher-desktop"></div>
+
+      <button aria-label="بحث" class="btn btn-ghost btn-icon" id="search-btn">
+        <i class="fas fa-search"></i>
+      </button>
+      <button aria-label="الوضع الليلي" class="btn btn-ghost btn-icon" id="theme-toggle">
+        <i class="fas fa-moon" id="theme-icon"></i>
+      </button>
+      <button aria-label="القائمة" class="hamburger" id="hamburger">
+        <span class="hamburger-icon"></span>
+      </button>
+    </div>
+
+  </div>
+</nav>
+
+<!-- ─── Overlay ─── -->
+<div class="menu-overlay" id="menu-overlay"></div>
+
+<!-- ─── Drawer الموبايل ─── -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <div class="mobile-drawer-header">
+    <div class="brand arabic-text">
+      <span class="dot"></span>
+      <span class="brand-copy">
+        <span class="brand-title">أشرف أياو</span>
+        <span class="brand-tag">أفكار · بودكاست · تعلّم</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="nav-items">
+    <div class="nav-item"><a class="nav-link arabic-text" href="/">الرئيسية</a></div>
+    <div class="nav-item"><a class="nav-link arabic-text" href="/search">المدونة</a></div>
+    <div class="nav-item"><a class="nav-link arabic-text" href="/p/blog-page_73.html">مقولات</a></div>
+    <div class="nav-item"><a class="nav-link arabic-text" href="/p/blog-page_52.html">تعلّم</a></div>
+    <div class="nav-item"><a class="nav-link arabic-text" href="/p/blog-page_54.html">بودكاست</a></div>
+    <div class="nav-item"><a class="nav-link arabic-text" href="/p/blog-page_96.html">أعمالي</a></div>
+    <div class="nav-item">
+      <a class="nav-link arabic-text" href="javascript:void(0)" id="drawer-about-open">عني</a>
+    </div>
+    <div class="nav-item">
+      <a class="nav-link arabic-text" href="javascript:void(0)" id="drawer-contact-open">راسلني</a>
+    </div>
+  </div>
+
+  <!-- قسم مبدّل المظهر — يملؤه blogarch.js -->
+  <div class="drawer-theme-section" id="drawer-theme-section"></div>
+</div>
