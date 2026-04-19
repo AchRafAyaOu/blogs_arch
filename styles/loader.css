@@ -1,41 +1,86 @@
 /* ═══════════════════════════════════════════════
-   AchRafAyaOu — Branded Loader
-   Use:  <link href="...blogs_arch@main/loader/loader.css?v=1" rel="stylesheet"/>
-   Then place  <div id="fin-loader" class="fin-loader">...</div>  in your page
+  Branded Loader  ✦ v2 Enhanced
+   ─ GPU-accelerated  ─ Silky smooth  ─ Eye-easy
+   Use: <link href="...loader.css?v=2" rel="stylesheet"/>
    ═══════════════════════════════════════════════ */
 
+/* ── Design tokens ── */
+:root {
+  --fl-bg-a:   #060e1a;
+  --fl-bg-b:   #0b1626;
+  --fl-bg-c:   #0f1b2e;
+
+  --fl-accent:       #7b6fff;
+  --fl-accent-light: #a78bfa;
+  --fl-accent-dim:   rgba(109, 95, 255, .75);
+
+  --fl-ring-speed-outer: 2.2s;
+  --fl-ring-speed-inner: 3.4s;
+  --fl-float-speed:      3.2s;
+  --fl-glow-speed:       2.6s;
+  --fl-draw-speed:       3.2s;
+  --fl-line-speed:       1.75s;
+  --fl-name-speed:       2.8s;
+
+  --fl-ease-smooth: cubic-bezier(.45, .05, .55, .95);
+  --fl-ease-bounce: cubic-bezier(.34, 1.56, .64, 1);
+}
+
+/* ── Base overlay ── */
 .fin-loader {
   position: fixed; inset: 0; z-index: 99999;
   display: grid; place-items: center;
-  background: linear-gradient(160deg, #07101e 0%, #0d1b2a 55%, #111827 100%);
-  transition: opacity .45s ease, visibility .45s ease;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 30%,
+      rgba(109, 95, 255, .07) 0%, transparent 65%),
+    linear-gradient(160deg,
+      var(--fl-bg-a) 0%,
+      var(--fl-bg-b) 50%,
+      var(--fl-bg-c) 100%);
+
+  /* GPU hint — avoids repaint on hide */
+  will-change: opacity;
+  transition: opacity .5s var(--fl-ease-smooth),
+              visibility .5s var(--fl-ease-smooth);
+
+  /* Subpixel anti-aliasing */
+  -webkit-font-smoothing: antialiased;
 }
 .fin-loader.fin-loader-hidden {
   opacity: 0; visibility: hidden; pointer-events: none;
 }
 
+/* ── Stage ── */
 .fl-stage {
   display: flex; flex-direction: column;
-  align-items: center; gap: 24px;
-  transform: translateY(-6px);
+  align-items: center; gap: 28px;
+  /* slight upward offset so content feels visually centred */
+  transform: translateY(-8px);
   text-align: center;
 }
 
-/* ── Logo ring wrapper ── */
+/* ────────────────────────────────
+   LOGO RING SECTION
+──────────────────────────────── */
 .fl-logo-wrap {
   position: relative;
   width: 175px; height: 175px;
   display: grid; place-items: center;
+  /* promote to own compositor layer */
+  will-change: transform;
 }
 
-/* Ambient glow */
+/* Ambient glow behind logo */
 .fl-logo-wrap::before {
   content: "";
   position: absolute;
-  width: 130px; height: 130px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(109,95,255,.22), transparent 68%);
-  filter: blur(12px);
-  animation: fl-glow 2.8s ease-in-out infinite;
+  width: 140px; height: 140px; border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(109, 95, 255, .20) 0%,
+    transparent 68%);
+  filter: blur(16px);
+  animation: fl-glow var(--fl-glow-speed) var(--fl-ease-smooth) infinite;
+  will-change: transform, opacity;
 }
 
 /* Outer conic spinner */
@@ -43,17 +88,20 @@
   position: absolute; inset: 0; border-radius: 50%;
   background: conic-gradient(
     from 0deg,
-    rgba(109, 95,255,.00)  0deg,
-    rgba(109, 95,255,.12)  70deg,
-    rgba(123,111,255,.95) 140deg,
-    rgba(167,139,250,1.0) 200deg,
-    rgba( 79, 70,229,.08) 290deg,
-    rgba(109, 95,255,.00) 360deg
+    rgba(109,  95, 255, .00)   0deg,
+    rgba(109,  95, 255, .10)  65deg,
+    rgba(123, 111, 255, .90) 135deg,
+    rgba(167, 139, 250, 1.0) 195deg,
+    rgba( 79,  70, 229, .06) 285deg,
+    rgba(109,  95, 255, .00) 360deg
   );
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
-          mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
-  animation: fl-spin-cw 2.4s linear infinite;
-  filter: drop-shadow(0 0 10px rgba(109,95,255,.38));
+  -webkit-mask: radial-gradient(farthest-side,
+    transparent calc(100% - 5.5px), #000 calc(100% - 4px));
+          mask: radial-gradient(farthest-side,
+    transparent calc(100% - 5.5px), #000 calc(100% - 4px));
+  animation: fl-spin-cw var(--fl-ring-speed-outer) linear infinite;
+  filter: drop-shadow(0 0 9px rgba(109, 95, 255, .40));
+  will-change: transform;
 }
 
 /* Inner counter-spin ring */
@@ -61,34 +109,39 @@
   position: absolute; inset: 18px; border-radius: 50%;
   background: conic-gradient(
     from 180deg,
-    rgba(167,139,250,.00)  0deg,
-    rgba(167,139,250,.55)  90deg,
-    rgba(109, 95,255,.80) 160deg,
-    rgba(109, 95,255,.00) 260deg,
-    rgba(167,139,250,.00) 360deg
+    rgba(167, 139, 250, .00)   0deg,
+    rgba(167, 139, 250, .50)  88deg,
+    rgba(109,  95, 255, .78) 158deg,
+    rgba(109,  95, 255, .00) 255deg,
+    rgba(167, 139, 250, .00) 360deg
   );
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
-          mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
-  animation: fl-spin-ccw 3.6s linear infinite;
-  opacity: .7;
+  -webkit-mask: radial-gradient(farthest-side,
+    transparent calc(100% - 3.5px), #000 calc(100% - 2px));
+          mask: radial-gradient(farthest-side,
+    transparent calc(100% - 3.5px), #000 calc(100% - 2px));
+  animation: fl-spin-ccw var(--fl-ring-speed-inner) linear infinite;
+  opacity: .72;
+  will-change: transform;
 }
 
-/* A core */
+/* A core icon */
 .fl-a-core {
   position: relative;
   width: 92px; height: 92px;
   display: grid; place-items: center;
-  animation: fl-float 3.4s ease-in-out infinite;
-  filter: drop-shadow(0 0 18px rgba(109,95,255,.36));
+  animation: fl-float var(--fl-float-speed) var(--fl-ease-smooth) infinite;
+  filter: drop-shadow(0 0 16px rgba(109, 95, 255, .34));
+  will-change: transform;
 }
 .fl-a-core svg { width: 100%; height: 100%; overflow: visible; }
 
+/* SVG parts */
 .fl-shell {
-  fill: rgba(255,255,255,.03);
-  stroke: rgba(255,255,255,.07);
+  fill: rgba(255, 255, 255, .03);
+  stroke: rgba(255, 255, 255, .08);
   stroke-width: 1;
 }
-.fl-shine { fill: url(#fl-shineG); opacity: .22; }
+.fl-shine { fill: url(#fl-shineG); opacity: .20; }
 
 .fl-a-mark {
   fill: none;
@@ -96,99 +149,171 @@
   stroke-width: 5.8;
   stroke-linecap: round; stroke-linejoin: round;
   stroke-dasharray: 248; stroke-dashoffset: 0;
-  animation: fl-draw 3.4s ease-in-out infinite;
+  animation: fl-draw var(--fl-draw-speed) var(--fl-ease-smooth) infinite;
+  will-change: stroke-dashoffset, opacity;
 }
 
+/* Liquid fill */
 .fl-liq-group {
   clip-path: url(#fl-clipA);
-  animation: fl-liq 3.4s ease-in-out infinite alternate;
+  animation: fl-liq var(--fl-draw-speed) var(--fl-ease-smooth) infinite alternate;
+  will-change: transform;
 }
-.fl-liq-base { fill: url(#fl-liqG); opacity: .78; }
-.fl-wave1 { fill: rgba(255,255,255,.20); animation: fl-wave 4.6s linear infinite; }
-.fl-wave2 { fill: rgba(255,255,255,.32); animation: fl-wave 3.0s linear infinite reverse; }
-.fl-bbl   { fill: rgba(255,255,255,.60); animation: fl-bbl 3.6s ease-in-out infinite; }
-.fl-bbl2  { animation-delay: .8s; opacity: .55; }
-.fl-bbl3  { animation-delay: 1.6s; opacity: .40; }
+.fl-liq-base { fill: url(#fl-liqG); opacity: .76; }
+.fl-wave1 {
+  fill: rgba(255, 255, 255, .18);
+  animation: fl-wave 4.4s linear infinite;
+  will-change: transform;
+}
+.fl-wave2 {
+  fill: rgba(255, 255, 255, .30);
+  animation: fl-wave 2.9s linear infinite reverse;
+  will-change: transform;
+}
+.fl-bbl  { fill: rgba(255, 255, 255, .58); animation: fl-bbl 3.4s var(--fl-ease-smooth) infinite; will-change: transform, opacity; }
+.fl-bbl2 { animation-delay: .85s;  opacity: .52; }
+.fl-bbl3 { animation-delay: 1.70s; opacity: .38; }
 
-/* ── Name ── */
+/* ────────────────────────────────
+   BRAND NAME
+──────────────────────────────── */
 .fl-name {
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(2rem,5.5vw,3rem);
+  font-size: clamp(1.95rem, 5.2vw, 2.9rem);
   font-weight: 500;
   letter-spacing: .22em;
   text-transform: uppercase;
   line-height: 1;
+  /* Softer gradient — easier on eyes in dark context */
   background: linear-gradient(
-    180deg,
-    rgba(255,255,255,.95) 0%,
-    rgba(220,210,255,.58) 55%,
-    rgba(255,255,255,.18) 100%
+    175deg,
+    rgba(255, 255, 255, .92)  0%,
+    rgba(210, 198, 255, .62) 52%,
+    rgba(255, 255, 255, .16) 100%
   );
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: fl-name-fade 2.8s ease-in-out infinite;
+  animation: fl-name-fade var(--fl-name-speed) var(--fl-ease-smooth) infinite;
   user-select: none;
+  will-change: opacity, transform, filter;
 }
 
-/* ── Progress line ── */
+/* ────────────────────────────────
+   PROGRESS BAR
+──────────────────────────────── */
 .fl-line {
-  width: 100px; height: 1.5px; border-radius: 99px;
-  background: rgba(255,255,255,.07); overflow: hidden; position: relative;
+  width: 108px; height: 1.5px; border-radius: 99px;
+  background: rgba(255, 255, 255, .06);
+  overflow: hidden; position: relative;
 }
 .fl-line::before {
   content: "";
   position: absolute; inset: 0;
-  width: 40%; border-radius: inherit;
-  background: linear-gradient(90deg,#7b6fff,#a78bfa);
-  box-shadow: 0 0 14px rgba(109,95,255,.55);
-  animation: fl-line-slide 1.9s ease-in-out infinite;
+  width: 38%; border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    var(--fl-accent),
+    var(--fl-accent-light)
+  );
+  box-shadow: 0 0 12px rgba(109, 95, 255, .52);
+  animation: fl-line-slide var(--fl-line-speed) var(--fl-ease-smooth) infinite;
+  will-change: transform;
 }
 
-/* ── Keyframes ── */
+/* ════════════════════════════════
+   KEYFRAMES
+   All use translate3d / opacity
+   so the browser never triggers layout
+════════════════════════════════ */
+
+/* Spinner rotation */
 @keyframes fl-spin-cw  { to { transform: rotate(360deg); } }
 @keyframes fl-spin-ccw { to { transform: rotate(-360deg); } }
+
+/* Ambient glow pulse */
 @keyframes fl-glow {
-  0%,100% { transform: scale(.94); opacity: .60; }
-  50%      { transform: scale(1.10); opacity: 1; }
-}
-@keyframes fl-float {
-  0%,100% { transform: translateY(0); }
-  50%      { transform: translateY(-6px); }
-}
-@keyframes fl-draw {
-  0%   { stroke-dashoffset: 248; opacity: .80; }
-  42%  { stroke-dashoffset: 0;   opacity: 1; }
-  100% { stroke-dashoffset: -248; opacity: .85; }
-}
-@keyframes fl-liq {
-  0%   { transform: translateY(6px); }
-  100% { transform: translateY(-5px); }
-}
-@keyframes fl-wave {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-64px); }
-}
-@keyframes fl-bbl {
-  0%   { transform: translateY(8px); opacity: 0; }
-  15%  { opacity: .7; }
-  100% { transform: translateY(-52px); opacity: 0; }
-}
-@keyframes fl-name-fade {
-  0%,100% { opacity: .18; transform: translateY(0) scale(.986); filter: blur(.5px); }
-  50%      { opacity: .88; transform: translateY(-2px) scale(1); filter: blur(0); }
-}
-@keyframes fl-line-slide {
-  0%   { transform: translateX(-140%); }
-  100% { transform: translateX(280%); }
+  0%, 100% { transform: scale3d(.92, .92, 1); opacity: .55; }
+  50%       { transform: scale3d(1.08, 1.08, 1); opacity: .95; }
 }
 
-@media (max-width:480px) {
-  .fl-logo-wrap { width: 145px; height: 145px; }
-  .fl-a-core    { width: 78px; height: 78px; }
-  .fl-name      { font-size: 1.9rem; letter-spacing: .14em; }
+/* Logo float */
+@keyframes fl-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%       { transform: translate3d(0, -7px, 0); }
 }
-@media (prefers-reduced-motion:reduce) {
-  .fin-loader *, .fin-loader *::before, .fin-loader *::after {
-    animation: none !important;
+
+/* SVG stroke draw */
+@keyframes fl-draw {
+  0%   { stroke-dashoffset:  248; opacity: .75; }
+  40%  { stroke-dashoffset:    0; opacity: 1; }
+  100% { stroke-dashoffset: -248; opacity: .78; }
+}
+
+/* Liquid sway */
+@keyframes fl-liq {
+  0%   { transform: translate3d(0,  7px, 0); }
+  100% { transform: translate3d(0, -6px, 0); }
+}
+
+/* Wave scroll */
+@keyframes fl-wave {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-64px, 0, 0); }
+}
+
+/* Bubble rise */
+@keyframes fl-bbl {
+  0%   { transform: translate3d(0,  8px, 0); opacity: 0; }
+  12%  { opacity: .68; }
+  100% { transform: translate3d(0, -54px, 0); opacity: 0; }
+}
+
+/* Name breathing */
+@keyframes fl-name-fade {
+  0%, 100% { opacity: .16; transform: translate3d(0, 0, 0) scale(.984); filter: blur(.6px); }
+  50%       { opacity: .86; transform: translate3d(0, -2px, 0) scale(1); filter: blur(0); }
+}
+
+/* Progress shimmer */
+@keyframes fl-line-slide {
+  0%   { transform: translate3d(-148%, 0, 0); opacity: .7; }
+  50%  { opacity: 1; }
+  100% { transform: translate3d(290%, 0, 0);  opacity: .7; }
+}
+
+/* ────────────────────────────────
+   RESPONSIVE
+──────────────────────────────── */
+@media (max-width: 480px) {
+  .fl-logo-wrap { width: 148px; height: 148px; }
+  .fl-a-core    { width: 80px;  height: 80px; }
+  .fl-name      { font-size: 1.85rem; letter-spacing: .14em; }
+  .fl-line      { width: 90px; }
+}
+
+/* Larger screens — scale up a touch */
+@media (min-width: 1200px) {
+  .fl-logo-wrap { width: 195px; height: 195px; }
+  .fl-a-core    { width: 104px; height: 104px; }
+}
+
+/* ────────────────────────────────
+   ACCESSIBILITY — reduced motion
+──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .fin-loader *,
+  .fin-loader *::before,
+  .fin-loader *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
   }
+}
+
+/* ────────────────────────────────
+   HIGH-CONTRAST mode support
+──────────────────────────────── */
+@media (forced-colors: active) {
+  .fl-ring-outer,
+  .fl-ring-inner { forced-color-adjust: none; }
 }
