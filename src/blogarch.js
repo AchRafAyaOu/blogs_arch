@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
-   BlogArch v12
+  
    المستودع: https://github.com/AchRafAyaOu/blogs_arch
-   ═══════════════════════════════════════════════════════════════ */
+ ═══════════════════════════════════════════════════════════════ */
 
 (function () {
   'use strict';
@@ -482,25 +482,42 @@
   let _lazyObserver = null;
 
   function _loadImage(img) {
-    const src = img.dataset.src;
+    const src = img.dataset.src || img.src;
     if (!src) return;
 
-    img.style.filter     = 'blur(8px)';
-    img.style.transition = 'filter 0.4s ease';
+    const shell = img.closest('.card-image-wrapper, .img-shell');
 
     const temp = new Image();
     temp.onload = () => {
-      img.src          = src;
-      img.style.filter = '';
+      if (img.dataset.src) img.src = img.dataset.src;
       img.classList.add('loaded');
-      img.closest('.card-image-wrapper')?.classList.add('loaded');
+      if (shell) shell.classList.add('loaded');
     };
+
+    let _retried = false;
     temp.onerror = () => {
-      img.style.filter = '';
-      img.classList.add('loaded', 'img-error');
+      /* محاولة إعادة التحميل مرة واحدة لصور Blogger بكسر الـ cache */
+      if (!_retried && src && (src.includes('blogspot.com') || src.includes('googleusercontent.com'))) {
+        _retried = true;
+        const retry = new Image();
+        retry.onload = () => {
+          if (img.dataset.src) img.src = img.dataset.src;
+          img.classList.add('loaded');
+          if (shell) shell.classList.add('loaded');
+        };
+        retry.onerror = () => {
+          img.alt = img.alt || 'تعذّر تحميل الصورة';
+          if (img.dataset.placeholder) img.src = img.dataset.placeholder;
+          img.classList.add('loaded', 'img-error');
+          if (shell) shell.classList.add('has-error', 'img-error');
+        };
+        retry.src = src + (src.includes('?') ? '&' : '?') + '_t=' + Date.now();
+        return;
+      }
       img.alt = img.alt || 'تعذّر تحميل الصورة';
       if (img.dataset.placeholder) img.src = img.dataset.placeholder;
-      img.closest('.card-image-wrapper')?.classList.add('loaded', 'img-error');
+      img.classList.add('loaded', 'img-error');
+      if (shell) shell.classList.add('has-error', 'img-error');
     };
     temp.src = src;
   }
@@ -958,9 +975,43 @@
 
 
   /* ═══════════════════════════════════════════════════════════
+     15. Performance Hints — fetchpriority + lazy
+  ═══════════════════════════════════════════════════════════ */
+  function _initPerformanceHints() {
+    /* أول صورة مرئية في hero أو avatar تحصل على أولوية عالية */
+    const heroImg = document.querySelector('.fin-hero-avatar, .fin-hero img');
+    if (heroImg) {
+      heroImg.setAttribute('fetchpriority', 'high');
+      heroImg.setAttribute('decoding', 'sync');
+      heroImg.removeAttribute('loading');
+    }
+
+    /* كل الصور الأخرى غير المُعلَّمة: lazy + async */
+    const vp = window.innerHeight;
+    document.querySelectorAll('img:not([loading]):not(.fin-hero-avatar):not([fetchpriority])').forEach(img => {
+      const rect = img.getBoundingClientRect();
+      if (rect.top < vp) {
+        /* في نطاق الشاشة الأولى */
+        img.setAttribute('fetchpriority', 'high');
+        img.setAttribute('decoding', 'async');
+      } else {
+        img.setAttribute('loading', 'lazy');
+        img.setAttribute('decoding', 'async');
+      }
+    });
+
+    /* إضافة decoding=async لكل الصور داخل المقال */
+    document.querySelectorAll('.post-body img, .post-content img').forEach(img => {
+      if (!img.hasAttribute('decoding')) img.setAttribute('decoding', 'async');
+    });
+  }
+
+
+  /* ═══════════════════════════════════════════════════════════
      INIT — تهيئة كل الوحدات عند جاهزية DOM
   ═══════════════════════════════════════════════════════════ */
   function _init() {
+    _initPerformanceHints();
     _buildDesktopSwitcher();
     _buildMobileSwitcher();
     _initLazy();
