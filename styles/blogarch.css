@@ -982,44 +982,113 @@ body[data-dark] .post-card, body[data-dark] .entry, body[data-theme="midnight"] 
 .fin-clickable-card a, .fin-clickable-card button { position: relative; z-index: 2; }
 
 /* Card Image */
-.card-image-wrapper {
-  aspect-ratio: 16 / 9;
+/* ══════════════════════════════════════════════════════════
+   Image System v2 — Skeleton + Error + Aspect Ratio
+   ══════════════════════════════════════════════════════════ */
+
+/* ── @keyframes ── */
+@keyframes img-skeleton {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── الغلاف (Shell) — .img-shell و .card-image-wrapper كلاهما يُولدان نفس السلوك ── */
+.card-image-wrapper,
+.img-shell {
+  aspect-ratio: 16 / 10;
   overflow: hidden;
-  background: var(--muted-bg);
+  background: var(--muted-bg, #e2e8f0);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
 }
-.card-image-wrapper::before {
+
+/* ── Skeleton shimmer — يختفي عند .loaded ── */
+.card-image-wrapper::before,
+.img-shell::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,.06) 50%, transparent 75%);
+  background: linear-gradient(
+    110deg,
+    var(--muted-bg, #e2e8f0) 30%,
+    var(--subtle-bg, #f1f5f9) 50%,
+    var(--muted-bg, #e2e8f0) 70%
+  );
   background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
+  animation: img-skeleton 1.5s ease-in-out infinite;
+  z-index: 1;
+  transition: opacity var(--dur-base, .3s);
+  pointer-events: none;
 }
-.card-image-wrapper i {
+
+/* skeleton يختفي بعد التحميل */
+.card-image-wrapper.loaded::before,
+.img-shell.loaded::before {
+  opacity: 0;
+}
+
+/* ── حالة الخطأ — يظهر أيقونة صورة مكسورة ── */
+.card-image-wrapper.has-error::before,
+.card-image-wrapper.img-error::before,
+.img-shell.has-error::before {
+  background: var(--muted-bg, #e2e8f0);
+  animation: none;
+}
+.card-image-wrapper.has-error::after,
+.card-image-wrapper.img-error::after,
+.img-shell.has-error::after {
+  content: '\f03e';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 400;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.8rem;
-  color: var(--muted);
+  color: var(--muted, #94a3b8);
+  z-index: 2;
+}
+
+/* ── الأيقونة الداخلية (placeholder icon) ── */
+.card-image-wrapper > i,
+.img-shell > i {
+  font-size: 1.8rem;
+  color: var(--muted, #94a3b8);
   position: relative;
   z-index: 1;
+  transition: opacity var(--dur-base, .3s);
 }
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+.card-image-wrapper.loaded > i,
+.img-shell.loaded > i {
+  opacity: 0;
 }
-.card-image {
+
+/* ── الصورة الفعلية ── */
+.card-image,
+.img-shell img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity .35s ease, transform .45s ease;
+  transition: opacity .4s ease, transform .5s ease;
   position: relative;
   z-index: 1;
 }
-.card-image.loaded { opacity: 1; }
-.post-card:hover .card-image { transform: scale(1.03); }
+.card-image.loaded,
+.img-shell.loaded img {
+  opacity: 1;
+}
+.post-card:hover .card-image,
+.post-card:hover .img-shell img {
+  transform: scale(1.04);
+}
 
 /* Card Content */
 .card-content {
