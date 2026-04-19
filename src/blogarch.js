@@ -1,23 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
    BlogArch v12
    المستودع: https://github.com/AchRafAyaOu/blogs_arch
-
-   الميزات:
-     Theme Engine × 5 · Dark Mode · System Preference Detection
-     TOC (sticky-aware) · Relative Dates · Text Share · Read Position
-     Contact Form (Web3Forms) · Read Time · Lazy Load (Enhanced)
-     Mobile Drawer · Search (diacritic-insensitive) · About Modal
-     Scroll FX (rAF-throttled) · Quotes Carousel · Podcast Grid
-     Pills · Nav Highlight · Keyboard Shortcuts · Clickable Cards
-     Focus Trap (Modals) · ARIA Support · Reduced Motion Respect
-
-   ترتيب التحميل:
-     1. blogarch.v12.js       ← هذا الملف (Core)
-     2. blogarch.lessons.js   ← وحدة الدروس (تُحمَّل بعده)
-
-   المتغيرات العامة المُصدَّرة (window.BlogArch):
-     .setTheme(name, dark)  · .observeNewImage(img)
-     .CDN_BASE              · .openLesson / .closeLesson (من lessons.js)
    ═══════════════════════════════════════════════════════════════ */
 
 (function () {
