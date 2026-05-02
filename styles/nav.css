@@ -1,4 +1,14 @@
 /* ══════════════════════════════════════
+   nav.css — Navbar + Drawer + Search
+   BlogArch v12 — RTL-first, a11y-clean
+   Updated: 2026-04-28
+══════════════════════════════════════ */
+
+/* -- CSS custom property for navbar height (used by search-panel top) -- */
+:root { --navbar-height: 68px; }
+
+
+/* ══════════════════════════════════════
    1. NAVBAR — الشريط العلوي الثابت
 ══════════════════════════════════════ */
 .navbar {
@@ -18,7 +28,8 @@
 .navbar::after {
   content: '';
   position: absolute;
-  bottom: 0; left: 0; right: 0;
+  bottom: 0;
+  inset-inline: 0;           /* ① was: left:0; right:0 */
   height: 2px;
   background: linear-gradient(to left, var(--accent), var(--primary-color));
   opacity: 0.5;
@@ -27,13 +38,14 @@
 .navbar.scrolled::after { opacity: 1; }
 
 /* Dark mode */
-body[data-dark]    .navbar { background: rgba(12, 18, 34, 0.92); }
-body[data-theme="ocean"][data-dark]    .navbar { background: rgba(7,  26, 46, 0.92); }
-body[data-theme="sunset"][data-dark]   .navbar { background: rgba(26, 14,  2, 0.92); }
-body[data-theme="forest"][data-dark]   .navbar { background: rgba(6,  26, 16, 0.92); }
-body[data-theme="midnight"]            .navbar { background: rgba(9,   9, 11, 0.94); }
+body[data-dark]                      .navbar { background: rgba(12, 18, 34, 0.92); }
+body[data-theme="ocean"][data-dark]  .navbar { background: rgba(7,  26, 46, 0.92); }
+body[data-theme="sunset"][data-dark] .navbar { background: rgba(26, 14,  2, 0.92); }
+body[data-theme="forest"][data-dark] .navbar { background: rgba(6,  26, 16, 0.92); }
+body[data-theme="midnight"]          .navbar { background: rgba(9,   9, 11, 0.94); }
 
 .navbar.scrolled { box-shadow: var(--shadow-lg); }
+
 
 /* ── داخل Navbar ── */
 .navbar-inner {
@@ -41,7 +53,7 @@ body[data-theme="midnight"]            .navbar { background: rgba(9,   9, 11, 0.
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  min-height: 68px;
+  min-height: var(--navbar-height);   /* ③ was: 68px hardcoded */
   max-width: min(92vw, 1120px);
   margin-inline: auto;
   padding-inline: clamp(0.85rem, 2.5vw, 1.5rem);
@@ -49,8 +61,8 @@ body[data-theme="midnight"]            .navbar { background: rgba(9,   9, 11, 0.
 }
 
 /* Compact عند التمرير */
-.navbar.scrolled .navbar-inner  { min-height: 56px; }
-.navbar.scrolled .brand-tag     {
+.navbar.scrolled .navbar-inner { min-height: 56px; }
+.navbar.scrolled .brand-tag {
   opacity: 0;
   max-height: 0;
   overflow: hidden;
@@ -102,9 +114,9 @@ body[data-theme="midnight"]            .navbar { background: rgba(9,   9, 11, 0.
 .brand:hover .dot { transform: scale(1.25); }
 
 /* تأثير الثيم على النقطة */
-body[data-theme="ocean"]    .brand .dot { box-shadow: 0 0 0 3px rgba(6,182,212,.18); background: var(--accent); }
-body[data-theme="sunset"]   .brand .dot { box-shadow: 0 0 0 3px rgba(245,158,11,.18); background: var(--accent); }
-body[data-theme="forest"]   .brand .dot { box-shadow: 0 0 0 3px rgba(82,183,136,.18); background: var(--accent); }
+body[data-theme="ocean"]    .brand .dot { box-shadow: 0 0 0 3px rgba(6,182,212,.18);   background: var(--accent); }
+body[data-theme="sunset"]   .brand .dot { box-shadow: 0 0 0 3px rgba(245,158,11,.18);  background: var(--accent); }
+body[data-theme="forest"]   .brand .dot { box-shadow: 0 0 0 3px rgba(82,183,136,.18);  background: var(--accent); }
 body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252,.18); background: var(--accent); }
 
 
@@ -114,7 +126,8 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 .nav-menu {
   display: none;
   list-style: none;
-  margin: 0; padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 @media (min-width: 820px) {
@@ -140,6 +153,10 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
     position: relative;
     transition: all 0.2s ease;
     white-space: nowrap;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
   }
   .nav-link:hover {
     background: var(--primary-light);
@@ -158,15 +175,14 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
     content: '';
     position: absolute;
     bottom: 3px;
-    right: 14px;
-    width: calc(100% - 28px);
+    inset-inline: 14px;          /* ① was: right:14px + manual calc */
     height: 3px;
     background: linear-gradient(to left, var(--accent), var(--primary-color));
     border-radius: 2px;
     box-shadow: 0 1px 4px rgba(var(--primary-rgb), 0.25);
   }
 
-  /* Dropdown */
+  /* Dropdown — ⑧ toggle should be <button> in HTML (aria-expanded) */
   .dropdown-toggle svg {
     width: 14px;
     height: 14px;
@@ -175,10 +191,13 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
   .dropdown:hover .dropdown-toggle svg,
   .dropdown.active  .dropdown-toggle svg { transform: rotate(180deg); }
 
+  /* sync aria-expanded with visual state */
+  .dropdown-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+
   .dropdown-content {
     position: absolute;
     top: calc(100% + 8px);
-    right: 0;
+    inset-inline-end: 0;         /* ① was: right:0 */
     background: var(--card);
     min-width: 220px;
     border-radius: var(--radius);
@@ -192,7 +211,8 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
     z-index: 10001;
   }
   .dropdown:hover .dropdown-content,
-  .dropdown:focus-within .dropdown-content {
+  .dropdown:focus-within .dropdown-content,
+  .dropdown.active .dropdown-content {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
@@ -211,7 +231,7 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
   .dropdown-item:hover {
     background: var(--primary-light);
     color: var(--primary-color);
-    padding-right: 18px;
+    padding-inline-end: 18px;    /* ⑥ was: padding-right:18px (breaks LTR) */
   }
 
   /* CTA pill */
@@ -265,7 +285,8 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px; height: 38px;
+  width: 38px;
+  height: 38px;
   background: var(--muted-bg, #f1f5f9);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -281,7 +302,8 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 .hamburger-icon::before,
 .hamburger-icon::after {
   display: block;
-  width: 18px; height: 2px;
+  width: 18px;
+  height: 2px;
   background: var(--text);
   border-radius: 2px;
   transition: all 0.28s ease;
@@ -304,24 +326,24 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 
 
 /* ══════════════════════════════════════
-   6. COLLAPSE BUTTON (Desktop sidebar toggle — Nav3 inspired)
-      يظهر في حال تحويل Nav إلى sidebar مستقبلاً
+   6. COLLAPSE BUTTON (sidebar toggle — future use)
 ══════════════════════════════════════ */
 .nav-collapse-btn {
-  width: 28px; height: 28px;
+  width: 28px;
+  height: 28px;
   border: 1px solid var(--border);
   background: var(--muted-bg, #f1f5f9);
   border-radius: 8px;
   cursor: pointer;
-  display: none; /* مخفي الآن — يُفعَّل عند تحويل Nav لـ sidebar */
+  display: none;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   color: var(--text-soft);
   transition: background 0.22s, color 0.22s, transform 0.3s;
 }
-.nav-collapse-btn:hover   { background: var(--primary-light); color: var(--primary-color); }
-.nav-collapse-btn svg     { width: 14px; height: 14px; transition: transform 0.3s; }
+.nav-collapse-btn:hover { background: var(--primary-light); color: var(--primary-color); }
+.nav-collapse-btn svg   { width: 14px; height: 14px; transition: transform 0.3s; }
 .nav-collapsed .nav-collapse-btn svg { transform: rotate(180deg); }
 
 
@@ -330,7 +352,7 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 ══════════════════════════════════════ */
 .menu-overlay {
   position: fixed;
-  inset: 0;
+  inset: 0;                       /* ① was: top/left/right/bottom individually */
   background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(2px);
   opacity: 0;
@@ -347,20 +369,21 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 .mobile-drawer {
   position: fixed;
   top: 0;
-  right: -100%;
+  inset-inline-end: -100%;       /* ① was: right:-100% — now RTL-safe */
   width: min(300px, 82vw);
   height: 100vh;
+  height: 100dvh;                /* ⑤ dynamic viewport height (mobile browser chrome) */
   background: var(--card);
-  border-left: 1px solid var(--border);
+  border-inline-start: 1px solid var(--border);  /* ① was: border-left */
   z-index: 9999;
   display: flex;
   flex-direction: column;
   box-shadow: var(--shadow-xl);
-  transition: right 0.35s cubic-bezier(.77, 0, .175, 1);
+  transition: inset-inline-end 0.35s cubic-bezier(.77, 0, .175, 1);
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-.mobile-drawer.active { right: 0; }
+.mobile-drawer.active { inset-inline-end: 0; }  /* ① was: right:0 */
 
 /* Header الدرج */
 .mobile-drawer-header {
@@ -390,6 +413,11 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
   justify-content: space-between;
   transition: background 0.15s, color 0.15s;
   text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: inherit;
 }
 .mobile-drawer .nav-link:hover {
   background: var(--primary-light);
@@ -401,9 +429,11 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 /* Dropdown داخل الدرج */
 .mobile-drawer .dropdown-content {
   position: static;
-  opacity: 1; visibility: visible;
+  opacity: 1;
+  visibility: visible;
   transform: none;
-  box-shadow: none; border: none;
+  box-shadow: none;
+  border: none;
   background: transparent;
   padding: 6px 14px 6px 0;
   display: none;
@@ -426,15 +456,15 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
   animation: navDrawerIn 0.3s ease forwards;
   opacity: 0;
 }
-.mobile-drawer.active .nav-item:nth-child(1)        { animation-delay: .06s; }
-.mobile-drawer.active .nav-item:nth-child(2)        { animation-delay: .10s; }
-.mobile-drawer.active .nav-item:nth-child(3)        { animation-delay: .14s; }
-.mobile-drawer.active .nav-item:nth-child(4)        { animation-delay: .18s; }
-.mobile-drawer.active .nav-item:nth-child(5)        { animation-delay: .22s; }
-.mobile-drawer.active .nav-item:nth-child(6)        { animation-delay: .26s; }
-.mobile-drawer.active .nav-item:nth-child(7)        { animation-delay: .30s; }
-.mobile-drawer.active .nav-item:nth-child(8)        { animation-delay: .34s; }
-.mobile-drawer.active .drawer-settings-section      {
+.mobile-drawer.active .nav-item:nth-child(1) { animation-delay: .06s; }
+.mobile-drawer.active .nav-item:nth-child(2) { animation-delay: .10s; }
+.mobile-drawer.active .nav-item:nth-child(3) { animation-delay: .14s; }
+.mobile-drawer.active .nav-item:nth-child(4) { animation-delay: .18s; }
+.mobile-drawer.active .nav-item:nth-child(5) { animation-delay: .22s; }
+.mobile-drawer.active .nav-item:nth-child(6) { animation-delay: .26s; }
+.mobile-drawer.active .nav-item:nth-child(7) { animation-delay: .30s; }
+.mobile-drawer.active .nav-item:nth-child(8) { animation-delay: .34s; }
+.mobile-drawer.active .drawer-settings-section {
   animation: navDrawerIn 0.3s ease forwards;
   animation-delay: .38s;
   opacity: 0;
@@ -447,8 +477,7 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 
 
 /* ══════════════════════════════════════
-   9. SETTINGS PANEL (Nav3 inspired)
-      لوحة إعدادات المظهر — داخل الدرج وكذلك Desktop
+   9. SETTINGS PANEL (داخل الدرج + Desktop)
 ══════════════════════════════════════ */
 .drawer-settings-section {
   padding: 16px 22px;
@@ -466,7 +495,7 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
   margin-bottom: 12px;
 }
 
-/* شبكة الثيمات — نمط Nav3 (label + dot) */
+/* شبكة الثيمات */
 .theme-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -502,7 +531,8 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 
 /* نقطة لون الثيم */
 .theme-dot {
-  width: 13px; height: 13px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -530,7 +560,7 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 }
 .drawer-dark-label i { color: var(--muted); font-size: 0.82rem; }
 
-/* Palette style القديم (متوافق مع blogarch.js) */
+/* Palette style (متوافق مع blogarch.js) */
 .drawer-theme-btn {
   aspect-ratio: 1;
   border-radius: var(--radius-sm);
@@ -551,10 +581,15 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 .drawer-theme-btn[data-pick="forest"]   { background: linear-gradient(135deg,#52b788,#2d6a4f); }
 .drawer-theme-btn[data-pick="midnight"] { background: linear-gradient(135deg,#c084fc,#18181b); }
 .drawer-theme-btn .active-check {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  color: #fff; font-size: 0.68rem;
-  opacity: 0; transition: opacity 0.2s;
+  position: absolute;
+  inset: 0;                       /* ① was: top/left/right/bottom individually */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.68rem;
+  opacity: 0;
+  transition: opacity 0.2s;
   text-shadow: 0 1px 2px rgba(0,0,0,.4);
 }
 .drawer-theme-btn.active .active-check { opacity: 1; }
@@ -565,10 +600,12 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 ══════════════════════════════════════ */
 .search-panel {
   position: fixed;
-  top: 76px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-8px);
+  /* ② RTL fix: centered without left/translateX conflict */
+  /* Use margin-inline:auto + inset-inline trick */
+  top: calc(var(--navbar-height) + 8px);  /* ③ was: top:76px hardcoded */
+  inset-inline: 0;                        /* ② was: left:50% */
   width: min(88%, 560px);
+  margin-inline: auto;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -578,13 +615,15 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  /* ② remove translateX(-50%) — margin-inline:auto handles centering */
+  transform: translateY(-8px);
   transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
 }
 .search-panel.active {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
 }
 
 #search-input {
@@ -594,7 +633,7 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
   border: 2px solid var(--border);
   background: var(--bg);
   color: var(--text);
-  font-size: 1.05rem;
+  font-size: max(1.05rem, 16px);  /* ④ prevents iOS auto-zoom (≥16px) */
   font-family: inherit;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -623,11 +662,12 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 }
 .search-item span { font-size: 0.83rem; color: var(--text-soft); }
 
-/* Mobile search bar (Nav3 slide-down style) */
+/* Mobile search bar */
 .mobile-search-bar {
   display: none;
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  inset-inline: 0;              /* ① was: left:0; right:0 */
   background: var(--card);
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
@@ -657,7 +697,7 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
   background: transparent;
   padding: 10px 4px;
   font-family: inherit;
-  font-size: 14px;
+  font-size: max(14px, 1rem);   /* ④ was: 14px — iOS zooms when <16px */
   color: var(--text);
   outline: none;
 }
@@ -671,4 +711,50 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
   .navbar        { padding: 0.5rem 0; }
   .brand-tag     { display: none; }
   .nav-collapse-btn { display: none !important; }
+}
+
+
+/* ══════════════════════════════════════
+   12. ACCESSIBILITY — prefers-reduced-motion
+   ⑦ يلغي كل الحركة عند طلب المستخدم
+══════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .navbar,
+  .navbar::after,
+  .navbar-inner,
+  .brand,
+  .brand .dot,
+  .nav-link,
+  .nav-cta,
+  .dropdown-toggle svg,
+  .dropdown-content,
+  .hamburger,
+  .hamburger-icon,
+  .hamburger-icon::before,
+  .hamburger-icon::after,
+  .mobile-drawer,
+  .menu-overlay,
+  .search-panel,
+  .mobile-search-bar,
+  .drawer-theme-btn,
+  .theme-btn {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* Keep visibility toggling but remove motion */
+  .mobile-drawer.active {
+    inset-inline-end: 0;
+  }
+  .mobile-drawer.active .nav-item {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .mobile-drawer.active .drawer-settings-section {
+    opacity: 1 !important;
+  }
+  .search-panel.active,
+  .dropdown-content {
+    transform: none !important;
+  }
 }
