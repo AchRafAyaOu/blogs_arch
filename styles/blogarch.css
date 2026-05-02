@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   BlogArch v12 — Modern Layered Stylesheet (CSS )
+   BlogArch v13 — Modern Layered Stylesheet (CSS 2024-2026)
    ─────────────────────────────────────────────────────────────────────
-   Built on v2.1 architecture + production hardening 
+   Built on v2.0 architecture + production hardening + 2025-2026 best
    practices. Surgical fixes for: SVG noise typo, missing --glass-* tokens,
    duplicate hover borders, content-visibility intrinsic-size, missing
    prefers-reduced-transparency / prefers-contrast, missing :user-valid
@@ -17,7 +17,7 @@
            media='(prefers-color-scheme: light)'/>
      <meta name='theme-color' content='#0a0f1c'
            media='(prefers-color-scheme: dark)'/>
-   Updated: 2026-04-28
+   Updated: 2026-05-02 — v13 UX hardening
    ═══════════════════════════════════════════════════════════════════════ */
 
 @layer reset, tokens, base, typography, themes, components, glass, utilities, enhancements, print;
@@ -64,8 +64,9 @@
     /* ── Text ── */
     --text:        light-dark(oklch(20% 0.03 250),  oklch(96% 0.01 240));
     --text-light:  light-dark(oklch(30% 0.03 245),  oklch(85% 0.015 240));
-    --text-soft:   light-dark(oklch(45% 0.03 240),  oklch(70% 0.02 240));
-    --muted:       light-dark(oklch(55% 0.02 240),  oklch(60% 0.02 240));
+    --text-soft:   light-dark(oklch(42% 0.03 240),  oklch(70% 0.02 240));
+    /* --muted raised from 55%→40% in light mode for WCAG AA at small sizes */
+    --muted:       light-dark(oklch(40% 0.025 240), oklch(62% 0.02 240));
 
     /* ── Borders ── */
     --border:        light-dark(oklch(90% 0.012 240), oklch(30% 0.025 250));
@@ -140,9 +141,15 @@
     --duration-fast:   0.15s;
     --duration-normal: 0.25s;
     --duration-slow:   0.4s;
-    --ease-out:    cubic-bezier(0.4, 0, 0.2, 1);
-    --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    --transition:  all var(--duration-normal) var(--ease-out);
+    --ease-out:     cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-spring:  cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --ease-default: cubic-bezier(0.4, 0, 0.2, 1); /* alias — used by sidebar & FAB */
+    --transition:   color var(--duration-fast) ease,
+                    background-color var(--duration-normal) var(--ease-out),
+                    border-color var(--duration-normal) var(--ease-out),
+                    box-shadow var(--duration-normal) var(--ease-out),
+                    transform var(--duration-fast) var(--ease-out),
+                    opacity var(--duration-fast) ease;
 
     /* ── Logical spacing scale ── */
     --space-1: 0.25rem;
@@ -294,7 +301,9 @@
     font-weight: 700;
     text-wrap: balance;
     margin-block: 0;
-    letter-spacing: -0.01em;
+    /* letter-spacing: 0 — Arabic text must NOT use negative tracking;
+       Amiri has built-in kashida spacing — leave at browser default */
+    letter-spacing: 0;
     font-feature-settings: "kern", "liga", "clig", "calt";
   }
   h1 {
@@ -302,7 +311,6 @@
     margin-block-start: 1.6em;
     margin-block-end: 0.5em;
     line-height: 1.2;
-    letter-spacing: -0.015em;
   }
   h2 {
     font-size: clamp(1.5rem, 2.8vw + 0.2rem, 2rem);
@@ -465,7 +473,8 @@ body { background: var(--bg); color: var(--text); }
 body[data-dark] p,
 body[data-theme="midnight"] p {
   line-height: 2;
-  color: var(--text-soft);
+  /* use text-light (not text-soft) — soft was too low contrast in dark */
+  color: var(--text-light);
 }
 
 a { color: inherit; text-decoration: none; transition: color .2s; }
@@ -592,7 +601,9 @@ select:focus-visible {
   opacity: 0;
   visibility: hidden;
   transform: translateY(16px);
-  transition: all .3s var(--ease-spring);
+  transition: opacity .3s var(--ease-spring),
+              transform .3s var(--ease-spring),
+              visibility .3s var(--ease-spring);
   z-index: 10010;
 }
 .back-to-top.visible { opacity: 1; visibility: visible; transform: translateY(0); }
@@ -618,7 +629,9 @@ select:focus-visible {
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: all .2s;
+  transition: background-color .2s var(--ease-out),
+              border-color .2s var(--ease-out),
+              color .15s ease;
   white-space: nowrap;
 }
 .theme-switcher-toggle:hover { background: var(--muted-bg); border-color: var(--primary-color); }
@@ -666,7 +679,8 @@ select:focus-visible {
   border-radius: var(--radius-sm);
   border: 1.5px solid transparent;
   cursor: pointer;
-  transition: all .2s;
+  transition: background-color .2s var(--ease-out),
+              border-color .2s var(--ease-out);
   background: transparent;
   width: 100%;
   text-align: start;
@@ -762,7 +776,8 @@ select:focus-visible {
   font-weight: 800;
   line-height: 1.3;
   margin-bottom: 0.75rem;
-  letter-spacing: -0.02em;
+  /* Arabic: no negative tracking — Amiri handles kashida spacing */
+  letter-spacing: 0;
 }
 .hero p {
   font-size: clamp(1rem, 1.2vw, 1.12rem);
@@ -814,6 +829,24 @@ body[data-dark] .feature { background: color-mix(in oklch, var(--card) 80%, tran
   color: var(--text);
   font-family: var(--font-body);
   font-weight: 700;
+  /* Gradient accent underline */
+  position: relative;
+  padding-bottom: 0.6rem;
+}
+.section-title::after {
+  content: '';
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  width: 2.5rem;
+  height: 3px;
+  border-radius: 99px;
+  background: linear-gradient(
+    90deg,
+    var(--accent),
+    color-mix(in oklch, var(--accent) 70%, var(--primary-color))
+  );
 }
 .pills { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; margin-bottom: 1.75rem; }
 .pill {
@@ -823,7 +856,10 @@ body[data-dark] .feature { background: color-mix(in oklch, var(--card) 80%, tran
   padding: 0.5rem 1.1rem;
   border-radius: 50px;
   cursor: pointer;
-  transition: all .2s;
+  transition: background-color .2s var(--ease-out),
+              border-color .2s var(--ease-out),
+              color .15s ease,
+              transform .15s var(--ease-out);
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;
@@ -845,7 +881,9 @@ body[data-dark] .feature { background: color-mix(in oklch, var(--card) 80%, tran
   border-radius: 9999px;
   font-size: 0.85rem;
   font-weight: 600;
-  transition: all .2s;
+  transition: background-color .2s var(--ease-out),
+              border-color .2s var(--ease-out),
+              color .15s ease;
   text-decoration: none;
 }
 .hero-tag:hover { border-color: var(--accent); color: var(--text); background: var(--bg); }
@@ -886,6 +924,8 @@ body[data-dark] .feature { background: color-mix(in oklch, var(--card) 80%, tran
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 1.25rem;
   padding-block: 1.75rem;
+  max-width: min(92vw, 1120px);
+  margin-inline: auto;
 }
 .grid {
   display: grid;
@@ -987,6 +1027,11 @@ body[data-theme="midnight"] .entry { background: var(--card); }
   z-index: 1;
 }
 .card-image.loaded { opacity: 1; }
+/* Stop shimmer once image loads — :has() detects loaded state without JS */
+.card-image-wrapper:has(.card-image.loaded)::before {
+  animation: none;
+  opacity: 0;
+}
 .post-card:hover .card-image { transform: scale(1.03); }
 
 /* ── Card content ── */
@@ -1069,7 +1114,9 @@ body[data-theme="midnight"] .entry { background: var(--card); }
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
-  transition: all .2s;
+  transition: background-color .2s var(--ease-out),
+              border-color .2s var(--ease-out),
+              color .15s ease;
   text-decoration: none;
 }
 .page-btn:hover { background: var(--muted-bg); color: var(--text); border-color: var(--accent); }
@@ -1081,7 +1128,8 @@ body[data-theme="midnight"] .entry { background: var(--card); }
   font-size: clamp(1.7rem, 3.2vw, 2.5rem);
   font-weight: 800;
   line-height: 1.25;
-  letter-spacing: -0.015em;
+  /* Arabic: no negative letter-spacing — Amiri handles its own tracking */
+  letter-spacing: 0;
   margin-bottom: 0.85rem;
 }
 .post-meta {
@@ -1350,7 +1398,9 @@ body[data-dark] .contact-feedback.error {
   background: linear-gradient(135deg, var(--accent), var(--primary-color));
   color: var(--accent-fg);
   border: none;
-  transition: all .25s ease;
+  transition: background-position .25s ease,
+              transform .2s var(--ease-out),
+              box-shadow .2s var(--ease-out);
   background-size: 200% 200%;
   background-position: 0% 50%;
 }
@@ -1447,7 +1497,8 @@ body[data-theme="midnight"] ::selection { background: color-mix(in oklch, oklch(
 }
 .read-link:hover { gap: 9px; color: var(--accent-hover); }
 .read-link i { font-size: 0.75rem; transition: transform .2s ease; }
-.read-link:hover i { transform: translateX(-2px); }
+/* RTL fix: icon in Arabic layout moves right (+2px) on hover, not left */
+.read-link:hover i { transform: translateX(2px); }
 .widget-title {
   display: flex;
   align-items: center;
@@ -1496,7 +1547,10 @@ body[data-theme="midnight"] ::selection { background: color-mix(in oklch, oklch(
   color: var(--text-soft);
   font-size: 0.8rem;
   font-weight: 700;
-  transition: all .2s ease;
+  transition: background-color .2s var(--ease-out),
+              border-color .2s var(--ease-out),
+              color .15s ease,
+              box-shadow .2s var(--ease-out);
   text-decoration: none;
 }
 .domain-chip i { color: var(--chip-color, var(--accent)); font-size: 0.75rem; }
@@ -1558,11 +1612,18 @@ body[data-theme="midnight"] ::selection { background: color-mix(in oklch, oklch(
   width: 36px; height: 36px; border-radius: 50%;
   background: var(--muted-bg); border: 1px solid var(--border);
   display: flex; align-items: center; justify-content: center;
-  color: var(--text-soft); cursor: pointer; transition: all .2s ease; font-size: 0.82rem;
+  color: var(--text-soft); cursor: pointer;
+  transition: background-color .2s var(--ease-out),
+              border-color .2s var(--ease-out),
+              color .15s ease;
+  font-size: 0.82rem;
 }
 .fin-quote-btn:hover { background: var(--d-quotes); color: #fff; border-color: var(--d-quotes); }
 .fin-quote-dots { display: flex; gap: 6px; }
-.fin-quote-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); cursor: pointer; transition: all .2s; }
+.fin-quote-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--border); cursor: pointer;
+  transition: background-color .2s var(--ease-out), transform .2s var(--ease-spring);
+}
 .fin-quote-dot.active { background: var(--d-quotes); transform: scale(1.35); }
 
 /* ── Podcast episode cards ── */
@@ -1571,6 +1632,8 @@ body[data-theme="midnight"] ::selection { background: color-mix(in oklch, oklch(
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
   gap: 1.15rem;
   margin-top: 1.75rem;
+  max-width: min(92vw, 1120px);
+  margin-inline: auto;
 }
 .fin-podcast-ep {
   background: var(--card);
@@ -1596,7 +1659,8 @@ body[data-theme="midnight"] ::selection { background: color-mix(in oklch, oklch(
 .fin-podcast-ep:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--d-podcast); }
 .fin-podcast-ep:hover::after { transform: scaleX(1); }
 .fin-podcast-ep-art {
-  height: 110px;
+  /* aspect-ratio replaces fixed height — stays proportional at any width */
+  aspect-ratio: 21 / 9;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1638,7 +1702,7 @@ body[data-theme="midnight"] ::selection { background: color-mix(in oklch, oklch(
   color: #fff;
   font-size: 0.78rem;
   font-weight: 800;
-  transition: all .2s;
+  transition: filter .2s ease, gap .2s var(--ease-out);
   text-decoration: none;
 }
 .fin-podcast-ep-play:hover { filter: brightness(1.1); }
@@ -1649,6 +1713,8 @@ body[data-theme="midnight"] ::selection { background: color-mix(in oklch, oklch(
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
   gap: 1.1rem;
   margin-top: 1.75rem;
+  max-width: min(92vw, 1120px);
+  margin-inline: auto;
 }
 .fin-learn-card {
   background: var(--card);
@@ -1729,7 +1795,9 @@ body[data-dark] .fin-learn-level.adv { background: color-mix(in oklch, oklch(72%
   background: var(--card);
   color: var(--text-soft);
   cursor: pointer;
-  transition: all .2s;
+  transition: background-color .2s var(--ease-out),
+              border-color .2s var(--ease-out),
+              color .15s ease;
   font-family: var(--font-ui);
   display: inline-flex;
   align-items: center;
@@ -1810,7 +1878,9 @@ body[data-dark] .fin-learn-level.adv { background: color-mix(in oklch, oklch(72%
   border-radius: var(--radius);
   padding: clamp(1.25rem, 2.5vw, 1.75rem) clamp(1rem, 2vw, 1.35rem);
   text-align: center;
-  transition: all .2s;
+  transition: transform .2s var(--ease-out),
+              box-shadow .2s var(--ease-out),
+              border-color .2s var(--ease-out);
   text-decoration: none;
   display: block;
   color: inherit;
@@ -1858,7 +1928,8 @@ body[data-theme="midnight"] ::-webkit-scrollbar-thumb { background: var(--border
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
-  opacity: 0.1;
+  /* raised from 0.1 to 0.13 — more visible presence without distraction */
+  opacity: 0.13;
 }
 .fin-hero-blob-1 { top: 8%; inset-inline-end: 8%;  width: clamp(250px, 30vw, 380px); height: clamp(250px, 30vw, 380px); background: var(--primary-color); }
 .fin-hero-blob-2 { bottom: 8%; inset-inline-start: 8%; width: clamp(200px, 25vw, 300px); height: clamp(200px, 25vw, 300px); background: var(--secondary-color); }
@@ -1895,12 +1966,14 @@ body[data-theme="midnight"] ::-webkit-scrollbar-thumb { background: var(--border
   box-shadow: var(--shadow-md);
 }
 .fin-hero h1 {
+  /* font-ui (Tajawal sans) intentionally overrides Amiri here — personal name display */
   font-family: var(--font-ui);
   font-size: clamp(1.8rem, 4.5vw, 3rem);
   font-weight: 800;
   color: var(--text);
   margin-bottom: 0.4rem;
   line-height: 1.2;
+  letter-spacing: 0; /* explicit — inherits from heading base */
 }
 .fin-hero-role {
   font-size: clamp(1rem, 2vw, 1.2rem);
@@ -1946,7 +2019,9 @@ body[data-theme="midnight"] ::-webkit-scrollbar-thumb { background: var(--border
   font-size: 0.95rem;
   text-decoration: none;
   box-shadow: 0 4px 14px color-mix(in oklch, var(--primary-color) 28%, transparent);
-  transition: all .2s;
+  transition: background-color .2s var(--ease-out),
+              box-shadow .2s var(--ease-out),
+              transform .15s var(--ease-out);
 }
 .fin-hero-cta:hover {
   background: var(--primary-dark);
@@ -2050,7 +2125,7 @@ body[data-theme="midnight"] ::-webkit-scrollbar-thumb { background: var(--border
   font-size: 0.82rem;
   font-weight: 600;
   border: 1px solid transparent;
-  transition: all .15s;
+  transition: background-color .15s var(--ease-out), color .12s ease;
 }
 .fin-tag:hover { background: var(--primary-color); color: #fff; }
 body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 18%, transparent); color: var(--ring); }
@@ -2134,11 +2209,12 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
   flex-direction: column;
 }
 .fin-podcast-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
-.fin-podcast-img { width: 100%; height: 170px; object-fit: cover; transition: transform .4s ease; }
+/* aspect-ratio: 16/9 replaces fixed height: 170px — proportional at any width */
+.fin-podcast-img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; transition: transform .4s ease; }
 .fin-podcast-card:hover .fin-podcast-img { transform: scale(1.04); }
 .fin-podcast-img-placeholder {
   width: 100%;
-  height: 170px;
+  aspect-ratio: 16 / 9;
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   display: flex;
   align-items: center;
@@ -2180,7 +2256,9 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
   background: var(--card);
   color: var(--text-light);
   cursor: pointer;
-  transition: all .15s;
+  transition: background-color .15s var(--ease-out),
+              border-color .15s var(--ease-out),
+              color .12s ease;
 }
 .fin-podcast-tag:hover, .fin-podcast-tag.active {
   background: var(--primary-color);
@@ -2211,7 +2289,10 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
   font-weight: 700;
   text-decoration: none;
   box-shadow: 0 4px 14px color-mix(in oklch, var(--primary-color) 25%, transparent);
-  transition: all .2s;
+  transition: background-color .2s var(--ease-out),
+              box-shadow .2s var(--ease-out),
+              transform .15s var(--ease-out),
+              color .15s ease;
 }
 .fin-btn-primary:hover {
   background: var(--primary-dark);
@@ -2290,10 +2371,11 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
   flex-direction: column;
 }
 .fin-afkar-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
-.fin-afkar-img { width: 100%; height: 170px; object-fit: cover; transition: transform .4s; }
+/* aspect-ratio: 16/9 replaces fixed height: 170px — proportional at any width */
+.fin-afkar-img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; transition: transform .4s; }
 .fin-afkar-card:hover .fin-afkar-img { transform: scale(1.04); }
 .fin-afkar-placeholder {
-  width: 100%; height: 170px;
+  width: 100%; aspect-ratio: 16 / 9;
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   display: flex;
   align-items: center;
@@ -2544,7 +2626,7 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
   .fin-stat-num { font-size: 1.2rem; }
   .fin-about-grid { gap: 1.25rem; }
   .fin-about-image-wrap img { aspect-ratio: 3/2; }
-  .fin-podcast-ep-art { height: 90px; }
+  /* aspect-ratio overrides are not needed — ratio is fluid */
   .fin-podcast-ep-art i { font-size: 1.8rem; }
   .fin-podcast-ep-body { padding: 1rem; }
   .fin-podcast-ep-title { font-size: 0.9rem; }
@@ -2552,7 +2634,7 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
   .fin-podcast-ep-play { padding: 4px 10px; font-size: 0.72rem; }
   .fin-work-icon-wrap { padding: 1rem 1rem 0.75rem; }
   .fin-work-body { padding: 0 1rem 1rem; }
-  .fin-afkar-img, .fin-afkar-placeholder { height: 140px; }
+  /* aspect-ratio 16/9 is already fluid — no override needed */
   .fin-resource-card { padding: 1rem 0.85rem; }
   .fin-resource-icon { width: 42px; height: 42px; font-size: 1.1rem; }
   .fin-quote-box { padding: 1.5rem 1.15rem; }
@@ -2619,6 +2701,13 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
         color-mix(in oklch, var(--accent) 10%, transparent), transparent 60%),
       radial-gradient(ellipse 70% 50% at 50% 100%,
         color-mix(in oklch, var(--secondary-color) 10%, transparent), transparent 60%);
+    /* Subtle floating animation — 0% GPU cost, pure background-position shift */
+    animation: meshFloat 30s ease-in-out infinite;
+  }
+  @keyframes meshFloat {
+    0%, 100% { background-position: 0% 0%, 100% 0%, 50% 100%; }
+    33%       { background-position: 5% 8%, 95% 5%, 48% 97%;  }
+    66%       { background-position: -3% 4%, 103% -4%, 52% 103%; }
   }
 
   /* Body-level noise texture — corrected SVG (no Chinese chars) */
@@ -2867,7 +2956,10 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
     *::view-transition-new(*) {
       animation: none !important;
     }
-    body::before { background: none; }
+    body::before {
+      animation: none; /* disable meshFloat */
+      background: none;
+    }
   }
 
   /* ── Forced-colors / Windows high contrast ── */
