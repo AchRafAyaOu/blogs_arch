@@ -1,7 +1,10 @@
+ 
 /* ══════════════════════════════════════
    nav.css — Navbar + Drawer + Search
    BlogArch v12 — RTL-first, a11y-clean
    Updated: 2026-04-28
+
+ 
 ══════════════════════════════════════ */
 
 /* -- CSS custom property for navbar height (used by search-panel top) -- */
@@ -379,7 +382,7 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
   display: flex;
   flex-direction: column;
   box-shadow: var(--shadow-xl);
-  transition: inset-inline-end 0.35s cubic-bezier(.77, 0, .175, 1);
+  transition: inset-inline-end 0.42s cubic-bezier(.34, 1.56, .64, 1);
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -404,6 +407,7 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 .mobile-drawer .nav-link  {
   width: 100%;
   padding: 12px 14px;
+  min-height: 48px;
   border-radius: var(--radius-sm);
   font-size: 1rem;
   font-weight: 700;
