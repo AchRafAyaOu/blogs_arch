@@ -1120,6 +1120,36 @@ body[data-theme="midnight"] .entry { background: var(--card); }
   text-decoration: none;
 }
 .page-btn:hover { background: var(--muted-bg); color: var(--text); border-color: var(--accent); }
+.page-btn i,
+.read-link i,
+.fin-hero-cta i {
+  transition: transform .2s ease, color .2s ease, opacity .2s ease;
+}
+.read-link,
+.page-btn,
+.fin-hero-cta {
+  text-decoration: none;
+}
+.read-link {
+  color: var(--accent);
+}
+.page-btn {
+  color: var(--text-light);
+}
+.fin-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 1.35rem;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--accent), var(--primary-color));
+  color: var(--accent-fg);
+  box-shadow: var(--shadow-md);
+}
+.fin-hero-cta:hover {
+  transform: translateY(-2px);
+  color: #fff;
+}
 
 /* ── Single post view ── */
 .post-container { padding-block: 1.75rem 3.5rem; }
@@ -1181,6 +1211,11 @@ body[data-theme="midnight"] .entry { background: var(--card); }
   border-inline-start: 3px solid var(--accent);
 }
 body[data-dark] .post-body, body[data-dark] .post-content {
+  font-size: clamp(1.08rem, 1.6vw, 1.22rem);
+  line-height: 2.2;
+  letter-spacing: 0.012em;
+}
+body.dark-mode .post-body, body.dark-mode .post-content {
   font-size: clamp(1.08rem, 1.6vw, 1.22rem);
   line-height: 2.2;
   letter-spacing: 0.012em;
@@ -1383,6 +1418,27 @@ body[data-dark] .contact-feedback.error {
   color: oklch(75% 0.18 25);
   border-color: color-mix(in oklch, oklch(75% 0.18 25) 25%, transparent);
   background: color-mix(in oklch, oklch(75% 0.18 25) 10%, transparent);
+}
+body.dark-mode .contact-feedback.error {
+  color: oklch(75% 0.18 25);
+  border-color: color-mix(in oklch, oklch(75% 0.18 25) 25%, transparent);
+  background: color-mix(in oklch, oklch(75% 0.18 25) 10%, transparent);
+}
+body[data-dark] .post-body, body[data-dark] .post-content,
+body.dark-mode .post-body, body.dark-mode .post-content,
+body[data-theme="midnight"] .post-body, body[data-theme="midnight"] .post-content {
+  color: var(--text);
+}
+body[data-dark] .read-link,
+body.dark-mode .read-link,
+body[data-theme="midnight"] .read-link {
+  color: var(--accent);
+}
+body[data-dark] .fin-hero-cta,
+body.dark-mode .fin-hero-cta,
+body[data-theme="midnight"] .fin-hero-cta {
+  background: linear-gradient(135deg, var(--accent), var(--primary-color));
+  color: var(--accent-fg);
 }
 
 .contact-submit-row {
@@ -2439,6 +2495,48 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
 .fin-footer-links a { font-size: 0.85rem; color: var(--text-soft); text-decoration: none; transition: color .15s; }
 .fin-footer-links a:hover { color: var(--accent); }
 .fin-footer-copy { font-size: 0.82rem; color: var(--muted); }
+body[data-dark] .fin-footer,
+body.dark-mode .fin-footer,
+body[data-theme="midnight"] .fin-footer {
+  background: color-mix(in oklch, var(--bg) 80%, black 20%);
+}
+body[data-dark] .fin-footer-links a,
+body.dark-mode .fin-footer-links a,
+body[data-theme="midnight"] .fin-footer-links a {
+  color: var(--text-light);
+}
+body[data-dark] .fin-footer-copy,
+body.dark-mode .fin-footer-copy,
+body[data-theme="midnight"] .fin-footer-copy {
+  color: var(--text-soft);
+}
+body[data-dark] .contact-copy,
+body.dark-mode .contact-copy,
+body[data-theme="midnight"] .contact-copy,
+body[data-dark] .contact-form-card,
+body.dark-mode .contact-form-card,
+body[data-theme="midnight"] .contact-form-card {
+  background: color-mix(in oklch, var(--card) 86%, transparent);
+}
+body[data-dark] .contact-shell,
+body.dark-mode .contact-shell,
+body[data-theme="midnight"] .contact-shell {
+  background: color-mix(in oklch, var(--card) 84%, transparent);
+}
+body[data-dark] .read-link,
+body.dark-mode .read-link,
+body[data-theme="midnight"] .read-link,
+body[data-dark] .page-btn,
+body.dark-mode .page-btn,
+body[data-theme="midnight"] .page-btn {
+  background: color-mix(in oklch, var(--card) 88%, transparent);
+  border-color: var(--border);
+}
+body[data-dark] .page-btn:hover,
+body.dark-mode .page-btn:hover,
+body[data-theme="midnight"] .page-btn:hover {
+  background: color-mix(in oklch, var(--muted-bg) 80%, transparent);
+}
 
 /* ── Theme FAB ── */
 .fin-theme-fab {
