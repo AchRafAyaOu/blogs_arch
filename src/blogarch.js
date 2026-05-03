@@ -1,7 +1,14 @@
 /* ═══════════════════════════════════════════════════════════════
-  
+   BlogArch — Core Engine  v12.1.0  (blogarch.js)
    المستودع: https://github.com/AchRafAyaOu/blogs_arch
- ═══════════════════════════════════════════════════════════════ */
+   المسار في GitHub: /src/blogarch.js
+   ────────────────────────────────────────────────────────────
+   ─────────────────────────────────────────────────────────────
+   التبعيات المُحمَّلة بعده (ASSETS.js في XML):
+     Blogarch.lessons.js  — عارض الدروس
+     Blogarch.contact.js  — نموذج التواصل (Telegram)
+     Blogarch.data.js     — ملف البيانات المركزي (site.data.json)
+   ═══════════════════════════════════════════════════════════════ */
 
 (function () {
   'use strict';
@@ -11,24 +18,25 @@
   ───────────────────────────────────────────────────────────── */
   const CDN_BASE   = 'https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main';
   const STORAGE    = { theme: 'ba-theme', dark: 'ba-dark', pos: 'ba-pos-' };
-  const NAV_OFFSET = 80; /* ارتفاع Navbar الثابت (px) — عدّله إذا تغيّر */
+  const NAV_OFFSET = 80; /* ارتفاع Navbar الثابت (px) */
 
-  const body    = document.body;
+  const body                 = document.body;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+
   /* ═══════════════════════════════════════════════════════════
-     1. THEME ENGINE — 5 هويات × وضع داكن
+     §1 — THEME ENGINE
+     ─ 5 هويات × وضع داكن
      ─ يكتشف تلقائياً تفضيل النظام عند أول زيارة
   ═══════════════════════════════════════════════════════════ */
   const THEMES = {
-    default:  { name: 'افتراضي',       desc: 'أخضر وأزرق هادئ',  bg: '#f8fafc', bgDark: '#0f172a' },
-    ocean:    { name: 'المحيط',        desc: 'أزرق سماوي عميق',   bg: '#f0f9ff', bgDark: '#071a2e' },
-    sunset:   { name: 'الغروب',        desc: 'عنبري دافئ',         bg: '#fffbf5', bgDark: '#1a0e02' },
-    forest:   { name: 'الغابة',        desc: 'أخضر طبيعي',        bg: '#f2f8f5', bgDark: '#061a10' },
-    midnight: { name: 'منتصف الليل',   desc: 'أرجواني داكن',       bg: '#09090b', bgDark: '#09090b' },
+    default:  { name: 'افتراضي',     desc: 'أخضر وأزرق هادئ',  bg: '#f8fafc', bgDark: '#0f172a' },
+    ocean:    { name: 'المحيط',      desc: 'أزرق سماوي عميق',  bg: '#f0f9ff', bgDark: '#071a2e' },
+    sunset:   { name: 'الغروب',      desc: 'عنبري دافئ',        bg: '#fffbf5', bgDark: '#1a0e02' },
+    forest:   { name: 'الغابة',      desc: 'أخضر طبيعي',       bg: '#f2f8f5', bgDark: '#061a10' },
+    midnight: { name: 'منتصف الليل', desc: 'أرجواني داكن',      bg: '#09090b', bgDark: '#09090b' },
   };
 
-  /* أول زيارة: اكتشاف تفضيل النظام (فاتح/داكن) تلقائياً */
   const isFirstVisit = !localStorage.getItem(STORAGE.theme);
   const systemDark   = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -55,7 +63,7 @@
     savedTheme = theme;
     savedDark  = dark;
     localStorage.setItem(STORAGE.theme, theme);
-    localStorage.setItem(STORAGE.dark, dark ? '1' : '0');
+    localStorage.setItem(STORAGE.dark,  dark ? '1' : '0');
     applyTheme(theme, dark);
   }
 
@@ -74,11 +82,10 @@
   /* تطبيق فوري قبل DOMContentLoaded لتفادي الوميض */
   applyTheme(savedTheme, savedDark);
 
-  /* زر التبديل الداكن/الفاتح */
   document.getElementById('theme-toggle')?.addEventListener('click', () =>
     setTheme(savedTheme, !savedDark));
 
-  /* ── بناء مبدّل الثيم — سطح المكتب ── */
+  /* ── مبدّل الثيم — سطح المكتب ── */
   function _buildDesktopSwitcher() {
     const c = document.getElementById('theme-switcher-desktop');
     if (!c) return;
@@ -121,28 +128,23 @@
     const toggleBtn = c.querySelector('#ts-toggle-btn');
     const popover   = c.querySelector('.theme-switcher-popover');
 
-    const _toggleOpen = (e) => {
+    toggleBtn.addEventListener('click', e => {
       e.stopPropagation();
       const open = c.classList.toggle('open');
       toggleBtn.setAttribute('aria-expanded', open);
       if (open) popover.querySelector('.theme-option')?.focus();
-    };
-    toggleBtn.addEventListener('click', _toggleOpen);
-
+    });
     c.querySelectorAll('.theme-option').forEach(o =>
       o.addEventListener('click', () => setTheme(o.dataset.pick)));
-
     c.querySelector('.ts-dark-input').addEventListener('change', function () {
       setTheme(savedTheme, this.checked);
     });
-
     document.addEventListener('click', e => { if (!c.contains(e.target)) c.classList.remove('open'); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') c.classList.remove('open'); });
-
     _syncSwitcherUI(savedTheme, savedDark);
   }
 
-  /* ── بناء مبدّل الثيم — الدرج (موبايل) ── */
+  /* ── مبدّل الثيم — الدرج (موبايل) ── */
   function _buildMobileSwitcher() {
     const c = document.getElementById('drawer-theme-section');
     if (!c) return;
@@ -170,18 +172,17 @@
 
     c.querySelectorAll('.drawer-theme-btn').forEach(b =>
       b.addEventListener('click', () => setTheme(b.dataset.pick)));
-
     c.querySelector('.drawer-dark-input').addEventListener('change', function () {
       setTheme(savedTheme, this.checked);
     });
-
     _syncSwitcherUI(savedTheme, savedDark);
   }
 
 
   /* ═══════════════════════════════════════════════════════════
-     2. SCROLL ENGINE — شريط القراءة + زر الأعلى + Navbar
-     ─ مُقيَّد بـ requestAnimationFrame لأداء أفضل
+     §2 — SCROLL ENGINE
+     ─ requestAnimationFrame throttling
+     ─ شريط القراءة + Navbar compact + زر الأعلى
   ═══════════════════════════════════════════════════════════ */
   const progressBar = document.getElementById('reading-progress');
   const bttBtn      = document.getElementById('back-to-top');
@@ -205,8 +206,7 @@
     if (progressBar) progressBar.style.width = (h > 0 ? Math.round((st / h) * 100) : 0) + '%';
 
     if (navbar) {
-      const overflow      = getComputedStyle(body).overflow;
-      const canScroll     = h > 10 && overflow !== 'hidden';
+      const canScroll = h > 10 && getComputedStyle(body).overflow !== 'hidden';
       navbar.classList.toggle('scrolled', canScroll && st > 50);
     }
 
@@ -223,21 +223,20 @@
 
 
   /* ═══════════════════════════════════════════════════════════
-     3. وقت القراءة — دقيق للغة العربية
-     ─ يحسب بمعدل 200 كلمة/دقيقة
+     §3 — وقت القراءة  (200 كلمة/دقيقة)
   ═══════════════════════════════════════════════════════════ */
   const postBody   = document.getElementById('post-body');
   const readTimeEl = document.querySelector('.read-time-val');
 
   if (postBody && readTimeEl) {
-    const text  = (postBody.innerText || postBody.textContent || '').trim();
-    const words = text.split(/\s+/).filter(Boolean).length;
+    const words = (postBody.innerText || postBody.textContent || '')
+      .trim().split(/\s+/).filter(Boolean).length;
     readTimeEl.textContent = Math.max(1, Math.round(words / 200));
   }
 
 
   /* ═══════════════════════════════════════════════════════════
-     4. حفظ موضع القراءة (sessionStorage — لكل مقال)
+     §4 — حفظ موضع القراءة  (sessionStorage — لكل مقال)
   ═══════════════════════════════════════════════════════════ */
   const _posKey = postBody ? STORAGE.pos + window.location.pathname : null;
 
@@ -250,50 +249,48 @@
     if (!_posKey || !postBody) return;
     try {
       const saved = parseInt(sessionStorage.getItem(_posKey), 10);
-      if (saved > 200 && !window.location.hash) {
-        /* تأخير بسيط لانتظار عرض الصفحة */
+      if (saved > 200 && !window.location.hash)
         setTimeout(() => window.scrollTo({ top: saved, behavior: 'auto' }), 120);
-      }
     } catch (_) {}
   }
 
 
   /* ═══════════════════════════════════════════════════════════
-     5. التواريخ النسبية بالعربية
+     §5 — التواريخ النسبية بالعربية
   ═══════════════════════════════════════════════════════════ */
   function _toRelativeAr(dateStr) {
     const d = new Date(dateStr);
     if (isNaN(d)) return null;
-    const diff = (Date.now() - d.getTime()) / 1000;
-    if (diff < 60)       return 'منذ لحظات';
-    if (diff < 3600)     return `منذ ${Math.floor(diff / 60)} دقيقة`;
-    if (diff < 86400)    return `منذ ${Math.floor(diff / 3600)} ساعة`;
-    if (diff < 2592000)  return `منذ ${Math.floor(diff / 86400)} يوم`;
-    if (diff < 31536000) return `منذ ${Math.floor(diff / 2592000)} شهر`;
-    return `منذ ${Math.floor(diff / 31536000)} سنة`;
+    const s = (Date.now() - d.getTime()) / 1000;
+    if (s < 60)       return 'منذ لحظات';
+    if (s < 3600)     return `منذ ${Math.floor(s / 60)} دقيقة`;
+    if (s < 86400)    return `منذ ${Math.floor(s / 3600)} ساعة`;
+    if (s < 2592000)  return `منذ ${Math.floor(s / 86400)} يوم`;
+    if (s < 31536000) return `منذ ${Math.floor(s / 2592000)} شهر`;
+    return `منذ ${Math.floor(s / 31536000)} سنة`;
   }
 
   function _initRelativeDates() {
-    const relContainer = document.querySelector('.post-relative-date');
-    const relVal       = document.querySelector('.relative-date-val');
-    if (!relContainer || !relVal) return;
+    const container = document.querySelector('.post-relative-date');
+    const val       = document.querySelector('.relative-date-val');
+    if (!container || !val) return;
 
-    const metaDate =
-      document.querySelector('meta[property="article:published_time"]') ||
-      document.querySelector('time[datetime]');
-    const dateStr =
-      metaDate?.getAttribute('content') || metaDate?.getAttribute('datetime') ||
-      document.querySelector('.post-meta span:first-child')?.textContent?.replace(/[^\d\-\/\s]/g, '').trim();
+    const metaDate = document.querySelector('meta[property="article:published_time"]') ||
+                     document.querySelector('time[datetime]');
+    const dateStr  = metaDate?.getAttribute('content') || metaDate?.getAttribute('datetime') ||
+      document.querySelector('.post-meta span:first-child')
+        ?.textContent?.replace(/[^\d\-\/\s]/g, '').trim();
 
     if (dateStr) {
       const rel = _toRelativeAr(dateStr);
-      if (rel) { relVal.textContent = rel; relContainer.style.display = 'flex'; }
+      if (rel) { val.textContent = rel; container.style.display = 'flex'; }
     }
   }
 
 
   /* ═══════════════════════════════════════════════════════════
-     6. جدول المحتويات (TOC) — مُدرَك للـ Navbar الثابت
+     §6 — جدول المحتويات (TOC)
+     ─ يُدرك ارتفاع Navbar عند الضغط + تحديد العنوان النشط
   ═══════════════════════════════════════════════════════════ */
   let _tocHeadings = [];
 
@@ -304,13 +301,11 @@
 
     const headings = [...postBody.querySelectorAll('h2, h3')];
     if (headings.length < 3) return;
-
     _tocHeadings = headings;
 
-    nav.innerHTML = headings.map((h, idx) => {
-      if (!h.id) h.id = `heading-${idx}`;
-      return `<a href="#${h.id}"
-                 class="${h.tagName === 'H3' ? 'toc-h3' : 'toc-h2'}"
+    nav.innerHTML = headings.map((h, i) => {
+      if (!h.id) h.id = `heading-${i}`;
+      return `<a href="#${h.id}" class="${h.tagName === 'H3' ? 'toc-h3' : 'toc-h2'}"
                  data-hid="${h.id}">${h.textContent.trim()}</a>`;
     }).join('');
 
@@ -344,7 +339,7 @@
 
 
   /* ═══════════════════════════════════════════════════════════
-     7. مشاركة النص المحدد
+     §7 — مشاركة النص المحدد
   ═══════════════════════════════════════════════════════════ */
   function _initTextShare() {
     const tooltip  = document.getElementById('text-share-tooltip');
@@ -358,7 +353,6 @@
       setTimeout(() => {
         const sel = window.getSelection();
         _selected = sel?.toString().trim() || '';
-
         if (_selected.length > 10 && postBody.contains(sel.anchorNode)) {
           const rect = sel.getRangeAt(0).getBoundingClientRect();
           const top  = rect.top + window.scrollY - tooltip.offsetHeight - 10;
@@ -382,7 +376,9 @@
       try {
         await navigator.clipboard.writeText(_selected);
         copyBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> تم النسخ';
-        setTimeout(() => { copyBtn.innerHTML = '<i class="fas fa-copy" aria-hidden="true"></i> نسخ'; }, 2000);
+        setTimeout(() => {
+          copyBtn.innerHTML = '<i class="fas fa-copy" aria-hidden="true"></i> نسخ';
+        }, 2000);
       } catch (_) {}
       tooltip.classList.remove('show');
     });
@@ -403,81 +399,16 @@
 
 
   /* ═══════════════════════════════════════════════════════════
-     8. نموذج التواصل — Web3Forms
-     ─ تحقق مباشر + عداد أحرف الرسالة
+     §8 — نموذج التواصل
+     ─ مُفوَّض كلياً إلى Blogarch.contact.js (Telegram)
+     ─ لا يوجد كود هنا لتجنب التعارض
   ═══════════════════════════════════════════════════════════ */
-  function _initContactForm() {
-    const form    = document.getElementById('contact-form');
-    const status  = document.getElementById('contact-status');
-    const btn     = document.getElementById('contact-btn');
-    if (!form) return;
-
-    /* عداد الأحرف (اختياري) */
-    const msgField   = form.querySelector('textarea[name="message"]');
-    const charCount  = form.querySelector('.char-count');
-    const MAX_CHARS  = 2000;
-
-    if (msgField && charCount) {
-      const _updateCount = () => {
-        const n = msgField.value.length;
-        charCount.textContent = `${n} / ${MAX_CHARS}`;
-        charCount.classList.toggle('near-limit', n > MAX_CHARS * 0.85);
-        charCount.classList.toggle('over-limit', n > MAX_CHARS);
-      };
-      msgField.addEventListener('input', _updateCount);
-      _updateCount();
-    }
-
-    /* إظهار رسالة الحالة */
-    function _showStatus(msg, ok) {
-      if (!status) return;
-      status.textContent = msg;
-      status.className   = `contact-note contact-status-${ok ? 'success' : 'error'}`;
-      status.removeAttribute('hidden');
-    }
-
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-
-      const key = form.querySelector('[name="access_key"]');
-      if (key?.value === 'YOUR_WEB3FORMS_KEY') {
-        _showStatus('أضف مفتاح Web3Forms الصحيح في ملف القالب.', false);
-        return;
-      }
-
-      /* تحقق بسيط */
-      const email = form.querySelector('[name="email"]')?.value?.trim();
-      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        _showStatus('البريد الإلكتروني غير صحيح.', false);
-        return;
-      }
-
-      btn.disabled     = true;
-      btn.innerHTML    = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> جاري الإرسال...';
-
-      try {
-        const res  = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: new FormData(form) });
-        const data = await res.json();
-
-        if (data.success) {
-          _showStatus('✓ تم إرسال رسالتك بنجاح!', true);
-          form.reset();
-          if (msgField && charCount) { charCount.textContent = `0 / ${MAX_CHARS}`; }
-        } else {
-          _showStatus('حدث خطأ، يرجى المحاولة مجدداً.', false);
-        }
-      } catch (_) {
-        _showStatus('تعذّر الاتصال، تحقق من الإنترنت.', false);
-      } finally {
-        btn.disabled  = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane" aria-hidden="true"></i> إرسال الرسالة';
-      }
-    });
-  }
 
 
   /* ═══════════════════════════════════════════════════════════
-     9. التحميل الكسول (Lazy Load) — محسَّن
+     §9 — Lazy Loading
+     ─ IntersectionObserver + blur-up
+     ─ retry تلقائي لصور Blogger عند الفشل
   ═══════════════════════════════════════════════════════════ */
   let _lazyObserver = null;
 
@@ -486,8 +417,8 @@
     if (!src) return;
 
     const shell = img.closest('.card-image-wrapper, .img-shell');
+    const temp  = new Image();
 
-    const temp = new Image();
     temp.onload = () => {
       if (img.dataset.src) img.src = img.dataset.src;
       img.classList.add('loaded');
@@ -496,8 +427,8 @@
 
     let _retried = false;
     temp.onerror = () => {
-      /* محاولة إعادة التحميل مرة واحدة لصور Blogger بكسر الـ cache */
-      if (!_retried && src && (src.includes('blogspot.com') || src.includes('googleusercontent.com'))) {
+      if (!_retried && src &&
+          (src.includes('blogspot.com') || src.includes('googleusercontent.com'))) {
         _retried = true;
         const retry = new Image();
         retry.onload = () => {
@@ -505,20 +436,20 @@
           img.classList.add('loaded');
           if (shell) shell.classList.add('loaded');
         };
-        retry.onerror = () => {
-          img.alt = img.alt || 'تعذّر تحميل الصورة';
-          if (img.dataset.placeholder) img.src = img.dataset.placeholder;
-          img.classList.add('loaded', 'img-error');
-          if (shell) shell.classList.add('has-error', 'img-error');
-        };
+        retry.onerror = _markError;
         retry.src = src + (src.includes('?') ? '&' : '?') + '_t=' + Date.now();
         return;
       }
+      _markError();
+    };
+
+    function _markError() {
       img.alt = img.alt || 'تعذّر تحميل الصورة';
       if (img.dataset.placeholder) img.src = img.dataset.placeholder;
       img.classList.add('loaded', 'img-error');
       if (shell) shell.classList.add('has-error', 'img-error');
-    };
+    }
+
     temp.src = src;
   }
 
@@ -532,19 +463,14 @@
     if ('IntersectionObserver' in window) {
       _lazyObserver = new IntersectionObserver(entries => {
         entries.forEach(e => {
-          if (e.isIntersecting) {
-            _loadImage(e.target);
-            _lazyObserver.unobserve(e.target);
-          }
+          if (e.isIntersecting) { _loadImage(e.target); _lazyObserver.unobserve(e.target); }
         });
       }, { rootMargin: '240px', threshold: 0 });
-
       imgs.forEach(img => _lazyObserver.observe(img));
     } else {
       imgs.forEach(_loadImage);
     }
 
-    /* إضافة lazy أصلي للصور داخل المقال */
     postBody?.querySelectorAll('img:not(.lazy)').forEach(img => {
       img.setAttribute('loading', 'lazy');
       const mark = () => img.classList.add('loaded');
@@ -554,10 +480,12 @@
 
 
   /* ═══════════════════════════════════════════════════════════
-     10. أنيميشن ظهور الأقسام
+     §10 — أنيميشن ظهور الأقسام
+     ─ 2 Observers: sections (threshold 0.1) + cards (stagger)
   ═══════════════════════════════════════════════════════════ */
   function _initSectionAnimations() {
-    const selector = '.fade-in-section,.fade-up-section,.fade-in-card,.slide-in-right,.slide-in-left';
+    const selector =
+      '.fade-in-section,.fade-up-section,.fade-in-card,.slide-in-right,.slide-in-left';
 
     if (prefersReducedMotion || !('IntersectionObserver' in window)) {
       document.querySelectorAll(selector).forEach(el => el.classList.add('is-visible'));
@@ -567,15 +495,20 @@
     const _reveal = el => el.classList.add('is-visible');
 
     const sectionObs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { _reveal(e.target); sectionObs.unobserve(e.target); } });
+      entries.forEach(e => {
+        if (e.isIntersecting) { _reveal(e.target); sectionObs.unobserve(e.target); }
+      });
     }, { rootMargin: '0px 0px -60px 0px', threshold: 0.1 });
 
     const cardObs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { _reveal(e.target); cardObs.unobserve(e.target); } });
+      entries.forEach(e => {
+        if (e.isIntersecting) { _reveal(e.target); cardObs.unobserve(e.target); }
+      });
     }, { rootMargin: '0px 0px -40px 0px', threshold: 0.05 });
 
-    document.querySelectorAll('.fade-in-section,.fade-up-section,.slide-in-right,.slide-in-left')
-      .forEach(el => sectionObs.observe(el));
+    document.querySelectorAll(
+      '.fade-in-section,.fade-up-section,.slide-in-right,.slide-in-left'
+    ).forEach(el => sectionObs.observe(el));
 
     document.querySelectorAll('.fade-in-card').forEach((el, i) => {
       el.style.transitionDelay = Math.min(i * 80, 500) + 'ms';
@@ -585,7 +518,7 @@
 
 
   /* ═══════════════════════════════════════════════════════════
-     11. الدرج (Drawer) للموبايل
+     §11 — Mobile Drawer  (Focus Trap + إعادة التركيز)
   ═══════════════════════════════════════════════════════════ */
   const drawer    = document.getElementById('mobile-drawer');
   const overlay   = document.getElementById('menu-overlay');
@@ -600,7 +533,6 @@
     hamburger?.classList.add('active');
     hamburger?.setAttribute('aria-expanded', 'true');
     if (getComputedStyle(body).overflow !== 'hidden') body.style.overflow = 'hidden';
-    /* التركيز على الرابط الأول */
     drawer?.querySelector('a, button')?.focus();
   }
 
@@ -623,25 +555,23 @@
   const mobileDropdown = document.getElementById('mobile-dropdown');
   if (mobileDropdown) {
     mobileDropdown.querySelector('.dropdown-toggle')?.addEventListener('click', e => {
-      e.preventDefault();
-      mobileDropdown.classList.toggle('active');
+      e.preventDefault(); mobileDropdown.classList.toggle('active');
     });
     mobileDropdown.querySelectorAll('.dropdown-item').forEach(i =>
       i.addEventListener('click', _closeDrawer));
   }
 
-  /* روابط "عني" في الدرج */
   document.querySelectorAll('#about-open-mobile, #drawer-about-open, #nav-about-open').forEach(el =>
     el?.addEventListener('click', e => { e.preventDefault(); _closeDrawer(); _openAbout(); }));
 
-  /* روابط "راسلني" في الدرج */
   document.querySelectorAll('#drawer-contact-open, #nav-contact-open').forEach(el =>
     el?.addEventListener('click', e => { e.preventDefault(); _closeDrawer(); }));
 
 
   /* ═══════════════════════════════════════════════════════════
-     12. لوحة البحث — بدون تشكيل (diacritic-insensitive)
-     ─ مُؤجَّل 220ms لتفادي الاستعلام عند كل حرف
+     §12 — لوحة البحث
+     ─ بدون تشكيل (diacritic-insensitive)
+     ─ debounce 220ms + "/" من لوحة المفاتيح
   ═══════════════════════════════════════════════════════════ */
   const searchPanel    = document.getElementById('search-panel');
   const searchInput    = document.getElementById('search-input');
@@ -649,19 +579,14 @@
   const searchBtn      = document.getElementById('search-btn');
   const searchCloseBtn = document.getElementById('search-close');
 
-  /* إزالة التشكيل (الحركات) للمقارنة */
-  const _normalize = str =>
-    (str || '').replace(/[\u064B-\u065F\u0670]/g, '').toLowerCase();
+  const _normalize = str => (str || '').replace(/[\u064B-\u065F\u0670]/g, '').toLowerCase();
 
   function _setSearch(open) {
     if (!searchPanel) return;
     searchPanel.classList.toggle('active', open);
     searchPanel.setAttribute('aria-hidden', !open);
-    if (open) {
-      searchInput?.focus();
-    } else {
-      searchBtn?.focus();
-    }
+    if (open) searchInput?.focus();
+    else      searchBtn?.focus();
   }
 
   searchBtn?.addEventListener('click', () =>
@@ -683,23 +608,20 @@
   function _doSearch(q) {
     const norm = _normalize(q);
     if (norm.length < 2) { _renderResults([]); return; }
-
     const items = [];
     document.querySelectorAll('.post-card, .entry').forEach(card => {
       const a  = card.querySelector('h2 a, h3 a');
       const sn = card.querySelector('.card-snippet, .snippet');
       if (!a || !sn) return;
-      const combined = _normalize(a.textContent + ' ' + sn.textContent);
-      if (combined.includes(norm)) {
+      if (_normalize(a.textContent + ' ' + sn.textContent).includes(norm)) {
         const snippet = sn.textContent.trim();
         items.push({
           title:   a.textContent.trim(),
           snippet: snippet.length > 110 ? snippet.slice(0, 110) + '...' : snippet,
-          url:     a.href
+          url:     a.href,
         });
       }
     });
-
     _renderResults(items.slice(0, 10));
   }
 
@@ -721,7 +643,7 @@
 
 
   /* ═══════════════════════════════════════════════════════════
-     13. مودال "عني" — مع حصر التركيز (Focus Trap)
+     §13 — مودال "عني"  (Focus Trap)
   ═══════════════════════════════════════════════════════════ */
   const aboutModal = document.getElementById('about-modal');
   let _lastFocusBeforeAbout = null;
@@ -732,7 +654,6 @@
     aboutModal.classList.add('open');
     aboutModal.removeAttribute('hidden');
     body.style.overflow = 'hidden';
-    /* التركيز على زر الإغلاق */
     aboutModal.querySelector('#about-close, [aria-label="إغلاق"]')?.focus();
   }
 
@@ -750,22 +671,22 @@
   document.getElementById('about-close')?.addEventListener('click', _closeAbout);
   aboutModal?.addEventListener('click', e => { if (e.target === aboutModal) _closeAbout(); });
 
-  /* حصر التركيز داخل المودال */
   aboutModal?.addEventListener('keydown', e => {
     if (e.key !== 'Tab' || !aboutModal.classList.contains('open')) return;
     const focusable = [...aboutModal.querySelectorAll(
       'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
     )].filter(el => !el.closest('[hidden]'));
     if (!focusable.length) return;
-    const first = focusable[0];
-    const last  = focusable[focusable.length - 1];
-    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    const [first, last] = [focusable[0], focusable[focusable.length - 1]];
+    if (e.shiftKey && document.activeElement === first)       { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last)  { e.preventDefault(); first.focus(); }
   });
 
 
   /* ═══════════════════════════════════════════════════════════
-     14. كاروسيل الاقتباسات — quotes.json
+     §14 — كاروسيل الاقتباسات
+     ─ يجلب CDN/data/quotes.json
+     ─ swipe + نقاط التنقل + auto-rotate 6s
   ═══════════════════════════════════════════════════════════ */
   function _initQuotes() {
     const textEl   = document.getElementById('fin-quote-text');
@@ -780,27 +701,25 @@
     function _show(i) {
       if (!quotes.length) return;
       qIdx = ((i % quotes.length) + quotes.length) % quotes.length;
-
       textEl.style.opacity   = '0';
       if (sourceEl) sourceEl.style.opacity = '0';
-
       setTimeout(() => {
         const q = quotes[qIdx];
-        textEl.textContent              = q.text || q.quote || q.content || '';
+        textEl.textContent = q.text || q.quote || q.content || '';
         if (sourceEl) sourceEl.textContent = q.source || q.author || '';
-        textEl.style.opacity            = '1';
+        textEl.style.opacity = '1';
         if (sourceEl) sourceEl.style.opacity = '1';
         dotsEl?.querySelectorAll('.fin-quote-dot').forEach((d, di) =>
           d.classList.toggle('active', di === qIdx));
       }, prefersReducedMotion ? 0 : 350);
     }
 
-    function _buildDots(count) {
+    function _buildDots(n) {
       if (!dotsEl) return;
       dotsEl.innerHTML = '';
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < n; i++) {
         const d = document.createElement('button');
-        d.className   = `fin-quote-dot${i === 0 ? ' active' : ''}`;
+        d.className = `fin-quote-dot${i === 0 ? ' active' : ''}`;
         d.setAttribute('aria-label', `الاقتباس ${i + 1}`);
         d.addEventListener('click', () => { _show(i); _resetTimer(); });
         dotsEl.appendChild(d);
@@ -815,10 +734,9 @@
     prevBtn?.addEventListener('click', () => { _show(qIdx - 1); _resetTimer(); });
     nextBtn?.addEventListener('click', () => { _show(qIdx + 1); _resetTimer(); });
 
-    /* Swipe */
     let _tx = 0;
     textEl.addEventListener('touchstart', e => { _tx = e.changedTouches[0].screenX; }, { passive: true });
-    textEl.addEventListener('touchend', e => {
+    textEl.addEventListener('touchend',   e => {
       const diff = _tx - e.changedTouches[0].screenX;
       if (Math.abs(diff) > 50) { diff > 0 ? _show(qIdx + 1) : _show(qIdx - 1); _resetTimer(); }
     }, { passive: true });
@@ -837,7 +755,8 @@
 
 
   /* ═══════════════════════════════════════════════════════════
-     15. شبكة البودكاست — podcast.json
+     §15 — شبكة البودكاست
+     ─ يجلب CDN/data/podcast.json (أحدث 4 حلقات)
   ═══════════════════════════════════════════════════════════ */
   function _initPodcast() {
     const grid = document.getElementById('fin-podcast-grid');
@@ -850,32 +769,37 @@
       .then(data => {
         const eps = Array.isArray(data) ? data : (data.episodes || data.items || []);
         grid.removeAttribute('aria-busy');
-
         if (!eps.length) {
-          grid.innerHTML = '<p class="arabic-text" style="text-align:center;padding:2rem;color:var(--muted)">لا توجد حلقات بعد.</p>';
+          grid.innerHTML =
+            '<p class="arabic-text" style="text-align:center;padding:2rem;color:var(--muted)">لا توجد حلقات بعد.</p>';
           return;
         }
-
         grid.innerHTML = eps.slice(0, 4).map((ep, i) => {
-          const epNum = ep.episode || ep.number || ep.ep || (i + 1);
+          const num   = ep.episode || ep.number || ep.ep || (i + 1);
           const cat   = ep.category || ep.label || 'بودكاست';
           const title = ep.title || ep.name || '';
           const desc  = (ep.description || ep.desc || '').trim().slice(0, 160);
           const dur   = ep.duration || ep.length || '';
           const url   = ep.url || ep.link || ep.audio || '#';
-
           return `<div class="fin-podcast-ep fade-in-card" tabindex="0">
             <div class="fin-podcast-ep-art" aria-hidden="true">
               <i class="fas fa-podcast" style="font-size:1.6rem;opacity:.9"></i>
-              <span class="fin-podcast-ep-num arabic-text">الحلقة ${epNum}</span>
+              <span class="fin-podcast-ep-num arabic-text">الحلقة ${num}</span>
             </div>
             <div class="fin-podcast-ep-body">
-              <div class="fin-podcast-ep-cat arabic-text"><i class="fas fa-tag" aria-hidden="true"></i> ${cat}</div>
+              <div class="fin-podcast-ep-cat arabic-text">
+                <i class="fas fa-tag" aria-hidden="true"></i> ${cat}
+              </div>
               <h3 class="fin-podcast-ep-title arabic-text">${title}</h3>
               <p class="fin-podcast-ep-desc arabic-text">${desc}${desc.length === 160 ? '...' : ''}</p>
               <div class="fin-podcast-ep-footer">
-                ${dur ? `<span class="fin-podcast-ep-dur arabic-text"><i class="far fa-clock" aria-hidden="true"></i> ${dur}</span>` : '<span></span>'}
-                <a class="fin-podcast-ep-play arabic-text" href="${url}" target="_blank" rel="noopener noreferrer">
+                ${dur
+                  ? `<span class="fin-podcast-ep-dur arabic-text">
+                       <i class="far fa-clock" aria-hidden="true"></i> ${dur}
+                     </span>`
+                  : '<span></span>'}
+                <a class="fin-podcast-ep-play arabic-text" href="${url}"
+                   target="_blank" rel="noopener noreferrer">
                   استمع <i class="fas fa-arrow-left" aria-hidden="true"></i>
                 </a>
               </div>
@@ -885,13 +809,14 @@
       })
       .catch(() => {
         grid.removeAttribute('aria-busy');
-        grid.innerHTML = '<p class="arabic-text" style="text-align:center;padding:2rem;color:var(--muted)">تعذّر تحميل حلقات البودكاست.</p>';
+        grid.innerHTML =
+          '<p class="arabic-text" style="text-align:center;padding:2rem;color:var(--muted)">تعذّر تحميل حلقات البودكاست.</p>';
       });
   }
 
 
   /* ═══════════════════════════════════════════════════════════
-     16. Pills — تحديد النشط بالمسار
+     §16 — Pills active state  (بالمسار الحالي)
   ═══════════════════════════════════════════════════════════ */
   function _initPills() {
     const path = location.pathname;
@@ -909,7 +834,7 @@
 
 
   /* ═══════════════════════════════════════════════════════════
-     17. تحديد رابط التنقل النشط
+     §17 — تحديد رابط التنقل النشط
   ═══════════════════════════════════════════════════════════ */
   function _initNavHighlight() {
     const path = location.pathname;
@@ -925,20 +850,21 @@
 
 
   /* ═══════════════════════════════════════════════════════════
-     18. اختصارات لوحة المفاتيح
+     §18 — اختصارات لوحة المفاتيح
+     ─ Escape: إغلاق كل المودالات + البحث + الدرج
+     ─ /     : فتح البحث سريعاً
   ═══════════════════════════════════════════════════════════ */
   document.addEventListener('keydown', e => {
     switch (e.key) {
       case 'Escape':
-        if (searchPanel?.classList.contains('active'))  _setSearch(false);
-        if (aboutModal?.classList.contains('open'))     _closeAbout();
-        if (drawer?.classList.contains('active'))       _closeDrawer();
+        if (searchPanel?.classList.contains('active'))   _setSearch(false);
+        if (aboutModal?.classList.contains('open'))      _closeAbout();
+        if (drawer?.classList.contains('active'))        _closeDrawer();
         if (document.getElementById('fin-learn-modal')?.classList.contains('open'))
           window.BlogArch?.closeLesson?.();
         break;
-      /* / — فتح البحث بسرعة */
       case '/':
-        if (!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) {
+        if (!['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
           e.preventDefault();
           _setSearch(true);
         }
@@ -948,18 +874,17 @@
 
 
   /* ═══════════════════════════════════════════════════════════
-     19. البطاقات القابلة للنقر
+     §19 — Clickable Cards  (Enter + role="link")
   ═══════════════════════════════════════════════════════════ */
   function _initClickableCards() {
     document.querySelectorAll('.fin-clickable-card').forEach(card => {
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'link');
       card.addEventListener('click', e => {
         if (e.target.closest('a, button')) return;
         const url = card.dataset.url;
         if (url) location.href = url;
       });
-      /* إمكانية الوصول: Enter يُفعّل البطاقة */
-      card.setAttribute('tabindex', '0');
-      card.setAttribute('role', 'link');
       card.addEventListener('keydown', e => {
         if (e.key === 'Enter') card.click();
       });
@@ -968,17 +893,18 @@
 
 
   /* ═══════════════════════════════════════════════════════════
-     20. تحديث سنة حقوق النشر تلقائياً
+     §20 — سنة حقوق النشر تلقائية
   ═══════════════════════════════════════════════════════════ */
   const yearEl = document.getElementById('fin-year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
 
   /* ═══════════════════════════════════════════════════════════
-     15. Performance Hints — fetchpriority + lazy
+     §21 — Performance Hints
+     ─ fetchpriority=high للصور في الشاشة الأولى
+     ─ loading=lazy + decoding=async للباقي
   ═══════════════════════════════════════════════════════════ */
   function _initPerformanceHints() {
-    /* أول صورة مرئية في hero أو avatar تحصل على أولوية عالية */
     const heroImg = document.querySelector('.fin-hero-avatar, .fin-hero img');
     if (heroImg) {
       heroImg.setAttribute('fetchpriority', 'high');
@@ -986,12 +912,12 @@
       heroImg.removeAttribute('loading');
     }
 
-    /* كل الصور الأخرى غير المُعلَّمة: lazy + async */
     const vp = window.innerHeight;
-    document.querySelectorAll('img:not([loading]):not(.fin-hero-avatar):not([fetchpriority])').forEach(img => {
+    document.querySelectorAll(
+      'img:not([loading]):not(.fin-hero-avatar):not([fetchpriority])'
+    ).forEach(img => {
       const rect = img.getBoundingClientRect();
       if (rect.top < vp) {
-        /* في نطاق الشاشة الأولى */
         img.setAttribute('fetchpriority', 'high');
         img.setAttribute('decoding', 'async');
       } else {
@@ -1000,7 +926,6 @@
       }
     });
 
-    /* إضافة decoding=async لكل الصور داخل المقال */
     document.querySelectorAll('.post-body img, .post-content img').forEach(img => {
       if (!img.hasAttribute('decoding')) img.setAttribute('decoding', 'async');
     });
@@ -1020,14 +945,16 @@
     _initRelativeDates();
     _restoreReadPosition();
     _initTextShare();
-    _initContactForm();
     _initClickableCards();
     _initPills();
     _initNavHighlight();
     _initQuotes();
     _initPodcast();
-    /* Lesson viewer تُهيَّأ في blogarch.lessons.js */
+    /* §8  contact  ← Blogarch.contact.js */
+    /* §?  lessons  ← Blogarch.lessons.js */
+    /* §?  sitedata ← Blogarch.data.js    */
     _syncSwitcherUI(savedTheme, savedDark);
+    document.dispatchEvent(new CustomEvent('blogarch:ready'));
   }
 
   if (document.readyState === 'loading') {
@@ -1039,22 +966,22 @@
 
   /* ═══════════════════════════════════════════════════════════
      PUBLIC API — window.BlogArch
-     ── نمط التوسيع الآمن لحماية دوال lessons.js ──
+     ── نمط Object.assign لحماية دوال الوحدات الأخرى ──
   ═══════════════════════════════════════════════════════════ */
   window.BlogArch = Object.assign(window.BlogArch || {}, {
-    /* ميزات Core */
     setTheme,
     observeNewImage,
-    openAbout:  _openAbout,
-    closeAbout: _closeAbout,
-    openDrawer: _openDrawer,
+    openAbout:   _openAbout,
+    closeAbout:  _closeAbout,
+    openDrawer:  _openDrawer,
     closeDrawer: _closeDrawer,
-    setSearch:  _setSearch,
-    /* ثوابت مشتركة */
+    setSearch:   _setSearch,
     CDN_BASE,
-    VERSION: '12.0.0',
+    VERSION: '12.1.0',
     /* openLesson / closeLesson / navigatePrevLesson / navigateNextLesson
-       ← تُضيفها blogarch.lessons.js لاحقاً */
+       ← تُضيفها Blogarch.lessons.js */
+    /* reloadData / clearData
+       ← تُضيفها Blogarch.data.js */
   });
 
 })();
