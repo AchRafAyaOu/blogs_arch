@@ -3,12 +3,7 @@
    المستودع: https://github.com/AchRafAyaOu/blogs_arch
    المسار في GitHub: /src/blogarch.js
    ────────────────────────────────────────────────────────────
-   ─────────────────────────────────────────────────────────────
-   التبعيات المُحمَّلة بعده (ASSETS.js في XML):
-     Blogarch.lessons.js  — عارض الدروس
-     Blogarch.contact.js  — نموذج التواصل (Telegram)
-     Blogarch.data.js     — ملف البيانات المركزي (site.data.json)
-   ═══════════════════════════════════════════════════════════════ */
+   ───────────────────────────────────────────────────────────── ═══════════════════════════════════════════════════════════════ */
 
 (function () {
   'use strict';
@@ -70,11 +65,13 @@
   function _syncSwitcherUI(theme, dark) {
     document.querySelectorAll('.theme-option').forEach(o =>
       o.classList.toggle('active', o.dataset.pick === theme));
-    document.querySelectorAll('.drawer-theme-btn').forEach(b =>
+    document.querySelectorAll('.drawer-theme-btn, .fin-sb-theme-btn').forEach(b =>
       b.classList.toggle('active', b.dataset.pick === theme));
     document.querySelectorAll('.ts-dark-input, .drawer-dark-input').forEach(i => {
       i.checked = dark;
     });
+    const darkToggleCb = document.getElementById('fin-dark-toggle');
+    if (darkToggleCb) darkToggleCb.checked = dark;
     const label = document.querySelector('.ts-current-name');
     if (label) label.textContent = (THEMES[theme] || THEMES.default).name;
   }
@@ -82,8 +79,12 @@
   /* تطبيق فوري قبل DOMContentLoaded لتفادي الوميض */
   applyTheme(savedTheme, savedDark);
 
+  /* زر تبديل dark (قديم) + checkbox fin-dark-toggle (v13) */
   document.getElementById('theme-toggle')?.addEventListener('click', () =>
     setTheme(savedTheme, !savedDark));
+  document.getElementById('fin-dark-toggle')?.addEventListener('change', function () {
+    setTheme(savedTheme, this.checked);
+  });
 
   /* ── مبدّل الثيم — سطح المكتب ── */
   function _buildDesktopSwitcher() {
@@ -184,9 +185,9 @@
      ─ requestAnimationFrame throttling
      ─ شريط القراءة + Navbar compact + زر الأعلى
   ═══════════════════════════════════════════════════════════ */
-  const progressBar = document.getElementById('reading-progress');
+  const progressBar = document.getElementById('fin-scroll-progress');
   const bttBtn      = document.getElementById('back-to-top');
-  const navbar      = document.getElementById('navbar');
+  const navbar      = document.getElementById('fin-mobile-header');
 
   let _rafPending = false;
   let _lastScrollY = 0;
@@ -520,36 +521,36 @@
   /* ═══════════════════════════════════════════════════════════
      §11 — Mobile Drawer  (Focus Trap + إعادة التركيز)
   ═══════════════════════════════════════════════════════════ */
-  const drawer    = document.getElementById('mobile-drawer');
-  const overlay   = document.getElementById('menu-overlay');
-  const hamburger = document.getElementById('hamburger');
+  const drawer    = document.getElementById('fin-sidebar');
+  const overlay   = document.getElementById('fin-sb-overlay');
+  const hamburger = document.getElementById('fin-hamburger');
 
   let _lastFocusBeforeDrawer = null;
 
   function _openDrawer() {
     _lastFocusBeforeDrawer = document.activeElement;
-    drawer?.classList.add('active');
+    drawer?.classList.add('open');
     overlay?.classList.add('active');
-    hamburger?.classList.add('active');
+    hamburger?.classList.add('open');
     hamburger?.setAttribute('aria-expanded', 'true');
     if (getComputedStyle(body).overflow !== 'hidden') body.style.overflow = 'hidden';
     drawer?.querySelector('a, button')?.focus();
   }
 
   function _closeDrawer() {
-    drawer?.classList.remove('active');
+    drawer?.classList.remove('open');
     overlay?.classList.remove('active');
-    hamburger?.classList.remove('active');
+    hamburger?.classList.remove('open');
     hamburger?.setAttribute('aria-expanded', 'false');
     body.style.overflow = '';
     _lastFocusBeforeDrawer?.focus();
   }
 
   hamburger?.addEventListener('click', () =>
-    drawer?.classList.contains('active') ? _closeDrawer() : _openDrawer());
+    drawer?.classList.contains('open') ? _closeDrawer() : _openDrawer());
   overlay?.addEventListener('click', _closeDrawer);
 
-  document.querySelectorAll('.mobile-drawer .nav-link:not(.dropdown-toggle)').forEach(l =>
+  document.querySelectorAll('.mobile-drawer .nav-link:not(.dropdown-toggle), .fin-sidebar .fin-sb-nav a').forEach(l =>
     l.addEventListener('click', _closeDrawer));
 
   const mobileDropdown = document.getElementById('mobile-dropdown');
@@ -576,7 +577,7 @@
   const searchPanel    = document.getElementById('search-panel');
   const searchInput    = document.getElementById('search-input');
   const searchResults  = document.getElementById('search-results');
-  const searchBtn      = document.getElementById('search-btn');
+  const searchBtn      = document.getElementById('fin-mh-search-btn');
   const searchCloseBtn = document.getElementById('search-close');
 
   const _normalize = str => (str || '').replace(/[\u064B-\u065F\u0670]/g, '').toLowerCase();
@@ -645,7 +646,7 @@
   /* ═══════════════════════════════════════════════════════════
      §13 — مودال "عني"  (Focus Trap)
   ═══════════════════════════════════════════════════════════ */
-  const aboutModal = document.getElementById('about-modal');
+  const aboutModal = document.getElementById('fin-mc-about');
   let _lastFocusBeforeAbout = null;
 
   function _openAbout() {
@@ -665,10 +666,10 @@
     _lastFocusBeforeAbout?.focus();
   }
 
-  document.getElementById('about-open')?.addEventListener('click', e => {
+  document.getElementById('nav-about-open')?.addEventListener('click', e => {
     e.preventDefault(); _openAbout();
   });
-  document.getElementById('about-close')?.addEventListener('click', _closeAbout);
+  document.getElementById('fin-mc-about-close')?.addEventListener('click', _closeAbout);
   aboutModal?.addEventListener('click', e => { if (e.target === aboutModal) _closeAbout(); });
 
   aboutModal?.addEventListener('keydown', e => {
@@ -838,7 +839,7 @@
   ═══════════════════════════════════════════════════════════ */
   function _initNavHighlight() {
     const path = location.pathname;
-    document.querySelectorAll('.nav-menu .nav-link, .mobile-drawer .nav-link').forEach(a => {
+    document.querySelectorAll('.nav-menu .nav-link, .mobile-drawer .nav-link, .fin-sidebar .fin-sb-nav a').forEach(a => {
       try {
         if (a.getAttribute('href') && path === new URL(a.href, location.origin).pathname) {
           a.classList.add('active', 'fin-active');
@@ -859,7 +860,7 @@
       case 'Escape':
         if (searchPanel?.classList.contains('active'))   _setSearch(false);
         if (aboutModal?.classList.contains('open'))      _closeAbout();
-        if (drawer?.classList.contains('active'))        _closeDrawer();
+        if (drawer?.classList.contains('open'))          _closeDrawer();
         if (document.getElementById('fin-learn-modal')?.classList.contains('open'))
           window.BlogArch?.closeLesson?.();
         break;
@@ -950,6 +951,9 @@
     _initNavHighlight();
     _initQuotes();
     _initPodcast();
+    /* ربط أزرار الثيم في الـ sidebar (fin-sb-theme-btn) */
+    document.querySelectorAll('.fin-sb-theme-btn').forEach(b =>
+      b.addEventListener('click', () => setTheme(b.dataset.pick)));
     /* §8  contact  ← Blogarch.contact.js */
     /* §?  lessons  ← Blogarch.lessons.js */
     /* §?  sitedata ← Blogarch.data.js    */
