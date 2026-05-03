@@ -1,7 +1,22 @@
-/* ═══════════════════════════════════════════════════════════════════════
-   BlogArch v13-fixed — Modern Layered Stylesheet (CSS 2025-2026)
+BlogArch v13 — Modern Layered Stylesheet (CSS 2024-2026)
    ─────────────────────────────────────────────────────────────────────
-  
+   Built on v2.0 architecture + production hardening + 2025-2026 best
+   practices. Surgical fixes for: SVG noise typo, missing --glass-* tokens,
+   duplicate hover borders, content-visibility intrinsic-size, missing
+   prefers-reduced-transparency / prefers-contrast, missing :user-valid
+   states, missing skip-link, missing scroll-driven animations.
+   ─────────────────────────────────────────────────────────────────────
+   Stack: @layer · light-dark() · oklch · color-mix · container queries
+        · :has() · @starting-style · @scroll-state · view-transition
+        · scroll-timeline · animation-range · @supports · forced-colors
+   ─────────────────────────────────────────────────────────────────────
+   Companion <head> tags (place in XML):
+     <meta name='color-scheme' content='light dark'/>
+     <meta name='theme-color' content='#f8fafc'
+           media='(prefers-color-scheme: light)'/>
+     <meta name='theme-color' content='#0a0f1c'
+           media='(prefers-color-scheme: dark)'/>
+   Updated: 2026-05-02 — v13 UX hardening
    ═══════════════════════════════════════════════════════════════════════ */
 
 @layer reset, tokens, base, typography, themes, components, glass, utilities, enhancements, print;
@@ -17,7 +32,11 @@
     -webkit-tap-highlight-color: transparent;
     interpolate-size: allow-keywords; /* enables transitions to/from auto */
   }
-  /* :focus-visible is defined once in @layer components — no duplicate here */
+  :focus-visible {
+    outline: 2px solid var(--ring, currentColor);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs, 6px);
+  }
   :focus:not(:focus-visible) { outline: none; }
   img, picture, video, canvas, svg { display: block; max-width: 100%; }
   button, input, select, textarea { font: inherit; color: inherit; }
@@ -63,12 +82,9 @@
     --accent-fg:       light-dark(oklch(100% 0 0),     oklch(20% 0.05 160));
     --ring:            var(--primary-color);
 
-    /* ── RGB triplets (legacy rgba consumers — updated per theme below) ── */
-    /* ⚠ These are sRGB approximations of the oklch tokens above.
-       Prefer color-mix(in oklch, var(--primary-color) X%, transparent) where possible.
-       Each [data-theme] block below overrides these to stay in sync. */
-    --primary-rgb: 67, 97, 238;   /* ≈ oklch(58% 0.22 265) */
-    --accent-rgb:  5, 150, 105;   /* ≈ oklch(58% 0.16 160) */
+    /* ── RGB triplets (legacy rgba consumers) ── */
+    --primary-rgb: 67, 97, 238;
+    --accent-rgb:  5, 150, 105;
 
     /* ── Domain colors ── */
     --d-blog:     oklch(58% 0.22 265);
@@ -83,23 +99,14 @@
     --radius-sm: 10px;
     --radius-xs: 6px;
 
-    /* ── Shadows (theme-aware via oklch color-mix) ── */
-    /* NOTE: --shadow-color was removed — it used raw triplets incorrectly with rgb().
-       Shadows now use oklch() directly for correct light/dark theming. */
-    --_sh-light: oklch(15% 0.02 250);   /* light mode shadow tint */
-    --_sh-dark:  oklch(0%  0    0);     /* dark  mode shadow tint */
-    --_sh: light-dark(var(--_sh-light), var(--_sh-dark));
-    --shadow-xs: 0 1px 2px color-mix(in oklch, var(--_sh) 4%,  transparent);
-    --shadow-sm: 0 1px 3px color-mix(in oklch, var(--_sh) 6%,  transparent),
-                 0 1px 2px color-mix(in oklch, var(--_sh) 4%,  transparent);
-    --shadow:    0 2px 8px color-mix(in oklch, var(--_sh) 6%,  transparent),
-                 0 1px 3px color-mix(in oklch, var(--_sh) 4%,  transparent);
-    --shadow-md: 0 4px 12px -2px color-mix(in oklch, var(--_sh) 8%,  transparent),
-                 0 2px 4px  -2px color-mix(in oklch, var(--_sh) 4%,  transparent);
-    --shadow-lg: 0 12px 24px -4px color-mix(in oklch, var(--_sh) 10%, transparent),
-                 0 4px  8px  -4px color-mix(in oklch, var(--_sh) 4%,  transparent);
-    --shadow-xl: 0 20px 40px -8px color-mix(in oklch, var(--_sh) 12%, transparent),
-                 0 8px  16px -8px color-mix(in oklch, var(--_sh) 4%,  transparent);
+    /* ── Shadows (theme-aware via shadow-color) ── */
+    --shadow-color: light-dark(15 23 42, 0 0 0);
+    --shadow-xs: 0 1px 2px rgb(var(--shadow-color) / .04);
+    --shadow-sm: 0 1px 3px rgb(var(--shadow-color) / .06), 0 1px 2px rgb(var(--shadow-color) / .04);
+    --shadow:    0 2px 8px rgb(var(--shadow-color) / .06), 0 1px 3px rgb(var(--shadow-color) / .04);
+    --shadow-md: 0 4px 12px -2px rgb(var(--shadow-color) / .08), 0 2px 4px -2px rgb(var(--shadow-color) / .04);
+    --shadow-lg: 0 12px 24px -4px rgb(var(--shadow-color) / .10), 0 4px 8px -4px rgb(var(--shadow-color) / .04);
+    --shadow-xl: 0 20px 40px -8px rgb(var(--shadow-color) / .12), 0 8px 16px -8px rgb(var(--shadow-color) / .04);
 
     /* ── Blur scales ── */
     --blur-sm: blur(8px);
@@ -210,8 +217,7 @@
     line-height: 1.85;
     font-size: clamp(16px, 1.2vw + 0.88rem, 19.5px);
     direction: rtl;
-    /* text-align: right removed — direction:rtl sets default alignment automatically.
-       Use text-align:start in components for logical, direction-aware alignment. */
+    text-align: right;
     letter-spacing: 0.008em;
     min-height: 100vh;
     min-height: 100dvh;
@@ -254,16 +260,12 @@
   main { animation: pageFadeIn .3s ease forwards; }
   @media (prefers-reduced-motion: reduce) { main { animation: none; } }
 
-  /* View Transitions API — smooth navigation between pages.
-     @view-transition is ignored silently in Firefox (no @supports for it yet).
-     ::view-transition-* pseudo-elements only exist in supporting browsers. */
-  @supports (view-transition-name: none) {
-    @view-transition { navigation: auto; }
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-      animation-duration: 0.35s;
-      animation-timing-function: var(--ease-out);
-    }
+  /* View Transitions API — smooth navigation between pages */
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.35s;
+    animation-timing-function: var(--ease-out);
   }
 
   /* Skip-to-content — keyboard accessibility */
@@ -335,11 +337,9 @@
     color: var(--text);
   }
 
-  /* Drop cap — disabled for Arabic RTL content (float:inline-start in RTL
-     floats right and breaks Arabic glyph shaping in most OpenType fonts).
-     Only applied when the page is explicitly in LTR mode. */
-  :not([dir="rtl"]) .post-body > p:first-of-type::first-letter,
-  :not([dir="rtl"]) .post-content > p:first-of-type::first-letter {
+  /* Drop cap on first paragraph of articles */
+  .post-body > p:first-of-type::first-letter,
+  .post-content > p:first-of-type::first-letter {
     font-family: var(--font-body);
     font-size: 3.5em;
     font-weight: 700;
@@ -350,8 +350,8 @@
     color: var(--accent);
   }
   @media (prefers-reduced-motion: no-preference) {
-    :not([dir="rtl"]) .post-body > p:first-of-type::first-letter,
-    :not([dir="rtl"]) .post-content > p:first-of-type::first-letter {
+    .post-body > p:first-of-type::first-letter,
+    .post-content > p:first-of-type::first-letter {
       transition: color var(--duration-normal) var(--ease-out);
     }
   }
@@ -382,8 +382,8 @@
     --border-strong:light-dark(oklch(78% 0.10 220),  oklch(42% 0.08 240));
     --input:        light-dark(oklch(86% 0.06 220),  oklch(32% 0.06 240));
     --ring:         var(--primary-color);
-    --accent-rgb:   6, 182, 212;    /* ≈ oklch(70% 0.15 200) */
-    --primary-rgb:  2, 132, 199;    /* ≈ oklch(56% 0.16 230) */
+    --accent-rgb:   6, 182, 212;
+    --primary-rgb:  2, 132, 199;
   }
 
   body[data-theme="sunset"] {
@@ -406,8 +406,8 @@
     --border-strong:light-dark(oklch(80% 0.12 65),   oklch(40% 0.08 50));
     --input:        light-dark(oklch(88% 0.08 70),   oklch(32% 0.07 50));
     --ring:         var(--primary-color);
-    --accent-rgb:   245, 158, 11;   /* ≈ oklch(72% 0.18 65) */
-    --primary-rgb:  217, 119, 6;    /* ≈ oklch(62% 0.18 55) */
+    --accent-rgb:   245, 158, 11;
+    --primary-rgb:  217, 119, 6;
   }
 
   body[data-theme="forest"] {
@@ -430,8 +430,8 @@
     --border-strong:light-dark(oklch(82% 0.12 150),  oklch(42% 0.08 160));
     --input:        light-dark(oklch(86% 0.08 150),  oklch(32% 0.06 160));
     --ring:         var(--primary-color);
-    --accent-rgb:   82, 183, 136;   /* ≈ oklch(70% 0.12 150) */
-    --primary-rgb:  45, 106, 79;    /* ≈ oklch(46% 0.10 160) */
+    --accent-rgb:   82, 183, 136;
+    --primary-rgb:  45, 106, 79;
   }
 
   body[data-theme="midnight"] {
@@ -455,8 +455,8 @@
     --border-strong:oklch(40% 0.015 280);
     --input:        oklch(30% 0.012 280);
     --ring:         var(--primary-color);
-    --accent-rgb:   192, 132, 252;  /* ≈ oklch(72% 0.20 305) */
-    --primary-rgb:  167, 139, 250;  /* ≈ oklch(72% 0.16 295) */
+    --accent-rgb:   192, 132, 252;
+    --primary-rgb:  167, 139, 250;
   }
 }
 
@@ -920,16 +920,16 @@ body[data-dark] .feature { background: color-mix(in oklch, var(--card) 80%, tran
 /* ── Posts grid ── */
 .posts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  gap: 1.25rem;
-  padding-block: 1.75rem;
-  max-width: min(92vw, 1120px);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: 1rem;
+  padding-block: 1.5rem;
+  max-width: min(92vw, 1200px);
   margin-inline: auto;
 }
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: 1rem;
 }
 
 /* ── Post card ── */
@@ -995,7 +995,7 @@ body[data-theme="midnight"] .entry { background: var(--card); }
 
 /* ── Card media ── */
 .card-image-wrapper {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 8;
   overflow: hidden;
   background: var(--muted-bg);
   display: flex;
@@ -1010,8 +1010,6 @@ body[data-theme="midnight"] .entry { background: var(--card); }
   background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,.06) 50%, transparent 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
-  /* Add transition so :has() fade-out works in Safari */
-  transition: opacity .4s ease;
 }
 .card-image-wrapper i { font-size: 1.8rem; color: var(--muted); position: relative; z-index: 1; }
 @keyframes shimmer {
@@ -1037,11 +1035,11 @@ body[data-theme="midnight"] .entry { background: var(--card); }
 
 /* ── Card content ── */
 .card-content {
-  padding: clamp(1rem, 1.8vw, 1.25rem);
+  padding: clamp(0.75rem, 1.2vw, 1rem);
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 .card-labels { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .card-label {
@@ -1057,7 +1055,7 @@ body[data-theme="midnight"] .entry { background: var(--card); }
 .card-label:hover { color: var(--text); border-color: var(--accent); }
 .card-title {
   font-family: var(--font-body);
-  font-size: clamp(1rem, 1.1vw, 1.1rem);
+  font-size: clamp(0.9rem, 0.95vw, 1rem);
   font-weight: 700;
   line-height: 1.45;
   display: -webkit-box;
@@ -1068,10 +1066,10 @@ body[data-theme="midnight"] .entry { background: var(--card); }
 .card-title a:hover { color: var(--accent); }
 .card-snippet {
   color: var(--text-soft);
-  font-size: 0.88rem;
-  line-height: 1.7;
+  font-size: 0.83rem;
+  line-height: 1.65;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   flex-grow: 1;
@@ -1205,17 +1203,9 @@ body[data-dark] .post-body h3, body[data-dark] .post-content h3 { color: var(--a
   margin: 1.75rem auto;
   display: block;
   box-shadow: var(--shadow-md);
-  /* Use @starting-style for fade-in — images remain visible even if JS fails to add .loaded */
+  opacity: 0;
   transition: opacity .35s ease;
 }
-/* Fade-in from transparent on first render (progressive enhancement) */
-@supports (transition-behavior: allow-discrete) {
-  .post-body img, .post-content img {
-    @starting-style { opacity: 0; }
-  }
-}
-/* Legacy JS-driven fade (fallback for browsers without @starting-style) */
-.post-body img.loading, .post-content img.loading { opacity: 0; }
 .post-body img.loaded, .post-content img.loaded { opacity: 1; }
 .post-body blockquote, .post-content blockquote {
   border-inline-start: 4px solid var(--accent);
@@ -1422,7 +1412,13 @@ body[data-dark] .contact-feedback.error {
 /* ── Responsive ── */
 @media (min-width: 1280px) {
   .container { max-width: 1200px; }
-  .posts-grid { grid-template-columns: repeat(4, 1fr); }
+  .posts-grid { grid-template-columns: repeat(5, 1fr); }
+}
+@media (min-width: 900px) and (max-width: 1279px) {
+  .posts-grid { grid-template-columns: repeat(3, 1fr); }
+  .card-image-wrapper { aspect-ratio: 16 / 7; }
+  .card-content { padding: 0.8rem; gap: 0.35rem; }
+  .card-snippet { font-size: 0.82rem; -webkit-line-clamp: 2; }
 }
 @media (max-width: 1024px) {
   .footer-grid { grid-template-columns: 1fr 1fr; }
@@ -1567,7 +1563,7 @@ body[data-theme="midnight"] ::selection { background: color-mix(in oklch, oklch(
   border-color: var(--chip-color, var(--accent));
   color: var(--chip-color, var(--accent));
   transform: translateY(-2px);
-  box-shadow: 0 3px 10px color-mix(in oklch, var(--_sh) 10%, transparent);
+  box-shadow: 0 3px 10px rgb(var(--shadow-color) / .10);
 }
 
 /* ── Quote rotator ── */
@@ -1816,7 +1812,7 @@ body[data-dark] .fin-learn-level.adv { background: color-mix(in oklch, oklch(72%
 .fin-learn-filter-btn.active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
 .fin-learn-filter-btn .fl-count {
   font-size: 0.7rem;
-  background: color-mix(in oklch, var(--text) 6%, transparent);
+  background: rgb(var(--shadow-color) / .06);
   padding: 1px 6px;
   border-radius: 99px;
   font-weight: 700;
@@ -2859,7 +2855,8 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
     .post-card .card-snippet { font-size: 0.88rem; line-height: 1.75; }
   }
   @container cards (min-width: 900px) {
-    .post-card .card-title { font-size: 1.15rem; }
+    .post-card .card-title { font-size: 0.95rem; }
+    .post-card .card-snippet { font-size: 0.82rem; }
   }
 
   /* ── :has() — content-aware cards ── */
@@ -2959,9 +2956,7 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
 
   /* ── Reduced-motion respects everything ── */
   @media (prefers-reduced-motion: reduce) {
-    @supports (view-transition-name: none) {
-      @view-transition { navigation: none; }
-    }
+    @view-transition { navigation: none; }
     *::view-transition-group(*),
     *::view-transition-old(*),
     *::view-transition-new(*) {
