@@ -1,10 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
    BlogArch — Data Module  v1.0  (Blogarch.data.js)
-   المستودع: https://github.com/AchRafAyaOu/blogs_arch
-
-  
-
- ═══════════════════════════════════════════════════════════════ */
+   المستودع: https://github.com/AchRafAyaOu/blogs_arch ═══════════════════════════════════════════════════════════════ */
 
 (function () {
   'use strict';
