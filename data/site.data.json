@@ -1,0 +1,115 @@
+{
+  "_comment": "BlogArch — ملف البيانات المركزي. يُحمَّل مرة واحدة ويُخزَّن 24 ساعة.",
+  "_version": "1.0.0",
+  "_updated": "2026-05-02",
+
+  "site": {
+    "name": "أشرف أياو",
+    "nameEn": "Achraf Ayaou",
+    "tagline": "الثقافة والوعي الفكري والتعلم الذاتي",
+    "language": "ar",
+    "direction": "rtl",
+    "url": "https://achrafayaou.blogspot.com"
+  },
+
+  "nav": [
+    { "name": "الرئيسية",  "url": "/",                          "icon": "home" },
+    { "name": "المدونة",   "url": "/search",                    "icon": "newspaper" },
+    { "name": "مقولات",    "url": "/p/blog-page_73.html",       "icon": "quote-right" },
+    { "name": "تعلّم",     "url": "/p/blog-page_52.html",       "icon": "graduation-cap" },
+    { "name": "بودكاست",   "url": "/p/blog-page_54.html",       "icon": "podcast" },
+    { "name": "أعمالي",    "url": "/p/blog-page_96.html",       "icon": "briefcase" },
+    { "name": "عني",       "url": "/p/blog-page_7.html",        "icon": "user" }
+  ],
+
+  "pages": [
+    {
+      "id": "learn",
+      "title": "تعلّم الإنجليزية",
+      "description": "دروس تعليمية منظمة حسب المستوى",
+      "url": "/p/blog-page_52.html",
+      "icon": "graduation-cap"
+    },
+    {
+      "id": "quotes",
+      "title": "مقولات",
+      "description": "أفكار قصيرة وملهمة من الكتب والحياة",
+      "url": "/p/blog-page_73.html",
+      "icon": "quote-right"
+    },
+    {
+      "id": "works",
+      "title": "أعمالي",
+      "description": "مشاريع وتجارب تقنية وإبداعية",
+      "url": "/p/blog-page_96.html",
+      "icon": "briefcase"
+    },
+    {
+      "id": "podcast",
+      "title": "بودكاست",
+      "description": "حلقات صوتية حول الفكر والثقافة والتكنولوجيا",
+      "url": "/p/blog-page_54.html",
+      "icon": "podcast"
+    }
+  ],
+
+  "categories": [
+    { "id": "all",      "name": "الكل",    "icon": "th-large" },
+    { "id": "mind",     "name": "فكر",     "icon": "brain" },
+    { "id": "learn",    "name": "تعلّم",   "icon": "graduation-cap" },
+    { "id": "tech",     "name": "تقنية",   "icon": "code" },
+    { "id": "culture",  "name": "ثقافة",   "icon": "book-open" }
+  ],
+
+  "home": {
+    "sections": [
+      {
+        "type": "hero",
+        "title": "Achraf Ayaou",
+        "subtitle": "الثقافة • الوعي • التعلم الذاتي"
+      },
+      { "type": "section", "id": "learn",   "limit": 3 },
+      { "type": "section", "id": "quotes",  "limit": 3 },
+      { "type": "section", "id": "podcast", "limit": 3 },
+      { "type": "section", "id": "works",   "limit": 3 }
+    ]
+  },
+
+  "social": {
+    "telegram":  "https://t.me/achrafayaou",
+    "github":    "https://github.com/AchRafAyaOu",
+    "twitter":   "",
+    "youtube":   "",
+    "linkedin":  "",
+    "email":     ""
+  },
+
+  "theme": {
+    "default": "default",
+    "dark": false,
+    "available": ["default", "ocean", "sunset", "forest", "midnight"]
+  },
+
+  "meta": {
+    "learn": {
+      "title": "تعلّم الإنجليزية",
+      "count": 27
+    },
+    "quotes": {
+      "title": "مقولات",
+      "count": 120
+    },
+    "podcast": {
+      "title": "بودكاست",
+      "count": 12
+    },
+    "works": {
+      "title": "أعمالي",
+      "count": 5
+    },
+    "posts": {
+      "title": "المقالات",
+      "count": 0
+    }
+  }
+}
