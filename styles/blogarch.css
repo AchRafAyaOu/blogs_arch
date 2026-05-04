@@ -1,6 +1,4 @@
-/* BlogArch v15.1
-   ═══════════════════════════════════════════════════════════════════════
-
+/* BlogArch v17 ═══════════════════════════════════════════════════════════════════════
    ═══════════════════════════════════════════════════════════════════════ */
 
 @layer reset, tokens, base, typography, themes, components, glass, utilities, enhancements, print;
@@ -1279,29 +1277,9 @@ body[data-theme="midnight"] .entry { background: var(--card); }
 /* Filtered cards hidden */
 .post-card.hidden-by-filter { display: none; }
 
-/* ── Card media ── */
-.card-image-wrapper {
-  aspect-ratio: 16 / 8;
-  overflow: hidden;
-  background: var(--muted-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-.card-image-wrapper::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,.06) 50%, transparent 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-}
-.card-image-wrapper i { font-size: 1.8rem; color: var(--muted); position: relative; z-index: 1; }
-@keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
+/* ── Card media (موحَّد — تعريف واحد فقط، القيم من b:skin تأخذ الأولوية) ── */
+/* NOTE: الكلاس معرَّف في b:skin (aspect-ratio 16/10 + border-radius). هذه المنطقة
+   مخصصة فقط لحالات الصورة الكسولة والتحميل. */
 .card-image {
   width: 100%;
   height: 100%;
@@ -2891,7 +2869,7 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
   box-shadow: var(--shadow-md);
 }
 .fin-about-badge span { font-size: 0.62rem; font-weight: 500; margin-top: 1px; text-align: center; }
-@media (max-width: 480px) { .fin-about-badge { display: none; }
+@media (max-width: 480px) { .fin-about-badge { display: none; } }
 
 
 /* ═══════════════════════════════════════════════
@@ -3057,3 +3035,4 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
 }
 .fin-podcast-ep-play:hover { filter: brightness(1.1); }
 
+    
