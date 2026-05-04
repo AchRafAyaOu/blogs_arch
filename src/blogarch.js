@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   BlogArch — Core Engine  v12.1.0  (blogarch.js)
+   BlogArch — Core Engine  v12.1.1  (blogarch.js)
    المستودع: https://github.com/AchRafAyaOu/blogs_arch
    المسار في GitHub: /src/blogarch.js
    ────────────────────────────────────────────────────────────
@@ -412,6 +412,7 @@
      ─ retry تلقائي لصور Blogger عند الفشل
   ═══════════════════════════════════════════════════════════ */
   let _lazyObserver = null;
+  let _cardObs      = null;
 
   function _loadImage(img) {
     const src = img.dataset.src || img.src;
@@ -501,9 +502,9 @@
       });
     }, { rootMargin: '0px 0px -60px 0px', threshold: 0.1 });
 
-    const cardObs = new IntersectionObserver(entries => {
+    _cardObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
-        if (e.isIntersecting) { _reveal(e.target); cardObs.unobserve(e.target); }
+        if (e.isIntersecting) { _reveal(e.target); _cardObs.unobserve(e.target); }
       });
     }, { rootMargin: '0px 0px -40px 0px', threshold: 0.05 });
 
@@ -513,7 +514,20 @@
 
     document.querySelectorAll('.fade-in-card').forEach((el, i) => {
       el.style.transitionDelay = Math.min(i * 80, 500) + 'ms';
-      cardObs.observe(el);
+      _cardObs.observe(el);
+    });
+  }
+
+  /* ── Re-observe dynamically rendered .fade-in-card elements ─────────────
+     Call after any async innerHTML render (podcast, works, learn) so that
+     cards injected after _initSectionAnimations() still animate in.
+  ── */
+  function _reobserveCards(container) {
+    if (!container) return;
+    container.querySelectorAll('.fade-in-card').forEach((el, i) => {
+      el.style.transitionDelay = Math.min(i * 80, 400) + 'ms';
+      if (_cardObs) _cardObs.observe(el);
+      else el.classList.add('is-visible');
     });
   }
 
@@ -807,6 +821,8 @@
             </div>
           </div>`;
         }).join('');
+        /* Re-observe new cards so intersection animation fires correctly */
+        _reobserveCards(grid);
       })
       .catch(() => {
         grid.removeAttribute('aria-busy');
