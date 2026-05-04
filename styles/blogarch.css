@@ -1,10 +1,5 @@
-BlogArch v13 — Modern Layered Stylesheet (CSS 2024-2026)
-   ─────────────────────────────────────────────────────────────────────
-   Built on v2.0 architecture + production hardening + 2025-2026 best
-   practices. Surgical fixes for: SVG noise typo, missing --glass-* tokens,
-   duplicate hover borders, content-visibility intrinsic-size, missing
-   prefers-reduced-transparency / prefers-contrast, missing :user-valid
-   states, missing skip-link, missing scroll-driven animations.
+BlogArch v13 — Modern Layered Stylesheet (CSS 2025-2026)
+   ────────────────────────────────────────────────────────────────────
    ─────────────────────────────────────────────────────────────────────
    Stack: @layer · light-dark() · oklch · color-mix · container queries
         · :has() · @starting-style · @scroll-state · view-transition
@@ -3484,4 +3479,3 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
       color: #555;
     }
   }
-}
