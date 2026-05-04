@@ -1,6 +1,6 @@
-/* BlogArch v14 — Professional Modern Ultimate (2026)
+/* BlogArch v15 — Professional Modern Ultimate
    ═══════════════════════════════════════════════════════════════════════
-    ─────────────────────────────────────────────────────────────────────
+   ─────────────────────────────────────────────────────────────────────
    The ULTIMATE Arabic RTL blog platform stylesheet. Combines the
    robust layered architecture of BlogArch v13 with the premium visual
    enhancements from the بصيرة multi-domain platform.
@@ -2774,7 +2774,7 @@ body[data-dark] .fin-tag { background: color-mix(in oklch, var(--primary-color) 
   box-shadow: var(--shadow-md);
 }
 .fin-about-badge span { font-size: 0.62rem; font-weight: 500; margin-top: 1px; text-align: center; }
-@media (max-width: 480px) { .fin-about-badge { display: none; }
+@media (max-width: 480px) { .fin-about-badge { display: none; } }
 
 
 /* ═══════════════════════════════════════════════
