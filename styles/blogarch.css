@@ -1,13 +1,4 @@
-/* BlogArch v14 ═══════════════════════════════════════════════════════════════════════
-    ─────────────────────────────────────────────────────────────────────
-   Companion <head> tags (place in XML):
-     <meta name='color-scheme' content='light dark'/>
-     <meta name='theme-color' content='#f8fafc'
-           media='(prefers-color-scheme: light)'/>
-     <meta name='theme-color' content='#0a0f1c'
-           media='(prefers-color-scheme: dark)'/>
-   Created: 2026 — v1 Ultimate Enhancement | v2.0 Merge
-   ═══════════════════════════════════════════════════════════════════════ */
+/* BlogArch v1 — Professional Modern Ultimate (2026) — v2.0 Enhanced
 
 @layer reset, tokens, base, typography, themes, components, glass, utilities, enhancements, print;
 
