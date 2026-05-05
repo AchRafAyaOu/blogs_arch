@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   BlogArch — Core Engine  v12.1.1  (blogarch.js)
+   BlogArch — Core Engine  v12.1.2  (blogarch.js)
    المستودع: https://github.com/AchRafAyaOu/blogs_arch
    المسار في GitHub: /src/blogarch.js
    ────────────────────────────────────────────────────────────
