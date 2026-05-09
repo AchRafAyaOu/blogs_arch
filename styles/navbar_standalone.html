@@ -1,14 +1,32 @@
 <!-- ═══════════════════════════════════════════
-     ② HTML — Navbar + Drawer
+     navbar_standalone.html — BlogArch v2
+     RTL-first · a11y-clean · v2 enhancements
+     Updated: 2026-05-09
      ═══════════════════════════════════════════ -->
 
+<!-- ─── Skip link (accessibility) ─── -->
+<a href="#main-content" class="skip-link">تخطى إلى المحتوى الرئيسي</a>
+
+<!-- ─── Reading progress bar ─── -->
+<div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
+
 <!-- ─── Navbar الرئيسي ─── -->
-<nav class="navbar" id="navbar">
+<nav class="navbar" id="navbar" role="navigation" aria-label="التنقل الرئيسي">
+
+  <!-- Breadcrumb — يظهر تلقائياً عند التمرير -->
+  <div class="navbar-breadcrumb" id="navbar-breadcrumb" aria-hidden="true">
+    <i class="fas fa-home" aria-hidden="true"></i>
+    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+    <span class="bc-page" id="bc-page-name">الرئيسية</span>
+  </div>
+
   <div class="navbar-inner">
 
     <!-- العلامة التجارية -->
-    <a class="brand arabic-text" href="/">
-      <span class="dot"></span>
+    <a class="brand arabic-text" href="/" aria-label="أشرف أياو — الصفحة الرئيسية">
+      <span class="brand-dot-wrap" aria-hidden="true">
+        <span class="dot"></span>
+      </span>
       <span class="brand-copy">
         <span class="brand-title">أشرف أياو</span>
         <span class="brand-tag">أفكار · بودكاست · تعلّم</span>
@@ -16,69 +34,100 @@
     </a>
 
     <!-- روابط التنقل — Desktop -->
-    <ul class="nav-menu" id="nav-menu">
-      <li class="nav-item">
-        <a class="nav-link arabic-text" href="/">الرئيسية</a>
+    <ul class="nav-menu" id="nav-menu" role="list">
+
+      <!-- مؤشر الرابط النشط المتزلّق -->
+      <div class="nav-glider" id="nav-glider" aria-hidden="true"></div>
+
+      <li class="nav-item" role="listitem">
+        <a class="nav-link arabic-text active" href="/" data-page="الرئيسية">الرئيسية</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link arabic-text" href="/search">المدونة</a>
+      <li class="nav-item" role="listitem">
+        <a class="nav-link arabic-text" href="/search" data-page="المدونة">
+          المدونة
+          <span class="nav-badge" aria-label="3 مقالات جديدة">3</span>
+        </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link arabic-text" href="/p/blog-page_73.html">مقولات</a>
+      <li class="nav-item" role="listitem">
+        <a class="nav-link arabic-text" href="/p/blog-page_73.html" data-page="مقولات">مقولات</a>
       </li>
 
       <!-- Dropdown: المزيد -->
-      <li class="nav-item dropdown" tabindex="0">
-        <a class="nav-link dropdown-toggle arabic-text" href="javascript:void(0)">
+      <li class="nav-item dropdown" role="listitem">
+        <button class="nav-link dropdown-toggle arabic-text"
+                aria-haspopup="true"
+                aria-expanded="false"
+                id="more-dropdown-btn"
+                data-page="المزيد">
           المزيد
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          <svg class="chevron" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
                stroke-linecap="round" stroke-linejoin="round"
-               style="width:14px;height:14px;vertical-align:middle;margin-right:2px">
+               aria-hidden="true">
             <polyline points="6 9 12 15 18 9"/>
           </svg>
-        </a>
-        <div class="dropdown-content">
-          <a class="dropdown-item arabic-text" href="/p/blog-page_52.html">
-            <i class="fas fa-graduation-cap" style="margin-left:8px;color:var(--accent)"></i> تعلّم
+        </button>
+        <div class="dropdown-content" role="menu" aria-labelledby="more-dropdown-btn">
+          <a class="dropdown-item arabic-text" href="/p/blog-page_52.html" role="menuitem">
+            <i class="fas fa-graduation-cap" aria-hidden="true"></i> تعلّم
           </a>
-          <a class="dropdown-item arabic-text" href="/p/blog-page_54.html">
-            <i class="fas fa-podcast" style="margin-left:8px;color:var(--accent)"></i> بودكاست
+          <a class="dropdown-item arabic-text" href="/p/blog-page_54.html" role="menuitem">
+            <i class="fas fa-podcast" aria-hidden="true"></i> بودكاست
           </a>
-          <a class="dropdown-item arabic-text" href="/p/blog-page_96.html">
-            <i class="fas fa-briefcase" style="margin-left:8px;color:var(--accent)"></i> أعمالي
+          <a class="dropdown-item arabic-text" href="/p/blog-page_96.html" role="menuitem">
+            <i class="fas fa-briefcase" aria-hidden="true"></i> أعمالي
           </a>
-          <a class="dropdown-item arabic-text" href="/search/label/مقالات">
-            <i class="fas fa-newspaper" style="margin-left:8px;color:var(--accent)"></i> مقالات
+          <div class="dropdown-divider" role="separator"></div>
+          <a class="dropdown-item arabic-text" href="/search/label/مقالات" role="menuitem">
+            <i class="fas fa-newspaper" aria-hidden="true"></i> مقالات
           </a>
-          <a class="dropdown-item arabic-text" href="/search/label/تقنية">
-            <i class="fas fa-code" style="margin-left:8px;color:var(--accent)"></i> تقنية
+          <a class="dropdown-item arabic-text" href="/search/label/تقنية" role="menuitem">
+            <i class="fas fa-code" aria-hidden="true"></i> تقنية
           </a>
         </div>
       </li>
 
-      <li class="nav-item">
-        <a class="nav-link arabic-text" href="javascript:void(0)" id="nav-about-open">عني</a>
+      <li class="nav-item" role="listitem">
+        <a class="nav-link arabic-text" href="javascript:void(0)"
+           id="nav-about-open" data-page="عني">عني</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" role="listitem">
         <a class="nav-cta arabic-text" href="javascript:void(0)" id="nav-contact-open">
-          <i class="fas fa-paper-plane" style="margin-left:.35rem"></i>راسلني
+          <i class="fas fa-paper-plane" aria-hidden="true"></i>
+          ابدأ محادثة
         </a>
       </li>
     </ul>
 
-    <!-- أدوات الـ Navbar: مبدّل المظهر / بحث / وضع ليلي / هامبرغر -->
-    <div class="nav-actions">
+    <!-- أدوات الـ Navbar -->
+    <div class="nav-actions" role="group" aria-label="أدوات الموقع">
+
       <!-- مبدّل المظهر — يملؤه blogarch.js تلقائياً -->
       <div class="theme-switcher" id="theme-switcher-desktop"></div>
 
-      <button aria-label="بحث" class="btn btn-ghost btn-icon" id="search-btn">
-        <i class="fas fa-search"></i>
+      <button aria-label="فتح البحث"
+              class="btn btn-ghost btn-icon"
+              id="search-btn"
+              data-tooltip="بحث  /">
+        <i class="fas fa-search" aria-hidden="true"></i>
       </button>
-      <button aria-label="الوضع الليلي" class="btn btn-ghost btn-icon" id="theme-toggle">
-        <i class="fas fa-moon" id="theme-icon"></i>
+
+      <button aria-label="تبديل الوضع الليلي"
+              class="btn btn-ghost btn-icon"
+              id="theme-toggle"
+              data-tooltip="الوضع الليلي">
+        <i class="fas fa-moon" id="theme-icon" aria-hidden="true"></i>
       </button>
-      <button aria-label="القائمة" class="hamburger" id="hamburger">
-        <span class="hamburger-icon"></span>
+
+      <!-- فاصل بصري (desktop فقط) -->
+      <div class="nav-actions-sep" aria-hidden="true"></div>
+
+      <button aria-label="فتح القائمة"
+              class="hamburger"
+              id="hamburger"
+              aria-expanded="false"
+              aria-controls="mobile-drawer">
+        <span class="hamburger-icon" aria-hidden="true"></span>
       </button>
     </div>
 
@@ -86,35 +135,150 @@
 </nav>
 
 <!-- ─── Overlay ─── -->
-<div class="menu-overlay" id="menu-overlay"></div>
+<div class="menu-overlay" id="menu-overlay" aria-hidden="true"></div>
 
-<!-- ─── Drawer الموبايل ─── -->
-<div class="mobile-drawer" id="mobile-drawer">
+<!-- ─── Drawer الموبايل — يفتح من اليمين (RTL) ─── -->
+<div class="mobile-drawer" id="mobile-drawer"
+     role="dialog"
+     aria-modal="true"
+     aria-label="قائمة التنقل">
+
   <div class="mobile-drawer-header">
     <div class="brand arabic-text">
-      <span class="dot"></span>
+      <span class="brand-dot-wrap" aria-hidden="true">
+        <span class="dot"></span>
+      </span>
       <span class="brand-copy">
         <span class="brand-title">أشرف أياو</span>
-        <span class="brand-tag">أفكار · بودكاست · تعلّم</span>
+        <span class="brand-tag" style="display:block">أفكار · بودكاست · تعلّم</span>
       </span>
     </div>
+    <p class="drawer-caption">مرحباً — اكتشف المحتوى، الأفكار، والبودكاست</p>
   </div>
 
-  <div class="nav-items">
-    <div class="nav-item"><a class="nav-link arabic-text" href="/">الرئيسية</a></div>
-    <div class="nav-item"><a class="nav-link arabic-text" href="/search">المدونة</a></div>
-    <div class="nav-item"><a class="nav-link arabic-text" href="/p/blog-page_73.html">مقولات</a></div>
-    <div class="nav-item"><a class="nav-link arabic-text" href="/p/blog-page_52.html">تعلّم</a></div>
-    <div class="nav-item"><a class="nav-link arabic-text" href="/p/blog-page_54.html">بودكاست</a></div>
-    <div class="nav-item"><a class="nav-link arabic-text" href="/p/blog-page_96.html">أعمالي</a></div>
+  <nav class="nav-items" aria-label="روابط التنقل">
     <div class="nav-item">
-      <a class="nav-link arabic-text" href="javascript:void(0)" id="drawer-about-open">عني</a>
+      <a class="nav-link arabic-text active" href="/">
+        <i class="fas fa-home" style="color:var(--accent);width:16px;text-align:center" aria-hidden="true"></i>
+        الرئيسية
+      </a>
     </div>
     <div class="nav-item">
-      <a class="nav-link arabic-text" href="javascript:void(0)" id="drawer-contact-open">راسلني</a>
+      <a class="nav-link arabic-text" href="/search">
+        <i class="fas fa-pencil-alt" style="color:var(--accent);width:16px;text-align:center" aria-hidden="true"></i>
+        المدونة
+        <span class="drawer-badge">3</span>
+      </a>
+    </div>
+    <div class="nav-item">
+      <a class="nav-link arabic-text" href="/p/blog-page_73.html">
+        <i class="fas fa-quote-right" style="color:var(--accent);width:16px;text-align:center" aria-hidden="true"></i>
+        مقولات
+      </a>
+    </div>
+
+    <div class="drawer-section-label">استكشف</div>
+
+    <div class="nav-item">
+      <a class="nav-link arabic-text" href="/p/blog-page_52.html">
+        <i class="fas fa-graduation-cap" style="color:var(--accent);width:16px;text-align:center" aria-hidden="true"></i>
+        تعلّم
+      </a>
+    </div>
+    <div class="nav-item">
+      <a class="nav-link arabic-text" href="/p/blog-page_54.html">
+        <i class="fas fa-podcast" style="color:var(--accent);width:16px;text-align:center" aria-hidden="true"></i>
+        بودكاست
+      </a>
+    </div>
+    <div class="nav-item">
+      <a class="nav-link arabic-text" href="/p/blog-page_96.html">
+        <i class="fas fa-briefcase" style="color:var(--accent);width:16px;text-align:center" aria-hidden="true"></i>
+        أعمالي
+      </a>
+    </div>
+    <div class="nav-item">
+      <a class="nav-link arabic-text" href="javascript:void(0)" id="drawer-about-open">
+        <i class="fas fa-user" style="color:var(--accent);width:16px;text-align:center" aria-hidden="true"></i>
+        عني
+      </a>
+    </div>
+    <div class="nav-item">
+      <a class="nav-link arabic-text" href="javascript:void(0)" id="drawer-contact-open">
+        <i class="fas fa-paper-plane" style="color:var(--accent);width:16px;text-align:center" aria-hidden="true"></i>
+        ابدأ محادثة
+      </a>
+    </div>
+  </nav>
+
+  <!-- Footer: اختيار الثيم + الوضع الليلي -->
+  <div class="drawer-footer-section">
+    <div class="drawer-footer-title">المظهر</div>
+
+    <div class="theme-dots-row" role="group" aria-label="اختر لون الثيم">
+      <button class="theme-dot-btn active" data-pick="default"  title="افتراضي"     aria-label="ثيم افتراضي"     aria-pressed="true"></button>
+      <button class="theme-dot-btn"        data-pick="ocean"    title="المحيط"      aria-label="ثيم المحيط"      aria-pressed="false"></button>
+      <button class="theme-dot-btn"        data-pick="sunset"   title="الغروب"      aria-label="ثيم الغروب"      aria-pressed="false"></button>
+      <button class="theme-dot-btn"        data-pick="forest"   title="الغابة"      aria-label="ثيم الغابة"      aria-pressed="false"></button>
+      <button class="theme-dot-btn"        data-pick="midnight" title="منتصف الليل" aria-label="ثيم منتصف الليل" aria-pressed="false"></button>
+    </div>
+
+    <div class="dark-toggle-row">
+      <span class="dark-toggle-label">
+        <i class="fas fa-moon" aria-hidden="true"></i>
+        الوضع الليلي
+      </span>
+      <button class="toggle-switch"
+              id="drawer-dark-toggle"
+              role="switch"
+              aria-checked="false"
+              aria-label="تفعيل الوضع الليلي">
+      </button>
     </div>
   </div>
 
-  <!-- قسم مبدّل المظهر — يملؤه blogarch.js -->
-  <div class="drawer-theme-section" id="drawer-theme-section"></div>
+  <!-- قسم مبدّل المظهر القديم — يملؤه blogarch.js (محتفظ به للتوافق) -->
+  <div class="drawer-theme-section" id="drawer-theme-section" style="display:none"></div>
 </div>
+
+<!-- ─── لوحة البحث ─── -->
+<div class="search-panel" id="search-panel"
+     role="search" aria-label="البحث في الموقع">
+
+  <div class="search-input-wrap">
+    <i class="fas fa-search" aria-hidden="true"></i>
+    <input type="search"
+           id="search-input"
+           placeholder="ابحث في المقالات، البودكاست..."
+           autocomplete="off"
+           aria-label="مربع البحث">
+    <div class="search-kbd" aria-hidden="true">
+      <kbd>Ctrl</kbd><kbd>K</kbd>
+    </div>
+    <button class="search-close-btn" id="search-close-btn" aria-label="إغلاق البحث">
+      <i class="fas fa-times" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <!-- آخر عمليات البحث -->
+  <div id="recent-section" style="display:none">
+    <div class="search-section-title">عمليات البحث الأخيرة</div>
+    <div class="recent-searches" id="recent-searches-list"></div>
+  </div>
+
+  <!-- الأكثر بحثاً -->
+  <div class="search-section-title" style="margin-top:.85rem">الأكثر بحثاً</div>
+  <div class="search-hints" aria-label="اقتراحات البحث السريع">
+    <button class="search-hint-chip">بودكاست</button>
+    <button class="search-hint-chip">تقنية</button>
+    <button class="search-hint-chip">تعلّم</button>
+    <button class="search-hint-chip">مقالات</button>
+    <button class="search-hint-chip">أفكار</button>
+    <button class="search-hint-chip">إنتاجية</button>
+  </div>
+</div>
+
+<!-- ─── زر العودة للأعلى ─── -->
+<button class="scroll-top-btn" id="scroll-top-btn" aria-label="العودة للأعلى">
+  <i class="fas fa-arrow-up" aria-hidden="true"></i>
+</button>
