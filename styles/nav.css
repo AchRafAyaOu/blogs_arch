@@ -12,30 +12,20 @@
      https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/styles/nav.css
    ══════════════════════════════════════════════════════════════════ */
 
-/* ── متغير خاص بالـ Navbar فقط ── */
+/* ── متغير خاص بالـ Navbar فقط ──
+   يستعير --mobile-header-h من blogarch.css إذا كانت متاحة (60px)
+   ويتراجع إلى 60px بدلاً من 68px لمطابقة #fin-mobile-header الفعلي ── */
 :root {
-  --navbar-height: 68px;
+  --navbar-height: var(--mobile-header-h, 60px);
 }
 
 
 /* ══════════════════════════════════════
    0. SKIP LINK & READING PROGRESS
 ══════════════════════════════════════ */
-.skip-link {
-  position: absolute;
-  top: -40px;
-  inset-inline-start: 1rem;
-  background: var(--primary-color);
-  color: #fff;
-  padding: .5rem 1rem;
-  border-radius: var(--radius-sm);
-  font-weight: 700;
-  font-size: .9rem;
-  transition: top .2s;
-  z-index: 99999;
-  text-decoration: none;
-}
-.skip-link:focus { top: .75rem; }
+/* .skip-link — مُعرَّف في blogarch.css @layer base (transform-based)
+   لا نُعيد تعريفه هنا لتجنب تعارض الـ cascade (nav.css غير مُطبَّق في layer
+   فيُلغي إعداد @layer base في blogarch.css) */
 
 .reading-progress {
   position: fixed;
