@@ -640,11 +640,15 @@
     _renderResults(items.slice(0, 10));
   }
 
+  /* إذا كانت الصفحة تستخدم Blogger Feed API للبحث (راية من الثيم)
+     نتجاهل DOM-search لتجنب التعارض وازدواجية النتائج */
   let _searchTimer = null;
-  searchInput?.addEventListener('input', () => {
-    clearTimeout(_searchTimer);
-    _searchTimer = setTimeout(() => _doSearch(searchInput.value), 220);
-  });
+  if (!window._blogarchFeedSearchEnabled) {
+    searchInput?.addEventListener('input', () => {
+      clearTimeout(_searchTimer);
+      _searchTimer = setTimeout(() => _doSearch(searchInput.value), 220);
+    });
+  }
 
   searchResults?.addEventListener('click', e => {
     const item = e.target.closest('.search-item');
