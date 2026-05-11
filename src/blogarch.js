@@ -604,9 +604,15 @@
     else      searchBtn?.focus();
   }
 
-  searchBtn?.addEventListener('click', () =>
-    _setSearch(!searchPanel.classList.contains('active')));
-  searchCloseBtn?.addEventListener('click', () => _setSearch(false));
+  if (searchBtn && !searchBtn._wired) {
+    searchBtn._wired = true;
+    searchBtn.addEventListener('click', () =>
+      _setSearch(!searchPanel.classList.contains('active')));
+  }
+  if (searchCloseBtn && !searchCloseBtn._wired) {
+    searchCloseBtn._wired = true;
+    searchCloseBtn.addEventListener('click', () => _setSearch(false));
+  }
 
   function _renderResults(items) {
     if (!searchResults) return;
@@ -1007,5 +1013,3 @@
     /* reloadData / clearData
        ← تُضيفها Blogarch.data.js */
   });
-
-})();
