@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════
-   BlogArch — nav.css  v2.1
+   BlogArch — nav.css  v2.3 — Drawer fix · Scroll-lock · Unified FAB
    Navigation: Navbar · Breadcrumb · Glider · Drawer · Search · UX
    ──────────────────────────────────────────────────────────────────
    المتطلبات:
@@ -8,6 +8,12 @@
        --primary-rgb, --accent-rgb, --ease-spring, --ease-smooth,
        --radius-*, --shadow-*, ...)
      • FontAwesome 6
+   تبعيات CSS المُعرَّفة في blogarch.css (لا تُعاد هنا):
+     • html { overflow-x: clip }  — منع تمرير أفقي بدون تقطيع الـ drawer
+     • body.no-scroll / body.drawer-open { overflow: hidden }  — قفل التمرير
+     • body:has(.mobile-drawer.active) { overflow: hidden }  — CSS-native lock
+   يضيف nav.css:
+     • body:has(.menu-overlay.active) { overflow: hidden }  — عند الـ overlay
    CDN:
      https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/styles/nav.css
    ══════════════════════════════════════════════════════════════════ */
@@ -27,10 +33,12 @@
    لا نُعيد تعريفه هنا لتجنب تعارض الـ cascade (nav.css غير مُطبَّق في layer
    فيُلغي إعداد @layer base في blogarch.css) */
 
+#reading-progress,
 .reading-progress {
   position: fixed;
   top: 0;
   inset-inline-start: 0;
+  inset-inline-end: auto;
   height: 3px;
   width: 0%;
   background: linear-gradient(to right, var(--accent), var(--primary-color));
@@ -38,6 +46,7 @@
   border-radius: 0 2px 2px 0;
   transition: width .1s linear;
   pointer-events: none;
+  will-change: width;
 }
 
 
@@ -535,14 +544,19 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 .menu-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, .5);
+  background: rgba(0, 0, 0, .48);
   backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   opacity: 0;
   visibility: hidden;
-  transition: opacity .3s, visibility .3s;
+  transition: opacity .35s ease, visibility .35s;
   z-index: 9998;
+  cursor: pointer;
 }
 .menu-overlay.active { opacity: 1; visibility: visible; }
+@supports selector(body:has(*)) {
+  body:has(.menu-overlay.active) { overflow: hidden; overscroll-behavior: none; }
+}
 
 
 /* ══════════════════════════════════════
@@ -563,13 +577,16 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
   box-shadow: var(--shadow-xl);
   transition: inset-inline-end .42s var(--ease-spring);
   overflow-y: auto;
+  overflow-x: visible;
   overscroll-behavior: contain;
   touch-action: pan-y;
+  will-change: inset-inline-end;
+  isolation: isolate;
 }
 .mobile-drawer.active { inset-inline-end: 0; }
 
 .mobile-drawer-header {
-  padding: 86px 22px 18px;
+  padding: calc(var(--navbar-height, 60px) + 22px) 22px 18px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   background: linear-gradient(180deg, var(--muted-bg, #f1f5f9) 0%, transparent 100%);
@@ -651,8 +668,8 @@ body[data-theme="midnight"] .brand .dot { box-shadow: 0 0 0 3px rgba(192,132,252
 }
 
 @keyframes drawerItemIn {
-  from { opacity: 0; transform: translateX(14px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translate3d(12px, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0,    0, 0); }
 }
 
 
@@ -917,35 +934,53 @@ body[data-theme="midnight"]          .toggle-switch::after { inset-inline-end: c
 /* ══════════════════════════════════════
    11. SCROLL-TO-TOP BUTTON
 ══════════════════════════════════════ */
-.scroll-top-btn {
+.scroll-top-btn,
+.back-to-top {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: 1.75rem;
   inset-inline-end: 1.5rem;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: var(--primary-color);
+  background: var(--accent);
   color: #fff;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: .85rem;
+  font-size: .9rem;
   font-family: inherit;
-  box-shadow: 0 4px 14px rgba(var(--primary-rgb), .35);
+  box-shadow: 0 4px 14px rgba(var(--accent-rgb), .35);
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transform: translateY(12px) scale(.85);
-  transition: opacity .3s, transform .3s var(--ease-spring), background .2s;
+  transform: translateY(14px) scale(.88);
+  transition: opacity .3s var(--ease-spring),
+              transform .3s var(--ease-spring),
+              visibility .3s,
+              background .2s;
   z-index: 9990;
+  will-change: transform, opacity;
 }
-.scroll-top-btn.visible {
+.scroll-top-btn.visible,
+.back-to-top.visible {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
   transform: translateY(0) scale(1);
 }
-.scroll-top-btn:hover { background: var(--accent); transform: translateY(-2px) scale(1.05); }
+.scroll-top-btn:hover,
+.back-to-top:hover {
+  background: var(--primary-color);
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 8px 22px rgba(var(--primary-rgb), .42);
+}
+.scroll-top-btn:active,
+.back-to-top:active { transform: translateY(0) scale(.96); }
+@media (max-width: 640px) {
+  .scroll-top-btn, .back-to-top { inset-inline-end: .85rem; bottom: 1.25rem; }
+}
 
 
 /* ══════════════════════════════════════
@@ -975,3 +1010,4 @@ body[data-theme="midnight"]          .toggle-switch::after { inset-inline-end: c
   .search-panel.active                         { transform: none !important; }
   .dropdown-content                            { transform: none !important; }
 }
+/* nav.css v2.3 — 2026-05-17 */
