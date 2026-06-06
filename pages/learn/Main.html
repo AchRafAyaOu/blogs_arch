@@ -945,6 +945,66 @@
   .ba-filter-pills { flex-wrap: wrap; }
   .ba-sort-select  { font-size: .78rem; padding: 0 8px; }
 }
+/* ===== Loader داخل البطاقة عند الفتح ===== */
+#ba-learn-root .lesson-card {
+  position: relative;
+}
+
+#ba-learn-root .card-loader-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: color-mix(in srgb, var(--bg-card) 84%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .22s ease, visibility .22s ease;
+  border-radius: inherit;
+}
+
+#ba-learn-root .card-loader-spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid color-mix(in srgb, var(--brand) 16%, var(--bd));
+  border-top-color: var(--brand);
+  animation: ba-card-spin .75s linear infinite;
+}
+
+#ba-learn-root .card-loader-text {
+  font-size: var(--fs-sm);
+  font-weight: 800;
+  color: var(--brand);
+}
+
+#ba-learn-root .lesson-card.card-loading .card-loader-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+#ba-learn-root .lesson-card.card-loading .card-header,
+#ba-learn-root .lesson-card.card-loading .lesson-content,
+#ba-learn-root .lesson-card.card-loading .lesson-meta {
+  opacity: .22;
+  filter: blur(1px);
+  transform: scale(.985);
+  transition: opacity .22s ease, filter .22s ease, transform .22s ease;
+}
+
+#ba-learn-root .lesson-card.card-loading {
+  pointer-events: none;
+}
+
+@keyframes ba-card-spin {
+  to { transform: rotate(360deg); }
+}
 </style>
 </head>
 <body>
@@ -1326,6 +1386,104 @@
   else { window.addEventListener('load', updateStats); }
 
 })();
+<script>
+(function () {
+  'use strict';
+
+  var grid = document.getElementById('lessonsGrid');
+  var iframe = document.getElementById('lessonIframe');
+  var modal = document.getElementById('lessonModal');
+  var closeBtn = document.getElementById('closeModal');
+  var backdrop = modal ? modal.querySelector('.modal-backdrop') : null;
+
+  var activeCard = null;
+  var loadingTimer = null;
+
+  function ensureCardLoader(card) {
+    if (!card || card.querySelector('.card-loader-overlay')) return;
+
+    var overlay = document.createElement('div');
+    overlay.className = 'card-loader-overlay';
+    overlay.innerHTML = `
+      <div class="card-loader-spinner" aria-hidden="true"></div>
+      <div class="card-loader-text">جاري التحميل...</div>
+    `;
+    card.appendChild(overlay);
+  }
+
+  function clearCardLoading() {
+    if (loadingTimer) {
+      clearTimeout(loadingTimer);
+      loadingTimer = null;
+    }
+
+    document.querySelectorAll('#ba-learn-root .lesson-card.card-loading').forEach(function(card) {
+      card.classList.remove('card-loading');
+      card.removeAttribute('aria-busy');
+    });
+
+    activeCard = null;
+  }
+
+  function setCardLoading(card) {
+    if (!card) return;
+
+    clearCardLoading();
+    ensureCardLoader(card);
+
+    activeCard = card;
+    card.classList.add('card-loading');
+    card.setAttribute('aria-busy', 'true');
+
+    /* احتياط إذا لم يكتمل التحميل */
+    loadingTimer = setTimeout(clearCardLoading, 12000);
+  }
+
+  if (grid) {
+    grid.addEventListener('click', function(e) {
+      var card = e.target.closest('.lesson-card');
+      if (!card) return;
+
+      /* لا تُظهر اللودر عند الضغط على زر المفضلة */
+      if (e.target.closest('.favorite-btn')) return;
+
+      setCardLoading(card);
+    }, true);
+  }
+
+  if (iframe) {
+    iframe.addEventListener('load', function() {
+      requestAnimationFrame(clearCardLoading);
+    });
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', clearCardLoading, true);
+  }
+
+  if (backdrop) {
+    backdrop.addEventListener('click', clearCardLoading, true);
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') clearCardLoading();
+  }, true);
+
+  if (modal) {
+    var observer = new MutationObserver(function() {
+      if (!modal.classList.contains('active')) {
+        clearCardLoading();
+      }
+    });
+
+    observer.observe(modal, {
+      attributes: true,
+      attributeFilter: ['class', 'aria-hidden']
+    });
+  }
+})();
+</script>
+
 </script>
 
 </body>
