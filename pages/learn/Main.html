@@ -8,1483 +8,208 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-  <!-- Lessons base styles -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/pages/learn/style.css">
-  <style>
-  /* ═══ PATCH — يُصحح التعارضات بين style.css الخارجي وـ learn.html ═══
-     يُطبَّق داخل #ba-learn-root فقط لتجنب تأثيره على Blogger          */
-
-  /* ── تعريف متغيرات الـ patch بأسماء #ba-learn-root ── */
-  #ba-learn-root {
-    --shadow-xs:   var(--sh-xs);
-    --shadow-sm:   var(--sh-sm);
-    --shadow-md:   var(--sh-md);
-    --shadow-lg:   var(--sh-lg);
-    --shadow-glow: var(--sh-glow);
-    --border:      var(--bd);
-    --border-strong: var(--bd-md);
-    --primary:     var(--brand);
-    --text-1:      var(--tx-1);
-    --text-2:      var(--tx-2);
-    --text-3:      var(--tx-3);
-  }
-
-  /* ── إصلاح modal-backdrop: يغلق فقط عند النقر على الخلفية لا على الـ container ── */
-  #ba-learn-root .modal-backdrop {
-    cursor: default;
-  }
-
-  /* ── إصلاح list-view: محاذاة صحيحة في كل الاتجاهات ── */
-  #ba-learn-root .ba-lessons-grid.list-view .card-header {
-    margin-inline-start: 0;
-    flex-shrink: 0;
-  }
-
-  #ba-learn-root .ba-lessons-grid.list-view .lesson-card {
-    min-height: unset;
-  }
-
-  /* ── إصلاح badge في الوضع الداكن — يضمن تباين كافي ── */
-  #ba-learn-root[data-theme="dark"] .level-badge.beginner,
-  [data-theme="dark"] #ba-learn-root .level-badge.beginner {
-    background: rgba(16,185,129,.15);
-    color: #6ee7b7;
-  }
-  #ba-learn-root[data-theme="dark"] .level-badge.intermediate,
-  [data-theme="dark"] #ba-learn-root .level-badge.intermediate {
-    background: rgba(245,158,11,.15);
-    color: #fcd34d;
-  }
-  #ba-learn-root[data-theme="dark"] .level-badge.advanced,
-  [data-theme="dark"] #ba-learn-root .level-badge.advanced {
-    background: rgba(239,68,68,.15);
-    color: #fca5a5;
-  }
-
-  /* ── إصلاح lesson-card في list-view على الشاشات الكبيرة ── */
-  @media (min-width: 541px) {
-    #ba-learn-root .ba-lessons-grid.list-view .lesson-meta {
-      border-top: none;
-      padding-top: 0;
-      margin-top: 0;
-    }
-  }
-  </style>
-
-<style>
-/* ================================================================
-   BlogArch Learn — Blogger Static Page Edition
-   ================================================================
-
-   STRATEGY FOR BLOGGER INTEGRATION:
-   • This page is injected inside Blogger's <body> which already
-     has a theme (header, sidebar, footer, body background).
-   • We wrap everything in  #ba-learn-root  to scope all styles
-     and avoid conflicts with Blogger's own CSS.
-   • Colors use  color-mix + inherit chains  to blend with
-     whatever Blogger theme is active (light or dark).
-   • The sticky bars use  position:sticky  (not fixed) so they
-     don't break out of Blogger's layout columns.
-   • body padding-top is NOT touched — Blogger controls that.
-================================================================ */
-
-/* ── 0. Blogger page body reset (gentle) ─────────────────── */
-/* Remove Blogger's default max-width constraint on static pages */
-.post-body,
-.post-outer,
-.post,
-.entry-content,
-.post-body.entry-content {
-  max-width: 100% !important;
-  width: 100% !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  overflow: visible !important;
-}
-
-/* ── 1. Root scope ───────────────────────────────────────── */
-#ba-learn-root {
-  /* ── Design tokens ── */
-  --brand:      hsl(227 83% 60%);
-  --brand-soft: hsl(227 90% 70%);
-  --brand-deep: hsl(227 64% 44%);
-  --accent:     hsl(329 90% 58%);
-  --success:    hsl(152 72% 36%);
-  --warning:    hsl(38  90% 48%);
-  --danger:     hsl(0   82% 58%);
-
-  /*
-    Surface colors: we start from Blogger's body background
-    using `color-mix(in srgb, Canvas …)` so we blend with
-    the live theme rather than hard-code white/dark values.
-    Canvas = CSS system color = actual page background.
-  */
-  --bg-page:    color-mix(in srgb, Canvas 96%, var(--brand) 4%);
-  --bg-card:    color-mix(in srgb, Canvas 100%, transparent);
-  --bg-subtle:  color-mix(in srgb, Canvas 90%, var(--brand) 10%);
-  --bg-elevated:color-mix(in srgb, Canvas 98%, var(--brand) 2%);
-  --bg-glass:   color-mix(in srgb, Canvas 94%, transparent);
-
-  /* Text: inherit from Blogger's CanvasText */
-  --tx-1: CanvasText;
-  --tx-2: color-mix(in srgb, CanvasText 75%, Canvas);
-  --tx-3: color-mix(in srgb, CanvasText 50%, Canvas);
-  --tx-inv: #ffffff;
-
-  /* Borders */
-  --bd:       color-mix(in srgb, CanvasText 12%, transparent);
-  --bd-md:    color-mix(in srgb, CanvasText 22%, transparent);
-  --bd-brand: color-mix(in srgb, var(--brand) 28%, transparent);
-
-  /* Shadows */
-  --sh-xs: 0 1px 4px  color-mix(in srgb, CanvasText 5%,  transparent);
-  --sh-sm: 0 4px 16px color-mix(in srgb, CanvasText 8%,  transparent);
-  --sh-md: 0 10px 30px color-mix(in srgb, CanvasText 12%, transparent);
-  --sh-lg: 0 20px 52px color-mix(in srgb, CanvasText 17%, transparent);
-  --sh-glow: 0 8px 26px color-mix(in srgb, var(--brand) 22%, transparent);
-
-  /* Radii */
-  --r-sm: 10px; --r-md: 16px; --r-lg: 22px; --r-xl: 30px; --r-pill: 999px;
-
-  /* Type */
-  --fs-xs:   .80rem;
-  --fs-sm:   .93rem;
-  --fs-base: 1.03rem;
-  --fs-md:   1.14rem;
-  --fs-lg:   1.28rem;
-  --fs-xl:   1.52rem;
-  --fs-2xl:  1.88rem;
-  --fs-3xl:  2.40rem;
-
-  /* Easing */
-  --ease:        cubic-bezier(.25,.46,.45,.94);
-  --ease-spring: cubic-bezier(.34,1.56,.64,1);
-  --dur-fast:  .16s;
-  --dur-base:  .26s;
-  --dur-slow:  .40s;
-
-  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--brand) 26%, transparent);
-
-  /* Heights updated by JS */
-  --h-search:  68px;
-  --h-filters: 54px;
-
-  /* Layout */
-  font-family: 'Tajawal', 'Cairo', system-ui, sans-serif;
-  font-size: var(--fs-base);
-  line-height: 1.9;
-  color: var(--tx-1);
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  direction: rtl;
-  /* Stretch to full post width */
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  /* Contain sticky children */
-  position: relative;
-}
-
-/* Override tokens for explicit dark/light if Blogger adds data-theme */
-#ba-learn-root[data-theme="dark"],
-[data-theme="dark"] #ba-learn-root {
-  --bg-page:    #07101f;
-  --bg-card:    #101c2e;
-  --bg-subtle:  #131e30;
-  --bg-elevated:#0d1828;
-  --bg-glass:   rgba(7,16,31,.96);
-  --tx-1: #eef4ff;
-  --tx-2: #b0c2db;
-  --tx-3: #72899e;
-  --bd:   rgba(255 255 255/.10);
-  --bd-md:rgba(255 255 255/.20);
-}
-
-#ba-learn-root[data-theme="light"],
-[data-theme="light"] #ba-learn-root {
-  --bg-page:    #eef2fa;
-  --bg-card:    #ffffff;
-  --bg-subtle:  #e3eaf6;
-  --bg-elevated:#f5f8ff;
-  --bg-glass:   rgba(245,248,255,.96);
-  --tx-1: #0b1121;
-  --tx-2: #283450;
-  --tx-3: #55698a;
-  --bd:   rgba(90 115 170/.16);
-  --bd-md:rgba(80 100 150/.28);
-}
-
-/* Auto dark via media query */
-@media (prefers-color-scheme: dark) {
-  #ba-learn-root:not([data-theme="light"]) {
-    --bg-page:    #07101f;
-    --bg-card:    #101c2e;
-    --bg-subtle:  #131e30;
-    --bg-elevated:#0d1828;
-    --bg-glass:   rgba(7,16,31,.96);
-    --tx-1: #eef4ff;
-    --tx-2: #b0c2db;
-    --tx-3: #72899e;
-    --bd:   rgba(255 255 255/.10);
-    --bd-md:rgba(255 255 255/.20);
-  }
-}
-
-/* ── 2. Inner container ──────────────────────────────────── */
-#ba-learn-root *,
-#ba-learn-root *::before,
-#ba-learn-root *::after {
-  box-sizing: border-box;
-}
-
-#ba-learn-root ::selection {
-  background: color-mix(in srgb, var(--brand) 20%, transparent);
-  color: var(--tx-1);
-}
-
-.ba-wrap {
-  width: min(100%, 1320px);
-  margin-inline: auto;
-  padding-inline: clamp(12px, 2.5vw, 28px);
-}
-
-/* ── 3. Ambient background glow ─────────────────────────── */
-.ba-ambient {
-  position: relative;
-  background: var(--bg-page);
-  border-radius: var(--r-xl);
-  overflow: hidden;
-  padding-bottom: 72px;
-}
-
-.ba-ambient::before {
-  content: "";
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse 70% 40% at 100% 0%,
-      color-mix(in srgb, var(--brand) 7%, transparent), transparent),
-    radial-gradient(ellipse 55% 35% at 0% 100%,
-      color-mix(in srgb, var(--accent) 4%, transparent), transparent);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* ── 4. STICKY SEARCH BAR (collapses on scroll) ──────────── */
-/*
-  Using position:sticky so it stays INSIDE the post column.
-  This works perfectly inside Blogger's layout.
-*/
-.ba-search-bar {
-  position: sticky;
-  top: 0;
-  z-index: 120;
-  background: var(--bg-glass);
-  backdrop-filter: blur(24px) saturate(170%);
-  -webkit-backdrop-filter: blur(24px) saturate(170%);
-  border-bottom: 1px solid var(--bd);
-  box-shadow: var(--sh-sm);
-  height: var(--h-search);
-  overflow: hidden;
-  /* Collapse animation */
-  transition:
-    height   var(--dur-base) var(--ease),
-    opacity  var(--dur-base) var(--ease),
-    border-color var(--dur-fast) var(--ease),
-    box-shadow   var(--dur-fast) var(--ease);
-  will-change: height, opacity;
-}
-
-.ba-search-bar.ba-collapsed {
-  height: 0;
-  opacity: 0;
-  border-bottom-color: transparent;
-  box-shadow: none;
-  pointer-events: none;
-}
-
-.ba-search-row {
-  display: flex;
-  align-items: center;
-  height: var(--h-search);
-  gap: 12px;
-}
-
-/* ── 5. STICKY FILTERS BAR (always visible) ──────────────── */
-.ba-filters-bar {
-  position: sticky;
-  top: 0;           /* hugs top once search collapses */
-  z-index: 110;
-  background: var(--bg-glass);
-  backdrop-filter: blur(24px) saturate(170%);
-  -webkit-backdrop-filter: blur(24px) saturate(170%);
-  border-bottom: 1px solid var(--bd);
-  box-shadow: var(--sh-sm);
-  transition: box-shadow var(--dur-base) var(--ease);
-}
-
-.ba-filters-bar.ba-at-top {
-  box-shadow: var(--sh-md);
-}
-
-.ba-filters-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  height: var(--h-filters);
-  flex-wrap: nowrap;
-}
-
-/* ── 6. Search Input ─────────────────────────────────────── */
-.ba-search-wrap {
-  position: relative;
-  width: 100%;
-  max-width: 620px;
-  margin-inline: auto;
-}
-
-.ba-search-icon {
-  position: absolute;
-  inset-inline-end: 16px;
-  top: 50%; transform: translateY(-50%);
-  color: var(--tx-3);
-  pointer-events: none;
-  font-size: .9rem;
-  transition: color var(--dur-fast) var(--ease);
-}
-.ba-search-wrap:focus-within .ba-search-icon { color: var(--brand); }
-
-.ba-search-input {
-  width: 100%;
-  height: 44px;
-  padding: 0 46px 0 18px;
-  border-radius: var(--r-pill);
-  border: 1.5px solid var(--bd);
-  background: var(--bg-card);
-  color: var(--tx-1);
-  font-size: var(--fs-base);
-  font-family: inherit;
-  font-weight: 500;
-  box-shadow: var(--sh-xs);
-  transition:
-    border-color var(--dur-base) var(--ease),
-    box-shadow   var(--dur-base) var(--ease);
-}
-.ba-search-input::placeholder { color: var(--tx-3); font-weight: 500; }
-.ba-search-input:hover  { border-color: var(--bd-md); }
-.ba-search-input:focus  {
-  outline: none;
-  border-color: var(--brand);
-  box-shadow: var(--focus-ring), var(--sh-xs);
-}
-
-.ba-search-clear {
-  position: absolute;
-  inset-inline-start: 11px;
-  top: 50%; transform: translateY(-50%);
-  width: 25px; height: 25px;
-  border: none; border-radius: 50%;
-  background: var(--bg-subtle);
-  color: var(--tx-3);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: .75rem;
-  opacity: 0;
-  transition: opacity var(--dur-fast), color var(--dur-fast);
-}
-.ba-search-input:not(:placeholder-shown) ~ .ba-search-clear { opacity: 1; }
-.ba-search-clear:hover { color: var(--danger); }
-
-/* ── 7. Filter Pills ────────────────────────────────────── */
-.ba-filter-pills {
-  display: flex; gap: 4px;
-  background: var(--bg-subtle);
-  border: 1px solid var(--bd);
-  padding: 4px; border-radius: var(--r-pill);
-  flex-shrink: 0;
-}
-
-.ba-filter-pill {
-  min-height: 32px; padding: 4px 14px;
-  border: none; background: transparent;
-  color: var(--tx-2); border-radius: var(--r-pill);
-  font-size: var(--fs-sm); font-weight: 700; font-family: inherit;
-  cursor: pointer;
-  display: flex; align-items: center; gap: 6px;
-  white-space: nowrap;
-  transition: background var(--dur-fast) var(--ease),
-              color     var(--dur-fast) var(--ease),
-              box-shadow var(--dur-fast) var(--ease);
-}
-.ba-filter-pill:hover {
-  color: var(--brand);
-  background: color-mix(in srgb, var(--brand) 8%, transparent);
-}
-.ba-filter-pill.active {
-  background: var(--bg-card); color: var(--brand);
-  box-shadow: var(--sh-xs); font-weight: 800;
-}
-
-.ba-pill-dot {
-  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
-}
-.ba-pill-dot.beginner     { background: var(--success); }
-.ba-pill-dot.intermediate { background: var(--warning); }
-.ba-pill-dot.advanced     { background: var(--danger); }
-
-/* ── 8. Quick Tags ──────────────────────────────────────── */
-.ba-quick-tags {
-  display: flex; align-items: center; gap: 6px;
-  flex-shrink: 1; min-width: 0; overflow: hidden;
-}
-.ba-tags-label {
-  color: var(--tx-3); font-size: var(--fs-xs); font-weight: 700; white-space: nowrap;
-}
-.ba-tag {
-  padding: 3px 11px;
-  border: 1.5px solid var(--bd); border-radius: var(--r-pill);
-  background: transparent; color: var(--tx-2);
-  font-size: var(--fs-xs); font-weight: 700; font-family: inherit;
-  cursor: pointer; white-space: nowrap;
-  transition: all var(--dur-fast) var(--ease);
-}
-.ba-tag:hover {
-  color: var(--brand); border-color: var(--bd-brand);
-  background: color-mix(in srgb, var(--brand) 7%, transparent);
-}
-
-/* ── 9. Sort + View Controls ────────────────────────────── */
-.ba-controls-right {
-  display: flex; align-items: center; gap: 9px; flex-shrink: 0;
-}
-
-.ba-sort-select {
-  height: 34px; padding: 0 13px;
-  border-radius: var(--r-md);
-  border: 1.5px solid var(--bd);
-  background: var(--bg-card); color: var(--tx-1);
-  font-size: var(--fs-sm); font-family: inherit; font-weight: 600;
-  cursor: pointer;
-  transition: border-color var(--dur-fast);
-}
-.ba-sort-select:focus { outline: none; box-shadow: var(--focus-ring); border-color: var(--brand); }
-
-.ba-view-toggle {
-  display: flex; gap: 3px;
-  background: var(--bg-subtle);
-  border: 1px solid var(--bd);
-  padding: 3px; border-radius: var(--r-md);
-}
-.ba-view-btn {
-  width: 32px; height: 32px; border: none; border-radius: 9px;
-  background: transparent; color: var(--tx-3);
-  cursor: pointer; font-size: .86rem;
-  display: flex; align-items: center; justify-content: center;
-  transition: all var(--dur-fast) var(--ease);
-}
-.ba-view-btn.active {
-  background: var(--bg-card); color: var(--brand); box-shadow: var(--sh-xs);
-}
-
-/* ── 10. Page header (section title) ────────────────────── */
-.ba-section-header {
-  text-align: center;
-  padding: clamp(28px, 4vw, 48px) 0 clamp(24px, 3.5vw, 40px);
-  position: relative; z-index: 1;
-}
-
-.ba-section-title {
-  font-family: 'Cairo', 'Tajawal', sans-serif;
-  font-size: clamp(1.8rem, 3.5vw, 2.70rem);
-  font-weight: 900; line-height: 1.28;
-  letter-spacing: -.025em;
-  color: var(--tx-1);
-  margin-bottom: 12px;
-}
-
-.ba-title-accent {
-  background: linear-gradient(135deg, var(--brand), var(--accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.ba-section-subtitle {
-  max-width: 640px; margin-inline: auto;
-  color: var(--tx-2); font-size: var(--fs-md);
-  font-weight: 500; line-height: 1.9;
-}
-
-/* ── 11. Cards Grid — flex-wrap centered ─────────────────── */
-/*
-  flex-wrap + justify-content:center ensures the last row
-  is always centered regardless of card count.
-*/
-.ba-lessons-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  align-items: stretch;   /* equal height per row */
-  position: relative; z-index: 1;
-  padding-inline: 2px;    /* prevent shadow clip */
-}
-
-/* Each card: grows from min 290px, caps at 400px */
-.ba-lessons-grid > .lesson-card {
-  flex: 1 1 290px;
-  max-width: 400px;
-  /* Override external CSS width if any */
-  width: auto !important;
-}
-
-/* List view */
-.ba-lessons-grid.list-view {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
-}
-.ba-lessons-grid.list-view > .lesson-card {
-  flex: none; max-width: 100%;
-  flex-direction: row; align-items: center;
-  padding: 16px 20px 16px 24px; gap: 16px;
-}
-
-/* Responsive */
-@media (max-width: 860px) {
-  .ba-lessons-grid > .lesson-card { flex: 1 1 260px; max-width: 440px; }
-}
-@media (max-width: 580px) {
-  .ba-lessons-grid > .lesson-card { flex: 1 1 100%; max-width: 100%; }
-}
-
-/* ── 12. Card design ────────────────────────────────────── */
-/* Re-declare to override external style.css with higher specificity */
-#ba-learn-root .lesson-card {
-  position: relative;
-  display: flex; flex-direction: column;
-  justify-content: space-between;
-  gap: 0;
-  padding: 24px 22px 20px;
-  background: var(--bg-card);
-  border: 1.5px solid var(--bd);
-  border-radius: var(--r-lg);
-  box-shadow: var(--sh-sm);
-  overflow: hidden; isolation: isolate;
-  cursor: pointer; min-height: 210px;
-  animation: ba-card-in .36s var(--ease) both;
-  transition:
-    transform  var(--dur-slow) var(--ease),
-    box-shadow var(--dur-slow) var(--ease),
-    border-color var(--dur-base) var(--ease);
-}
-
-/* Left accent bar */
-#ba-learn-root .lesson-card::after {
-  content: "";
-  position: absolute; inset-block: 16px; inset-inline-start: 0;
-  width: 4px; border-radius: 0 4px 4px 0;
-  background: linear-gradient(180deg, var(--brand), var(--accent));
-  opacity: .8;
-  transition: width var(--dur-base) var(--ease), opacity var(--dur-fast);
-}
-
-/* Hover glow */
-#ba-learn-root .lesson-card::before {
-  content: ""; position: absolute; inset: 0;
-  background: radial-gradient(ellipse at top left,
-    color-mix(in srgb, var(--brand) 7%, transparent), transparent 55%);
-  opacity: 0; z-index: -1;
-  transition: opacity var(--dur-slow) var(--ease);
-}
-
-#ba-learn-root .lesson-card:hover {
-  transform: translateY(-5px);
-  border-color: var(--bd-brand);
-  box-shadow: var(--sh-lg), var(--sh-glow);
-}
-#ba-learn-root .lesson-card:hover::before { opacity: 1; }
-#ba-learn-root .lesson-card:hover::after  { width: 5px; opacity: 1; }
-
-#ba-learn-root .lesson-card.completed {
-  border-color: color-mix(in srgb, var(--success) 32%, var(--bd));
-}
-#ba-learn-root .lesson-card.completed::after {
-  background: linear-gradient(180deg, var(--success),
-    color-mix(in srgb, var(--success) 55%, #fff));
-}
-
-/* Card header */
-#ba-learn-root .card-header {
-  display: flex; align-items: flex-start;
-  justify-content: space-between; gap: 12px;
-  margin-bottom: 14px;
-}
-
-#ba-learn-root .lesson-icon {
-  width: 54px; height: 54px; border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, var(--brand), var(--brand-deep));
-  color: #fff; font-size: 1.18rem;
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--brand) 26%, transparent);
-  flex-shrink: 0;
-  transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease);
-}
-#ba-learn-root .lesson-card:hover .lesson-icon {
-  transform: scale(1.07) rotate(-2deg);
-  box-shadow: 0 12px 28px color-mix(in srgb, var(--brand) 36%, transparent);
-}
-
-#ba-learn-root .favorite-btn {
-  width: 34px; height: 34px; border-radius: 50%;
-  border: 1.5px solid var(--bd);
-  background: var(--bg-subtle); color: var(--tx-3);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: .85rem; flex-shrink: 0;
-  transition: all var(--dur-fast) var(--ease);
-}
-#ba-learn-root .favorite-btn:hover,
-#ba-learn-root .favorite-btn.active {
-  color: var(--danger);
-  border-color: color-mix(in srgb, var(--danger) 28%, var(--bd));
-  background: color-mix(in srgb, var(--danger) 9%, var(--bg-card));
-}
-
-/* Card body */
-#ba-learn-root .lesson-content {
-  display: flex; flex-direction: column; gap: 8px; flex: 1;
-}
-
-#ba-learn-root .lesson-title {
-  font-family: 'Cairo', 'Tajawal', sans-serif;
-  font-size: var(--fs-lg); font-weight: 900; line-height: 1.42;
-  color: var(--tx-1); letter-spacing: -.01em;
-}
-
-#ba-learn-root .lesson-title-en {
-  font-size: var(--fs-xs); color: var(--tx-3);
-  font-weight: 600; letter-spacing: .04em;
-  line-height: 1.6; text-transform: uppercase;
-}
-
-#ba-learn-root .lesson-description {
-  color: var(--tx-2); font-size: var(--fs-base);
-  font-weight: 500; line-height: 1.85;
-  display: -webkit-box;
-  -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-  margin-top: 2px;
-}
-
-/* Card footer */
-#ba-learn-root .lesson-meta {
-  display: flex; align-items: center;
-  justify-content: space-between; gap: 10px;
-  border-top: 1px solid var(--bd);
-  padding-top: 13px; margin-top: 14px;
-}
-
-/* Level badges */
-#ba-learn-root .level-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  min-height: 26px; padding: 3px 11px;
-  border-radius: var(--r-pill);
-  font-size: var(--fs-xs); font-weight: 800; letter-spacing: .01em;
-}
-#ba-learn-root .level-badge.beginner {
-  background: color-mix(in srgb, var(--success) 13%, transparent);
-  color: color-mix(in srgb, var(--success) 82%, #002010);
-}
-#ba-learn-root .level-badge.intermediate {
-  background: color-mix(in srgb, var(--warning) 15%, transparent);
-  color: color-mix(in srgb, var(--warning) 80%, #2a1800);
-}
-#ba-learn-root .level-badge.advanced {
-  background: color-mix(in srgb, var(--danger) 13%, transparent);
-  color: color-mix(in srgb, var(--danger) 82%, #2a0000);
-}
-
-@media (prefers-color-scheme: dark) {
-  #ba-learn-root .level-badge.beginner    { color: color-mix(in srgb, var(--success) 88%, #a0ffe0); }
-  #ba-learn-root .level-badge.intermediate{ color: color-mix(in srgb, var(--warning) 88%, #ffe0a0); }
-  #ba-learn-root .level-badge.advanced    { color: color-mix(in srgb, var(--danger)  88%, #ffb0b0); }
-}
-
-#ba-learn-root .lesson-action {
-  display: inline-flex; align-items: center; gap: 6px;
-  color: var(--brand); font-size: var(--fs-sm); font-weight: 800;
-  transition: gap var(--dur-fast) var(--ease);
-}
-#ba-learn-root .lesson-card:hover .lesson-action { gap: 10px; }
-
-/* List view card tweaks */
-#ba-learn-root .ba-lessons-grid.list-view .lesson-card::after { inset-block: 13px; }
-#ba-learn-root .ba-lessons-grid.list-view .lesson-content { gap: 4px; }
-#ba-learn-root .ba-lessons-grid.list-view .lesson-description { -webkit-line-clamp: 2; }
-#ba-learn-root .ba-lessons-grid.list-view .lesson-meta {
-  border-top: none; padding-top: 0; margin-top: 0;
-  flex-direction: column; align-items: flex-end;
-  justify-content: center; gap: 7px; flex-shrink: 0; min-width: 110px;
-}
-
-/* ── 13. Card entrance animation ────────────────────────── */
-@keyframes ba-card-in {
-  from { opacity: 0; transform: translateY(15px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── 14. Empty state ────────────────────────────────────── */
-.ba-empty-state {
-  text-align: center; padding: 64px 20px;
-  background: color-mix(in srgb, var(--bg-card) 85%, transparent);
-  border: 1.5px dashed var(--bd-md);
-  border-radius: var(--r-xl); color: var(--tx-2);
-  position: relative; z-index: 1;
-}
-.ba-empty-icon {
-  width: 84px; height: 84px; margin: 0 auto 20px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; background: var(--bg-subtle);
-  color: var(--tx-3); font-size: 1.9rem;
-}
-.ba-empty-state h3 {
-  font-family: 'Cairo', sans-serif; font-size: var(--fs-xl);
-  font-weight: 900; color: var(--tx-1); margin-bottom: 10px;
-}
-
-/* ── 15. Buttons ────────────────────────────────────────── */
-.ba-btn-primary, .ba-btn-complete {
-  min-height: 44px; padding: 10px 22px;
-  border: none; border-radius: var(--r-md);
-  font-family: inherit; font-size: var(--fs-base); font-weight: 800;
-  cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
-  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
-}
-.ba-btn-primary {
-  color: #fff;
-  background: linear-gradient(135deg, var(--brand), var(--brand-deep));
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--brand) 24%, transparent);
-}
-.ba-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 28px color-mix(in srgb, var(--brand) 32%, transparent); }
-.ba-btn-complete {
-  color: #fff;
-  background: linear-gradient(135deg, var(--success), color-mix(in srgb, var(--success) 68%, #000));
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--success) 22%, transparent);
-}
-.ba-btn-complete:hover { transform: translateY(-2px); }
-
-/* ── 16. Modal ─────────────────────────────────────────── */
-/* Modal is fixed so it overlays the whole page (including Blogger chrome) */
-#ba-learn-root .lesson-modal {
-  position: fixed; inset: 0; z-index: 9999;
-  display: flex; align-items: center; justify-content: center;
-  padding: 16px; opacity: 0; visibility: hidden;
-  transition: opacity var(--dur-base) var(--ease), visibility var(--dur-base) var(--ease);
-}
-#ba-learn-root .lesson-modal.active { opacity: 1; visibility: visible; }
-
-#ba-learn-root .modal-backdrop {
-  position: absolute; inset: 0;
-  background: rgba(4,8,20,.83);
-  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-}
-
-#ba-learn-root .modal-container {
-  position: relative; width: min(1200px, 100%); height: min(92vh, 100%);
-  display: flex; flex-direction: column;
-  background: var(--bg-card); border: 1px solid var(--bd);
-  border-radius: 26px; overflow: hidden; box-shadow: var(--sh-lg);
-  transform: translateY(22px) scale(.96);
-  transition: transform var(--dur-slow) var(--ease);
-}
-#ba-learn-root .lesson-modal.active .modal-container { transform: translateY(0) scale(1); }
-
-#ba-learn-root .modal-header {
-  display: flex; align-items: flex-start;
-  justify-content: space-between; gap: 12px;
-  padding: 20px 24px; border-bottom: 1px solid var(--bd);
-  background: var(--bg-elevated);
-}
-#ba-learn-root .modal-title {
-  font-family: 'Cairo', 'Tajawal', sans-serif;
-  font-size: var(--fs-xl); font-weight: 900; line-height: 1.38; color: var(--tx-1);
-}
-#ba-learn-root .modal-subtitle { color: var(--tx-3); font-size: var(--fs-sm); font-weight: 500; margin-top: 4px; }
-#ba-learn-root .modal-actions  { display: flex; gap: 7px; }
-
-#ba-learn-root .icon-btn,
-#ba-learn-root .tool-btn {
-  width: 38px; height: 38px; border-radius: 11px;
-  border: 1.5px solid var(--bd); background: var(--bg-card); color: var(--tx-2);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: .9rem;
-  transition: all var(--dur-fast) var(--ease);
-}
-#ba-learn-root .icon-btn:hover,
-#ba-learn-root .tool-btn:hover {
-  color: var(--brand); border-color: var(--bd-brand);
-  background: color-mix(in srgb, var(--brand) 7%, var(--bg-card));
-}
-
-#ba-learn-root .modal-toolbar {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  padding: 11px 20px; border-bottom: 1px solid var(--bd); background: var(--bg-card);
-}
-#ba-learn-root .nav-arrow {
-  min-height: 37px; padding: 6px 15px;
-  border: 1.5px solid var(--bd); border-radius: var(--r-md);
-  background: var(--bg-subtle); color: var(--tx-1);
-  font-size: var(--fs-sm); font-weight: 800; font-family: inherit;
-  display: inline-flex; align-items: center; gap: 6px;
-  cursor: pointer; transition: all var(--dur-fast) var(--ease);
-}
-#ba-learn-root .nav-arrow:hover:not(:disabled) {
-  color: var(--brand); border-color: var(--bd-brand);
-  background: color-mix(in srgb, var(--brand) 7%, var(--bg-subtle));
-}
-#ba-learn-root .nav-arrow:disabled { opacity: .4; cursor: not-allowed; }
-#ba-learn-root .lesson-indicator {
-  color: var(--tx-2); font-weight: 800;
-  font-family: 'Cairo', sans-serif; font-size: var(--fs-base);
-}
-#ba-learn-root .reading-controls { display: flex; gap: 6px; }
-
-#ba-learn-root .modal-body {
-  flex: 1; background: var(--bg-page); overflow: hidden; position: relative;
-}
-#ba-learn-root .iframe-container,
-#ba-learn-root #lessonIframe { width: 100%; height: 100%; }
-#ba-learn-root #lessonIframe { border: none; background: #fff; }
-
-#ba-learn-root .iframe-loader {
-  position: absolute; inset: 0; z-index: 5;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 13px;
-  background: var(--bg-page); color: var(--tx-2); font-weight: 700;
-  transition: opacity var(--dur-base) var(--ease), visibility var(--dur-base) var(--ease);
-}
-#ba-learn-root .iframe-loader.hidden { opacity: 0; visibility: hidden; }
-
-#ba-learn-root .spinner {
-  width: 42px; height: 42px;
-  border: 3px solid color-mix(in srgb, var(--brand) 16%, var(--bd));
-  border-top-color: var(--brand); border-radius: 50%;
-  animation: ba-spin .82s linear infinite;
-}
-@keyframes ba-spin { to { transform: rotate(360deg); } }
-
-#ba-learn-root .modal-footer {
-  display: flex; justify-content: flex-end; align-items: center;
-  padding: 15px 24px; border-top: 1px solid var(--bd); background: var(--bg-elevated);
-}
-
-/* ── 17. Toast ──────────────────────────────────────────── */
-#ba-learn-root .toast-container {
-  position: fixed; inset-inline-start: 18px; bottom: 18px;
-  z-index: 99999; display: flex; flex-direction: column; gap: 9px;
-}
-#ba-learn-root .toast {
-  min-width: 265px; padding: 12px 17px;
-  border-radius: var(--r-md);
-  background: var(--bg-card); border: 1.5px solid var(--bd);
-  border-inline-end: 4px solid var(--brand);
-  box-shadow: var(--sh-md); color: var(--tx-1);
-  font-size: var(--fs-base); font-weight: 700;
-  animation: ba-toast-in .28s var(--ease-spring);
-}
-@keyframes ba-toast-in {
-  from { opacity: 0; transform: translateX(-16px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-/* ── 18. Focus ──────────────────────────────────────────── */
-#ba-learn-root button:focus-visible,
-#ba-learn-root input:focus-visible,
-#ba-learn-root select:focus-visible {
-  outline: none; box-shadow: var(--focus-ring);
-}
-
-/* ── 19. Responsive ─────────────────────────────────────── */
-@media (max-width: 1060px) {
-  .ba-quick-tags { display: none; }
-}
-
-@media (max-width: 768px) {
-  .ba-filters-row { flex-wrap: wrap; height: auto; padding: 8px 0; gap: 8px; }
-  .ba-filter-pills { gap: 3px; }
-  .ba-filter-pill  { padding: 4px 10px; font-size: .80rem; }
-  .ba-filter-pill i { display: none; }
-  .ba-filters-bar  { height: auto; }
-
-  #ba-learn-root .modal-container { width: 100%; height: 100dvh; border-radius: 0; }
-  #ba-learn-root .lesson-modal    { padding: 0; }
-  #ba-learn-root .modal-toolbar   { flex-wrap: wrap; justify-content: center; gap: 8px; }
-  #ba-learn-root .reading-controls{ width: 100%; justify-content: center; order: 3; }
-  #ba-learn-root .nav-arrow       { flex: 1; justify-content: center; }
-}
-
-@media (max-width: 540px) {
-  .ba-wrap { padding-inline: 12px; }
-
-  #ba-learn-root .lesson-card { padding: 18px 14px 16px; }
-
-  #ba-learn-root .ba-lessons-grid.list-view .lesson-card {
-    flex-direction: column; align-items: stretch; min-height: unset;
-  }
-  #ba-learn-root .ba-lessons-grid.list-view .lesson-meta {
-    flex-direction: row; align-items: center;
-    justify-content: space-between;
-    border-top: 1px solid var(--bd);
-    padding-top: 11px; margin-top: 10px; min-width: unset;
-  }
-  #ba-learn-root .modal-header,
-  #ba-learn-root .modal-footer { padding-inline: 15px; }
-  .ba-filter-pills { flex-wrap: wrap; }
-  .ba-sort-select  { font-size: .78rem; padding: 0 8px; }
-}
-/* ===== Loader داخل البطاقة عند الفتح ===== */
-#ba-learn-root .lesson-card {
-  position: relative;
-}
-
-#ba-learn-root .card-loader-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 20;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background: color-mix(in srgb, var(--bg-card) 84%, transparent);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity .22s ease, visibility .22s ease;
-  border-radius: inherit;
-}
-
-#ba-learn-root .card-loader-spinner {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 3px solid color-mix(in srgb, var(--brand) 16%, var(--bd));
-  border-top-color: var(--brand);
-  animation: ba-card-spin .75s linear infinite;
-}
-
-#ba-learn-root .card-loader-text {
-  font-size: var(--fs-sm);
-  font-weight: 800;
-  color: var(--brand);
-}
-
-#ba-learn-root .lesson-card.card-loading .card-loader-overlay {
-  opacity: 1;
-  visibility: visible;
-}
-
-#ba-learn-root .lesson-card.card-loading .card-header,
-#ba-learn-root .lesson-card.card-loading .lesson-content,
-#ba-learn-root .lesson-card.card-loading .lesson-meta {
-  opacity: .22;
-  filter: blur(1px);
-  transform: scale(.985);
-  transition: opacity .22s ease, filter .22s ease, transform .22s ease;
-}
-
-#ba-learn-root .lesson-card.card-loading {
-  pointer-events: none;
-}
-
-@keyframes ba-card-spin {
-  to { transform: rotate(360deg); }
-}
-</style>
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<!--
-  ╔══════════════════════════════════════════════════════════╗
-  ║  كل ما يلي يُنسخ داخل محرر Blogger (HTML mode)          ║
-  ║  افتح صفحة جديدة → الصق الكود أدناه بين <body> tags    ║
-  ╚══════════════════════════════════════════════════════════╝
--->
+
+<!-- ═══════════════════════════════════════════════════════════
+     BLOGGER INTEGRATION — Scoped Root
+     ═══════════════════════════════════════════════════════════ -->
 
 <div id="ba-learn-root">
-<div class="ba-ambient">
+  <div class="ba-ambient">
 
-  <!-- ══ SEARCH BAR (collapses on scroll) ══ -->
-  <div class="ba-search-bar" id="baSearchBar">
-    <div class="ba-wrap">
-      <div class="ba-search-row">
-        <div class="ba-search-wrap">
-          <i class="fas fa-search ba-search-icon"></i>
-          <input
-            type="search"
-            id="lessonSearch"
-            class="ba-search-input"
-            placeholder="ابحث في الدروس... (مثال: أفعال، محادثة، قواعد)"
-            autocomplete="off"
-          />
-          <button class="ba-search-clear" id="clearSearch" aria-label="مسح البحث">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ FILTERS BAR (always sticky) ══ -->
-  <div class="ba-filters-bar" id="baFiltersBar">
-    <div class="ba-wrap">
-      <div class="ba-filters-row">
-
-        <!-- Level filters -->
-        <div class="ba-filter-pills" id="levelFilters" role="group" aria-label="تصفية حسب المستوى">
-          <button class="ba-filter-pill filter-pill active" data-level="all">
-            <i class="fas fa-th-large"></i> الكل
-          </button>
-          <button class="ba-filter-pill filter-pill" data-level="beginner">
-            <span class="ba-pill-dot beginner" aria-hidden="true"></span> مبتدئ
-          </button>
-          <button class="ba-filter-pill filter-pill" data-level="intermediate">
-            <span class="ba-pill-dot intermediate" aria-hidden="true"></span> متوسط
-          </button>
-          <button class="ba-filter-pill filter-pill" data-level="advanced">
-            <span class="ba-pill-dot advanced" aria-hidden="true"></span> متقدم
-          </button>
-        </div>
-
-        <!-- Quick search tags -->
-        <div class="ba-quick-tags" id="searchTags" aria-label="بحث سريع">
-          <span class="ba-tags-label">بحث سريع:</span>
-          <button class="ba-tag" data-search="أفعال">أفعال</button>
-          <button class="ba-tag" data-search="حروف">حروف</button>
-          <button class="ba-tag" data-search="محادثة">محادثة</button>
-          <button class="ba-tag" data-search="قواعد">قواعد</button>
-          <button class="ba-tag" data-search="مفردات">مفردات</button>
-        </div>
-
-        <!-- Sort + View toggle -->
-        <div class="ba-controls-right">
-          <select class="ba-sort-select" id="sortSelect" aria-label="ترتيب الدروس">
-            <option value="default">الترتيب الافتراضي</option>
-            <option value="name">أبجدياً</option>
-            <option value="level">حسب المستوى</option>
-            <option value="completed">المكتملة أولاً</option>
-          </select>
-          <div class="ba-view-toggle" id="viewToggle" role="group" aria-label="طريقة العرض">
-            <button class="ba-view-btn active" data-view="grid" title="عرض شبكي" aria-pressed="true">
-              <i class="fas fa-th-large"></i>
-            </button>
-            <button class="ba-view-btn" data-view="list" title="عرض قائمة" aria-pressed="false">
-              <i class="fas fa-list"></i>
+    <!-- ══ SEARCH BAR ══ -->
+    <header class="ba-search-bar" id="baSearchBar">
+      <div class="ba-wrap">
+        <div class="ba-search-row">
+          <div class="ba-search-wrap">
+            <i class="fas fa-search ba-search-icon" aria-hidden="true"></i>
+            <input
+              type="search"
+              id="lessonSearch"
+              class="ba-search-input"
+              placeholder="ابحث في الدروس... (مثال: أفعال، محادثة، قواعد)"
+              autocomplete="off"
+              aria-label="البحث في الدروس"
+            />
+            <button class="ba-search-clear" id="clearSearch" aria-label="مسح البحث" type="button">
+              <i class="fas fa-times" aria-hidden="true"></i>
             </button>
           </div>
         </div>
-
       </div>
-    </div>
-  </div>
+    </header>
 
-  <!-- ══ SECTION HEADER ══ -->
-  <div class="ba-wrap">
-    <div class="ba-section-header">
-      <h2 class="ba-section-title">
-        دروس تعليمية <span class="ba-title-accent">تفاعلية</span>
-      </h2>
-      <p class="ba-section-subtitle">
-        اختر الدرس المناسب لمستواك وابدأ رحلة التعلم بقراءة مريحة وواضحة
-      </p>
-    </div>
-  </div>
+    <!-- ══ FILTERS BAR ══ -->
+    <nav class="ba-filters-bar" id="baFiltersBar">
+      <div class="ba-wrap">
+        <div class="ba-filters-row">
 
-  <!-- ══ LESSONS GRID ══ -->
-  <div class="ba-wrap">
-    <!-- JS-compatibility hidden spans -->
-    <span id="totalLessons"     style="display:none">0</span>
-    <span id="completedLessons" style="display:none">0</span>
-    <span id="favCount"         style="display:none">0</span>
-    <span id="streakDays"       style="display:none">1</span>
-
-    <div class="ba-lessons-grid" id="lessonsGrid" role="list"></div>
-
-    <!-- Empty state -->
-    <div class="ba-empty-state" id="emptyState" style="display:none" aria-live="polite">
-      <div class="ba-empty-icon"><i class="fas fa-search"></i></div>
-      <h3>لا توجد نتائج</h3>
-      <p>حاول البحث بكلمات مختلفة أو تغيير الفلاتر</p>
-      <button class="ba-btn-primary" id="resetFiltersBtn">
-        <i class="fas fa-redo"></i> إعادة ضبط
-      </button>
-    </div>
-  </div>
-
-  <!-- ══ LESSON MODAL ══ -->
-  <div id="lessonModal" class="lesson-modal" aria-hidden="true" role="dialog" aria-modal="true">
-    <div class="modal-backdrop"></div>
-    <div class="modal-container">
-
-      <div class="modal-header">
-        <div class="modal-title-wrap">
-          <h2 id="modalTitle" class="modal-title">عنوان الدرس</h2>
-          <span id="modalSubtitle" class="modal-subtitle">English Title</span>
-        </div>
-        <div class="modal-actions">
-          <button class="icon-btn" id="fullscreenBtn" title="ملء الشاشة" aria-label="ملء الشاشة">
-            <i class="fas fa-expand"></i>
-          </button>
-          <button class="icon-btn" id="closeModal" title="إغلاق (Esc)" aria-label="إغلاق">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="modal-toolbar">
-        <button class="nav-arrow" id="prevLesson" aria-label="الدرس السابق">
-          <i class="fas fa-chevron-right"></i><span>السابق</span>
-        </button>
-        <div class="lesson-indicator" aria-live="polite">
-          <span id="currentIndex">1</span> / <span id="totalIndex">26</span>
-        </div>
-        <div class="reading-controls">
-          <button class="tool-btn" id="fontSizeBtn"    aria-label="تكبير الخط">   <i class="fas fa-font"></i></button>
-          <button class="tool-btn" id="readingModeBtn" aria-label="وضع القراءة"> <i class="fas fa-book-open"></i></button>
-        </div>
-        <button class="nav-arrow" id="nextLesson" aria-label="الدرس التالي">
-          <span>التالي</span><i class="fas fa-chevron-left"></i>
-        </button>
-      </div>
-
-      <div class="modal-body">
-        <div class="iframe-container" id="iframeContainer">
-          <div class="iframe-loader" id="iframeLoader">
-            <div class="spinner"></div>
-            <p>جاري تحميل الدرس...</p>
+          <!-- Level filters -->
+          <div class="ba-filter-pills" id="levelFilters" role="group" aria-label="تصفية حسب المستوى">
+            <button class="ba-filter-pill active" data-level="all" type="button">
+              <i class="fas fa-th-large" aria-hidden="true"></i>
+              <span>الكل</span>
+            </button>
+            <button class="ba-filter-pill" data-level="beginner" type="button">
+              <span class="ba-pill-dot beginner" aria-hidden="true"></span>
+              <span>مبتدئ</span>
+            </button>
+            <button class="ba-filter-pill" data-level="intermediate" type="button">
+              <span class="ba-pill-dot intermediate" aria-hidden="true"></span>
+              <span>متوسط</span>
+            </button>
+            <button class="ba-filter-pill" data-level="advanced" type="button">
+              <span class="ba-pill-dot advanced" aria-hidden="true"></span>
+              <span>متقدم</span>
+            </button>
           </div>
-          <iframe id="lessonIframe" title="Lesson Viewer" allowfullscreen></iframe>
+
+          <!-- Quick tags -->
+          <div class="ba-quick-tags" id="searchTags" aria-label="بحث سريع">
+            <span class="ba-tags-label">بحث سريع:</span>
+            <button class="ba-tag" data-search="أفعال" type="button">أفعال</button>
+            <button class="ba-tag" data-search="حروف" type="button">حروف</button>
+            <button class="ba-tag" data-search="محادثة" type="button">محادثة</button>
+            <button class="ba-tag" data-search="قواعد" type="button">قواعد</button>
+            <button class="ba-tag" data-search="مفردات" type="button">مفردات</button>
+          </div>
+
+          <!-- Sort + View Controls -->
+          <div class="ba-controls-right">
+            <select class="ba-sort-select" id="sortSelect" aria-label="ترتيب الدروس">
+              <option value="default">الترتيب الافتراضي</option>
+              <option value="name">أبجدياً</option>
+              <option value="level">حسب المستوى</option>
+              <option value="completed">المكتملة أولاً</option>
+            </select>
+            <div class="ba-view-toggle" id="viewToggle" role="group" aria-label="طريقة العرض">
+              <button class="ba-view-btn active" data-view="grid" title="عرض شبكي" aria-pressed="true" type="button">
+                <i class="fas fa-th-large" aria-hidden="true"></i>
+              </button>
+              <button class="ba-view-btn" data-view="list" title="عرض قائمة" aria-pressed="false" type="button">
+                <i class="fas fa-list" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
+    </nav>
 
-      <div class="modal-footer">
-        <button class="ba-btn-complete btn-complete" id="markCompleteBtn">
-          <i class="fas fa-check-circle"></i>
-          <span>تحديد كمكتمل</span>
+    <!-- ══ SECTION HEADER ══ -->
+    <section class="ba-section-header">
+      <div class="ba-wrap">
+        <h1 class="ba-section-title">
+          دروس تعليمية <span class="ba-title-accent">تفاعلية</span>
+        </h1>
+        <p class="ba-section-subtitle">
+          اختر الدرس المناسب لمستواك وابدأ رحلة التعلم بقراءة مريحة وواضحة
+        </p>
+      </div>
+    </section>
+
+    <!-- ══ LESSONS GRID ══ -->
+    <main class="ba-wrap">
+      <!-- Hidden stats for JS -->
+      <span id="totalLessons" style="display:none">0</span>
+      <span id="completedLessons" style="display:none">0</span>
+      <span id="favCount" style="display:none">0</span>
+      <span id="streakDays" style="display:none">1</span>
+
+      <div class="ba-lessons-grid" id="lessonsGrid" role="list" aria-label="قائمة الدروس"></div>
+
+      <!-- Empty state -->
+      <div class="ba-empty-state" id="emptyState" style="display:none" aria-live="polite">
+        <div class="ba-empty-icon" aria-hidden="true">
+          <i class="fas fa-search"></i>
+        </div>
+        <h3>لا توجد نتائج</h3>
+        <p>حاول البحث بكلمات مختلفة أو تغيير الفلاتر</p>
+        <button class="ba-btn-primary" id="resetFiltersBtn" type="button">
+          <i class="fas fa-redo" aria-hidden="true"></i>
+          <span>إعادة ضبط</span>
         </button>
       </div>
+    </main>
+
+    <!-- ══ LESSON MODAL ══ -->
+    <div id="lessonModal" class="lesson-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-backdrop"></div>
+      <div class="modal-container">
+
+        <header class="modal-header">
+          <div class="modal-title-wrap">
+            <h2 id="modalTitle" class="modal-title">عنوان الدرس</h2>
+            <span id="modalSubtitle" class="modal-subtitle">English Title</span>
+          </div>
+          <div class="modal-actions">
+            <button class="icon-btn" id="fullscreenBtn" title="ملء الشاشة" aria-label="ملء الشاشة" type="button">
+              <i class="fas fa-expand" aria-hidden="true"></i>
+            </button>
+            <button class="icon-btn close-btn" id="closeModal" title="إغلاق (Esc)" aria-label="إغلاق" type="button">
+              <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+          </div>
+        </header>
+
+        <div class="modal-toolbar">
+          <button class="nav-arrow" id="prevLesson" aria-label="الدرس السابق" type="button">
+            <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            <span>السابق</span>
+          </button>
+          <div class="lesson-indicator" aria-live="polite">
+            <span id="currentIndex">1</span> / <span id="totalIndex">26</span>
+          </div>
+          <div class="reading-controls">
+            <button class="tool-btn" id="fontSizeBtn" aria-label="تكبير الخط" type="button">
+              <i class="fas fa-font" aria-hidden="true"></i>
+            </button>
+            <button class="tool-btn" id="readingModeBtn" aria-label="وضع القراءة" type="button">
+              <i class="fas fa-book-open" aria-hidden="true"></i>
+            </button>
+          </div>
+          <button class="nav-arrow" id="nextLesson" aria-label="الدرس التالي" type="button">
+            <span>التالي</span>
+            <i class="fas fa-chevron-left" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="iframe-container" id="iframeContainer">
+            <div class="iframe-loader" id="iframeLoader">
+              <div class="spinner" aria-hidden="true"></div>
+              <p>جاري تحميل الدرس...</p>
+            </div>
+            <iframe id="lessonIframe" title="Lesson Viewer" allowfullscreen></iframe>
+          </div>
+        </div>
+
+        <footer class="modal-footer">
+          <button class="ba-btn-complete" id="markCompleteBtn" type="button">
+            <i class="fas fa-check-circle" aria-hidden="true"></i>
+            <span>تحديد كمكتمل</span>
+          </button>
+        </footer>
+      </div>
     </div>
-  </div>
 
-  <!-- Toast container -->
-  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- Hidden theme anchor for JS compat -->
-  <div id="themeToggle" style="display:none"></div>
-
-</div><!-- .ba-ambient -->
+  </div><!-- .ba-ambient -->
 </div><!-- #ba-learn-root -->
 
-<!-- ══════════════════════════════════════════════════════════
-     SCRIPTS
-══════════════════════════════════════════════════════════ -->
-<script>
-(function () {
-  'use strict';
-
-  const root       = document.getElementById('ba-learn-root');
-  const searchBar  = document.getElementById('baSearchBar');
-  const filtersBar = document.getElementById('baFiltersBar');
-  const grid       = document.getElementById('lessonsGrid');
-  const searchInput = document.getElementById('lessonSearch');
-  const clearBtn    = document.getElementById('clearSearch');
-
-  if (!root || !searchBar || !filtersBar) return;
-
-  /* ── Measure heights ── */
-  const measure = () => {
-    const sh = searchBar.scrollHeight || 68;
-    const fh = filtersBar.scrollHeight || 54;
-    root.style.setProperty('--h-search',  sh + 'px');
-    root.style.setProperty('--h-filters', fh + 'px');
-  };
-  measure();
-  window.addEventListener('resize', measure, { passive: true });
-
-  /* ── Collapse search on scroll ──
-     We track the scroll position of #ba-learn-root itself
-     relative to the viewport, since inside Blogger the
-     window scroll === page scroll.
-  ── */
-  let ticking = false;
-
-  const update = () => {
-    const rootTop  = root.getBoundingClientRect().top;
-    const searchH  = searchBar.scrollHeight || 68;
-    /* Once root has scrolled up enough that search is gone → collapse */
-    if (rootTop < -searchH * 0.5) {
-      searchBar.classList.add('ba-collapsed');
-      filtersBar.classList.add('ba-at-top');
-    } else {
-      searchBar.classList.remove('ba-collapsed');
-      filtersBar.classList.remove('ba-at-top');
-    }
-    ticking = false;
-  };
-
-  window.addEventListener('scroll', () => {
-    if (!ticking) { requestAnimationFrame(update); ticking = true; }
-  }, { passive: true });
-
-  /* ── Clear search ── */
-  clearBtn?.addEventListener('click', () => {
-    if (!searchInput) return;
-    searchInput.value = '';
-    searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-    searchInput.focus();
-  });
-
-  /* ── Wire ba-filter-pill active state (script.js handles filter logic via .filter-pill class) ── */
-  document.querySelectorAll('#levelFilters .ba-filter-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      document.querySelectorAll('#levelFilters .ba-filter-pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-    });
-  });
-
-  /* ── Wire ba-view-btn → ba-lessons-grid + view-btn (script.js) ── */
-  document.querySelectorAll('.ba-view-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.ba-view-btn').forEach(b => {
-        b.classList.remove('active'); b.setAttribute('aria-pressed', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-pressed', 'true');
-      const view = btn.dataset.view;
-      if (grid) grid.classList.toggle('list-view', view === 'list');
-      /* إشعار script.js بتغيير الـ view mode */
-      document.querySelectorAll('.view-btn[data-view="' + view + '"]').forEach(vb => vb.click());
-    });
-  });
-
-  /* ── Wire ba-tag → search input ── */
-  document.querySelectorAll('.ba-tag').forEach(tag => {
-    tag.addEventListener('click', () => {
-      if (!searchInput) return;
-      const val = tag.dataset.search || '';
-      /* toggle: إذا نفس القيمة → امسح */
-      if (searchInput.value === val) {
-        searchInput.value = '';
-      } else {
-        searchInput.value = val;
-      }
-      searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-      searchInput.focus();
-    });
-  });
-
-  /* ── Card entrance stagger ── */
-  const stagger = () => {
-    if (!grid) return;
-    const cards = grid.querySelectorAll('.lesson-card');
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.style.animationPlayState = 'running';
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.06 });
-
-    cards.forEach((c, i) => {
-      c.style.animationDelay = (i * 48) + 'ms';
-      c.style.animationPlayState = 'paused';
-      io.observe(c);
-    });
-  };
-
-  if (grid) {
-    new MutationObserver(stagger).observe(grid, { childList: true });
-  }
-
-  /* ── Blogger theme detection:
-     Read Blogger's body background-color and decide light/dark.
-     Set data-theme on #ba-learn-root accordingly.
-  ── */
-  const detectBloggerTheme = () => {
-    try {
-      const bodyBg = getComputedStyle(document.body).backgroundColor;
-      const match  = bodyBg.match(/\d+/g);
-      if (!match || match.length < 3) return;
-      const [r, g, b] = match.map(Number);
-      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-      root.dataset.theme = luminance < 0.5 ? 'dark' : 'light';
-    } catch (_) { /* silent */ }
-  };
-
-  /* Run after a short delay so Blogger's theme CSS has applied */
-  setTimeout(detectBloggerTheme, 80);
-  document.fonts.ready.then(detectBloggerTheme);
-
-})();
-</script>
-
-<!-- External lessons data + interactivity -->
-<script src="https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/pages/learn/lessons-data.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/pages/learn/script.js"></script>
-
-<script>
-/* ══ POST-LOAD PATCH ══
-   يُطبَّق بعد تحميل script.js ليُصحح سلوكيات تتعارض مع بنية learn.html
-════════════════════════════════════════════════════════════════════════ */
-(function() {
-  'use strict';
-
-  /* 1. modal-backdrop: نوقف bubble من الـ container
-     script.js يُضيف listener على .modal-backdrop مما يُغلق المودال
-     عند النقر على أي مكان فيه. نمنع ذلك بوقف الـ propagation. */
-  var container = document.querySelector('#lessonModal .modal-container');
-  if (container) {
-    container.addEventListener('click', function(e) { e.stopPropagation(); });
-  }
-
-  /* 2. reading-mode على #ba-learn-root بدلاً من body فقط */
-  var root = document.getElementById('ba-learn-root');
-  var readingBtn = document.getElementById('readingModeBtn');
-  if (root && readingBtn) {
-    readingBtn.addEventListener('click', function() {
-      requestAnimationFrame(function() {
-        root.classList.toggle('reading-mode',
-          document.body.classList.contains('reading-mode'));
-      });
-    }, true);
-  }
-
-  /* 3. تأكيد class="filter-pill" على ba-filter-pill لكي يراها script.js */
-  var levelFilters = document.getElementById('levelFilters');
-  if (levelFilters) {
-    levelFilters.querySelectorAll('.ba-filter-pill').forEach(function(pill) {
-      if (!pill.classList.contains('filter-pill')) pill.classList.add('filter-pill');
-    });
-  }
-
-  /* 4. تحديث الإحصاءات المخفية */
-  function updateStats() {
-    var totalEl = document.getElementById('totalLessons');
-    var doneEl  = document.getElementById('completedLessons');
-    if (totalEl && window.LESSONS_DATA) totalEl.textContent = LESSONS_DATA.length;
-    try {
-      var done = JSON.parse(localStorage.getItem('ba_completed') || '[]');
-      if (doneEl) doneEl.textContent = done.length;
-    } catch(e) {}
-  }
-  if (window.LESSONS_DATA) { updateStats(); }
-  else { window.addEventListener('load', updateStats); }
-
-})();
-<script>
-(function () {
-  'use strict';
-
-  var grid = document.getElementById('lessonsGrid');
-  var iframe = document.getElementById('lessonIframe');
-  var modal = document.getElementById('lessonModal');
-  var closeBtn = document.getElementById('closeModal');
-  var backdrop = modal ? modal.querySelector('.modal-backdrop') : null;
-
-  var activeCard = null;
-  var loadingTimer = null;
-
-  function ensureCardLoader(card) {
-    if (!card || card.querySelector('.card-loader-overlay')) return;
-
-    var overlay = document.createElement('div');
-    overlay.className = 'card-loader-overlay';
-    overlay.innerHTML = `
-      <div class="card-loader-spinner" aria-hidden="true"></div>
-      <div class="card-loader-text">جاري التحميل...</div>
-    `;
-    card.appendChild(overlay);
-  }
-
-  function clearCardLoading() {
-    if (loadingTimer) {
-      clearTimeout(loadingTimer);
-      loadingTimer = null;
-    }
-
-    document.querySelectorAll('#ba-learn-root .lesson-card.card-loading').forEach(function(card) {
-      card.classList.remove('card-loading');
-      card.removeAttribute('aria-busy');
-    });
-
-    activeCard = null;
-  }
-
-  function setCardLoading(card) {
-    if (!card) return;
-
-    clearCardLoading();
-    ensureCardLoader(card);
-
-    activeCard = card;
-    card.classList.add('card-loading');
-    card.setAttribute('aria-busy', 'true');
-
-    /* احتياط إذا لم يكتمل التحميل */
-    loadingTimer = setTimeout(clearCardLoading, 12000);
-  }
-
-  if (grid) {
-    grid.addEventListener('click', function(e) {
-      var card = e.target.closest('.lesson-card');
-      if (!card) return;
-
-      /* لا تُظهر اللودر عند الضغط على زر المفضلة */
-      if (e.target.closest('.favorite-btn')) return;
-
-      setCardLoading(card);
-    }, true);
-  }
-
-  if (iframe) {
-    iframe.addEventListener('load', function() {
-      requestAnimationFrame(clearCardLoading);
-    });
-  }
-
-  if (closeBtn) {
-    closeBtn.addEventListener('click', clearCardLoading, true);
-  }
-
-  if (backdrop) {
-    backdrop.addEventListener('click', clearCardLoading, true);
-  }
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') clearCardLoading();
-  }, true);
-
-  if (modal) {
-    var observer = new MutationObserver(function() {
-      if (!modal.classList.contains('active')) {
-        clearCardLoading();
-      }
-    });
-
-    observer.observe(modal, {
-      attributes: true,
-      attributeFilter: ['class', 'aria-hidden']
-    });
-  }
-})();
-</script>
-
-</script>
+<!-- Scripts -->
+<script src="lessons-data.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
