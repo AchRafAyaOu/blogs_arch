@@ -13,12 +13,18 @@
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/pages/learn/style.css">
+  <!-- Styles (Primary: Local, Fallback: CDN) -->
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/pages/learn/style.css" data-fallback>
 
   <!-- Scripts with defer for performance -->
-  <script src="https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/pages/learn/lessons-data.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/pages/learn/script.js" defer></script>
+  <!-- Lessons Data (Primary: Local, Fallback: CDN) -->
+  <script src="./lessons-data.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/pages/learn/lessons-data.js" defer data-fallback></script>
+
+  <!-- Main Script (Primary: Local, Fallback: CDN) -->
+  <script src="./script.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/pages/learn/script.js" defer data-fallback></script>
 </head>
 <body>
 
@@ -210,6 +216,23 @@
 
   </div><!-- .ba-ambient -->
 </div><!-- #ba-learn-root -->
+
+<!-- Fallback loader for missing resources -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Check if main resources loaded
+    const checkResources = () => {
+      const needsLessons = typeof LESSONS_DATA === 'undefined';
+      const fallbackScripts = document.querySelectorAll('script[data-fallback]');
+      
+      if (needsLessons && fallbackScripts.length > 0) {
+        console.warn('⚠ Local resources not found, loading from CDN fallback...');
+      }
+    };
+    
+    setTimeout(checkResources, 500);
+  });
+</script>
 
 </body>
 </html>
