@@ -1,12 +1,10 @@
 /* ═══════════════════════════════════════════════════════════
-   BlogArch Learn — Main Script
-   Based on original working version with security & UX fixes
+   BlogArch Learn — Main Script [FIXED]
    ═══════════════════════════════════════════════════════════ */
 
 (function () {
   'use strict';
 
-  /* ── State ─────────────────────────────────────────────── */
   const state = {
     currentFilter: 'all',
     currentSort: 'default',
@@ -22,17 +20,14 @@
   let fontSizeLevel = 0;
   const fontSizes = ['16px', '18px', '20px', '14px'];
 
-  /* ── DOM helpers ───────────────────────────────────────── */
   const $ = (id) => document.getElementById(id);
   const $$ = (sel) => document.querySelectorAll(sel);
 
-  /* ── Init ──────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', init);
 
   function init() {
-    // Verify data is available (lessons-data.js loaded before this script)
     if (typeof LESSONS_DATA === 'undefined' || !Array.isArray(LESSONS_DATA)) {
-      console.error('LESSONS_DATA not loaded. Ensure lessons-data.js is loaded before script.js');
+      console.error('LESSONS_DATA not loaded');
       showToast('⚠ خطأ في تحميل بيانات الدروس', 'error');
       return;
     }
@@ -167,10 +162,6 @@
   /* ════════ CARD LOADER ════════ */
   function setupCardLoader() {
     const grid = $('lessonsGrid');
-    const iframe = $('lessonIframe');
-    const modal = $('lessonModal');
-    const closeBtn = $('closeModal');
-    const backdrop = modal?.querySelector('.modal-backdrop');
     if (!grid) return;
 
     let activeCard = null;
@@ -211,6 +202,11 @@
       if (!card || e.target.closest('.favorite-btn')) return;
       setLoading(card);
     }, true);
+
+    const iframe = $('lessonIframe');
+    const modal = $('lessonModal');
+    const closeBtn = $('closeModal');
+    const backdrop = modal?.querySelector('.modal-backdrop');
 
     iframe?.addEventListener('load', () => requestAnimationFrame(clearLoading));
     closeBtn?.addEventListener('click', clearLoading, true);
@@ -295,7 +291,7 @@
                  aria-label="فتح درس ${escapeHtml(lesson.title)}">
           <div class="card-header">
             <div class="lesson-icon" aria-hidden="true">
-              <i class="${escapeHtml(lesson.icon)}"></i>
+              <i class="fas fa-book"></i>
             </div>
             <button class="favorite-btn ${isFav ? 'active' : ''}"
                     data-id="${lesson.id}"
@@ -346,7 +342,6 @@
       });
     });
 
-    // Stagger animation
     staggerCards(grid);
   }
 
@@ -399,10 +394,16 @@
     const lesson = currentLessonsContext[index];
     if (!lesson) return;
 
-    $('modalTitle').textContent = lesson.title;
-    $('modalSubtitle').textContent = lesson.titleEn;
-    $('currentIndex').textContent = index + 1;
-    $('totalIndex').textContent = currentLessonsContext.length;
+    // ✅ FIX: Check if elements exist before accessing
+    const modalTitle = $('modalTitle');
+    const modalSubtitle = $('modalSubtitle');
+    const currentIndexEl = $('currentIndex');
+    const totalIndexEl = $('totalIndex');
+
+    if (modalTitle) modalTitle.textContent = lesson.title;
+    if (modalSubtitle) modalSubtitle.textContent = lesson.titleEn;
+    if (currentIndexEl) currentIndexEl.textContent = index + 1;
+    if (totalIndexEl) totalIndexEl.textContent = currentLessonsContext.length;
 
     updateCompleteBtn(lesson.id);
     updateNavBtns();
@@ -410,31 +411,44 @@
     const fullUrl = LESSONS_BASE_URL + lesson.githubPath;
 
     const modal = $('lessonModal');
-    modal.classList.add('active');
-    modal.setAttribute('aria-hidden', 'false');
+    if (modal) {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+    }
     document.body.style.overflow = 'hidden';
 
     const loader = $('iframeLoader');
-    loader.classList.remove('hidden');
-    const iframe = $('lessonIframe');
-    iframe.src = '';
-    setTimeout(() => { iframe.src = fullUrl; }, 50);
+    // ✅ FIX: Check if loader exists
+    if (loader) {
+      loader.classList.remove('hidden');
+    }
 
-    iframe.onload = () => {
-      loader.classList.add('hidden');
-      applyFontSize();
-    };
-    iframe.onerror = () => {
-      loader.innerHTML = '<p style="color:var(--error);padding:20px;text-align:center">⚠ فشل تحميل الدرس. تحقق من اتصالك بالإنترنت.</p>';
-    };
+    const iframe = $('lessonIframe');
+    if (iframe) {
+      iframe.src = '';
+      setTimeout(() => { iframe.src = fullUrl; }, 50);
+
+      iframe.onload = () => {
+        if (loader) loader.classList.add('hidden');
+        applyFontSize();
+      };
+      iframe.onerror = () => {
+        if (loader) {
+          loader.innerHTML = '<p style="color:var(--error);padding:20px;text-align:center">⚠ فشل تحميل الدرس. تحقق من اتصالك بالإنترنت.</p>';
+        }
+      };
+    }
   }
 
   function closeModal() {
     const modal = $('lessonModal');
-    modal.classList.remove('active');
-    modal.setAttribute('aria-hidden', 'true');
+    if (modal) {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+    }
     document.body.style.overflow = '';
-    $('lessonIframe').src = '';
+    const iframe = $('lessonIframe');
+    if (iframe) iframe.src = '';
     document.body.classList.remove('reading-mode');
     fontSizeLevel = 0;
   }
@@ -447,13 +461,17 @@
   }
 
   function updateNavBtns() {
-    $('prevLesson').disabled = state.currentLessonIndex === 0;
-    $('nextLesson').disabled = state.currentLessonIndex === currentLessonsContext.length - 1;
+    // ✅ FIX: Check if elements exist before accessing
+    const prevBtn = $('prevLesson');
+    const nextBtn = $('nextLesson');
+    if (prevBtn) prevBtn.disabled = state.currentLessonIndex === 0;
+    if (nextBtn) nextBtn.disabled = state.currentLessonIndex === currentLessonsContext.length - 1;
   }
 
   function updateCompleteBtn(id) {
     const isDone = state.completed.includes(id);
     const btn = $('markCompleteBtn');
+    if (!btn) return;
     btn.classList.toggle('completed', isDone);
     btn.innerHTML = isDone
       ? '<i class="fas fa-check" aria-hidden="true"></i><span>تم الإكمال</span>'
@@ -471,7 +489,6 @@
     filterAndRender();
   }
 
-  /* Fullscreen */
   function toggleFullscreen() {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(() => {});
@@ -487,7 +504,6 @@
       : '<i class="fas fa-expand" aria-hidden="true"></i>';
   });
 
-  /* Font size */
   function cycleFontSize() {
     fontSizeLevel = (fontSizeLevel + 1) % fontSizes.length;
     applyFontSize();
@@ -502,14 +518,12 @@
     } catch {}
   }
 
-  /* Reading mode */
   function toggleReadingMode() {
     document.body.classList.toggle('reading-mode');
     const active = document.body.classList.contains('reading-mode');
     showToast(active ? '📖 وضع القراءة' : 'وضع عادي', 'info');
   }
 
-  /* ════════ KEYBOARD ════════ */
   function setupKeyboard() {
     document.addEventListener('keydown', (e) => {
       const modal = $('lessonModal');
@@ -532,7 +546,6 @@
     });
   }
 
-  /* ════════ RESET FILTERS ════════ */
   function resetFilters() {
     state.currentFilter = 'all';
     state.searchQuery = '';
@@ -547,7 +560,6 @@
     filterAndRender();
   }
 
-  /* ════════ STATS ════════ */
   function updateStats() {
     const totalEl = $('totalLessons');
     const doneEl = $('completedLessons');
@@ -557,7 +569,6 @@
     if (favEl) favEl.textContent = state.favorites.length;
   }
 
-  /* ════════ TOAST ════════ */
   function showToast(msg, type = 'info') {
     const container = $('toastContainer');
     if (!container) return;
@@ -580,7 +591,6 @@
     }, 3000);
   }
 
-  /* ════════ THEME DETECTION ════════ */
   function detectTheme() {
     const root = $('ba-learn-root');
     if (!root) return;
@@ -594,7 +604,6 @@
     } catch {}
   }
 
-  /* ════════ UTILITIES ════════ */
   function escapeHtml(str) {
     if (!str) return '';
     return str
@@ -605,7 +614,6 @@
       .replace(/'/g, '&#039;');
   }
 
-  /* Expose for HTML onclick */
   window.resetFilters = resetFilters;
 
 })();
