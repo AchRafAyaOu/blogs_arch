@@ -56,7 +56,7 @@ const LESSONS_DATA = [
     description: "الأفعال الأكثر استخداماً",
     level: "intermediate",
     icon: "fas fa-running",
-    githubPath: "basic_virbs.html"
+    githubPath: "basic_verbs.html"
   },
   {
     id: 7,
@@ -65,7 +65,7 @@ const LESSONS_DATA = [
     description: "استخدام الأفعال المساعدة",
     level: "intermediate",
     icon: "fas fa-hands-helping",
-    githubPath: "Auxliary_verb.html"
+    githubPath: "Auxiliary_verb.html"
   },
   {
     id: 8,
@@ -74,7 +74,7 @@ const LESSONS_DATA = [
     description: "كلمات الحياة اليومية",
     level: "intermediate",
     icon: "fas fa-calendar-day",
-    githubPath: "Dailyvocabulary.html"
+    githubPath: "DailyVocabulary.html"
   },
   {
     id: 9,
