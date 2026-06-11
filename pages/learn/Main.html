@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>دروس تفاعلية | BlogArch</title>
 
-  <!-- Fonts -->
+  <!-- Fonts — Cairo (same as main theme) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -13,23 +13,17 @@
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-  <!-- Styles (Primary: Local, Fallback: CDN) -->
-  <link rel="stylesheet" href="./style.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/pages/learn/style.css" data-fallback>
+<link rel="stylesheet" href="./style.css">
 
-  <!-- Scripts with defer for performance -->
-  <!-- Lessons Data (Primary: Local, Fallback: CDN) -->
-  <script src="./lessons-data.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/pages/learn/lessons-data.js" defer data-fallback></script>
-
-  <!-- Main Script (Primary: Local, Fallback: CDN) -->
-  <script src="./script.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/pages/learn/script.js" defer data-fallback></script>
+<script src="./lessons-data.js" defer></script>
+<script src="./script.js" defer></script>
 </head>
 <body>
 
 <!-- ═══════════════════════════════════════════════════════════
      BLOGGER INTEGRATION — Scoped Root
+     All styles are prefixed with #ba-learn-root to avoid
+     conflicts with the main BlogArch theme.
      ═══════════════════════════════════════════════════════════ -->
 
 <div id="ba-learn-root">
@@ -58,7 +52,7 @@
     </header>
 
     <!-- ══ FILTERS BAR ══ -->
-    <nav class="ba-filters-bar" id="baFiltersBar">
+    <nav class="ba-filters-bar" id="baFiltersBar" aria-label="فلاتر الدروس">
       <div class="ba-wrap">
         <div class="ba-filters-row">
 
@@ -127,14 +121,13 @@
     </section>
 
     <!-- ══ LESSONS GRID ══ -->
-    <main class="ba-wrap">
+    <main class="ba-wrap" aria-label="قائمة الدروس">
       <!-- Hidden stats for JS -->
-      <span id="totalLessons" style="display:none">0</span>
+      <span id="totalLessons"     style="display:none">0</span>
       <span id="completedLessons" style="display:none">0</span>
-      <span id="favCount" style="display:none">0</span>
-      <span id="streakDays" style="display:none">1</span>
+      <span id="favCount"         style="display:none">0</span>
 
-      <div class="ba-lessons-grid" id="lessonsGrid" role="list" aria-label="قائمة الدروس"></div>
+      <div class="ba-lessons-grid" id="lessonsGrid" role="list" aria-label="الدروس المتاحة"></div>
 
       <!-- Empty state -->
       <div class="ba-empty-state" id="emptyState" style="display:none" aria-live="polite">
@@ -143,7 +136,7 @@
         </div>
         <h3>لا توجد نتائج</h3>
         <p>حاول البحث بكلمات مختلفة أو تغيير الفلاتر</p>
-        <button class="ba-btn-primary" id="resetFiltersBtn" type="button">
+        <button class="ba-btn-primary" id="resetFiltersBtn" type="button" onclick="window.resetFilters && window.resetFilters()">
           <i class="fas fa-redo" aria-hidden="true"></i>
           <span>إعادة ضبط</span>
         </button>
@@ -151,7 +144,12 @@
     </main>
 
     <!-- ══ LESSON MODAL ══ -->
-    <div id="lessonModal" class="lesson-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div id="lessonModal"
+         class="lesson-modal"
+         aria-hidden="true"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="modalTitle">
       <div class="modal-backdrop"></div>
       <div class="modal-container">
 
@@ -179,10 +177,10 @@
             <span id="currentIndex">1</span> / <span id="totalIndex">26</span>
           </div>
           <div class="reading-controls">
-            <button class="tool-btn" id="fontSizeBtn" aria-label="تكبير الخط" type="button">
+            <button class="tool-btn" id="fontSizeBtn" aria-label="تغيير حجم الخط" type="button">
               <i class="fas fa-font" aria-hidden="true"></i>
             </button>
-            <button class="tool-btn" id="readingModeBtn" aria-label="وضع القراءة" type="button">
+            <button class="tool-btn" id="readingModeBtn" aria-label="وضع القراءة المركّز" type="button">
               <i class="fas fa-book-open" aria-hidden="true"></i>
             </button>
           </div>
@@ -195,10 +193,16 @@
         <div class="modal-body">
           <div class="iframe-container" id="iframeContainer">
             <div class="iframe-loader" id="iframeLoader">
-              <div class="spinner" aria-hidden="true"></div>
+              <div class="ba-spinner" aria-hidden="true"></div>
               <p>جاري تحميل الدرس...</p>
             </div>
-            <iframe id="lessonIframe" title="Lesson Viewer" allowfullscreen></iframe>
+            <iframe
+              id="lessonIframe"
+              title="عارض الدرس"
+              loading="lazy"
+              allowfullscreen
+              sandbox="allow-scripts allow-same-origin allow-popups allow-forms">
+            </iframe>
           </div>
         </div>
 
@@ -208,31 +212,15 @@
             <span>تحديد كمكتمل</span>
           </button>
         </footer>
+
       </div>
     </div>
 
     <!-- Toast container -->
-    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+    <div class="ba-toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
   </div><!-- .ba-ambient -->
 </div><!-- #ba-learn-root -->
-
-<!-- Fallback loader for missing resources -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Check if main resources loaded
-    const checkResources = () => {
-      const needsLessons = typeof LESSONS_DATA === 'undefined';
-      const fallbackScripts = document.querySelectorAll('script[data-fallback]');
-      
-      if (needsLessons && fallbackScripts.length > 0) {
-        console.warn('⚠ Local resources not found, loading from CDN fallback...');
-      }
-    };
-    
-    setTimeout(checkResources, 500);
-  });
-</script>
 
 </body>
 </html>
