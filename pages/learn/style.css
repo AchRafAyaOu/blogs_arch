@@ -37,40 +37,45 @@ button, input, select { font-family: inherit; font-size: inherit; }
 
 /* ── 1. Design Tokens (Material 3) ─────────────────────── */
 :root {
+/* ═══════════════════════════════════════════════════════════
+   MD3 Color Tokens — مُكيَّفة مع ألوان القالب BlogArch v17 Pro
+   الوضع النهاري
+   ═══════════════════════════════════════════════════════════ */
+
   /* Primary palette */
-  --primary: #4F46E5;
-  --on-primary: #FFFFFF;
-  --primary-container: #E0E0FF;
-  --on-primary-container: #1A1B8C;
+  --primary:                   #4361ee;   /* ← template --primary-color */
+  --on-primary:                #FFFFFF;
+  --primary-container:         #eef2ff;   /* ← template --primary-light  */
+  --on-primary-container:      #1e2e8a;   /* ← derived من --primary-dark  */
 
   /* Secondary */
-  --secondary: #625B71;
-  --on-secondary: #FFFFFF;
-  --secondary-container: #E8DEF8;
-  --on-secondary-container: #1D192B;
+  --secondary:                 #475569;   /* ← template --text-tertiary   */
+  --on-secondary:              #FFFFFF;
+  --secondary-container:       #e2e8f0;   /* ← template --bg-muted / --border */
+  --on-secondary-container:    #0d1b2a;   /* ← template --text            */
 
   /* Tertiary (Accent) */
-  --tertiary: #7D5260;
-  --on-tertiary: #FFFFFF;
-  --tertiary-container: #FFD8E4;
-  --on-tertiary-container: #31111D;
+  --tertiary:                  #059669;   /* ← template --accent          */
+  --on-tertiary:               #FFFFFF;   /* ← template --accent-fg       */
+  --tertiary-container:        #d1fae5;   /* ← light green derived        */
+  --on-tertiary-container:     #064e3b;   /* ← dark green derived         */
 
   /* Surfaces */
-  --surface: #FEF7FF;
-  --on-surface: #1D1B20;
-  --on-surface-variant: #49454F;
-  --surface-variant: #E7E0EC;
-  --surface-container-lowest: #FFFFFF;
-  --surface-container-low: #F7F2FA;
-  --surface-container: #F3EDF7;
-  --surface-container-high: #ECE6F0;
-  --surface-container-highest: #E6E0E9;
-  --inverse-surface: #322F35;
-  --inverse-on-surface: #F5EFF7;
+  --surface:                   #f8fafc;   /* ← template --bg              */
+  --on-surface:                #0d1b2a;   /* ← template --text            */
+  --on-surface-variant:        #64748b;   /* ← template --text-muted      */
+  --surface-variant:           #e2e8f0;   /* ← template --border          */
+  --surface-container-lowest:  #ffffff;   /* ← template --card / --bg-elevated */
+  --surface-container-low:     #f1f5f9;   /* ← template --bg-subtle       */
+  --surface-container:         #e8eef4;   /* ← بين bg-subtle وbg-muted    */
+  --surface-container-high:    #e2e8f0;   /* ← template --bg-muted        */
+  --surface-container-highest: #cbd5e1;   /* ← template --border-strong   */
+  --inverse-surface:           #0d1b2a;   /* ← template --text (أغمق لون) */
+  --inverse-on-surface:        #f1f5f9;   /* ← template --bg-subtle       */
 
   /* Background */
-  --background: #FEF7FF;
-  --on-background: #1D1B20;
+  --background:                #f8fafc;   /* ← template --bg              */
+  --on-background:             #0d1b2a;   /* ← template --text            */
 
   /* Outline */
   --outline: #79747E;
@@ -152,36 +157,44 @@ button, input, select { font-family: inherit; font-size: inherit; }
 /* ── 2. Dark Theme ───────────────────────────────────────── */
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary: #C4C5FF;
-    --on-primary: #1A1B8C;
-    --primary-container: #2A2B8C;
-    --on-primary-container: #E0E0FF;
+/* ═══════════════════════════════════════════════════════════
+   MD3 Color Tokens — الوضع الليلي  body[data-dark]
+   ═══════════════════════════════════════════════════════════ */
 
-    --secondary: #CCC2DC;
-    --on-secondary: #332D41;
-    --secondary-container: #4A4458;
-    --on-secondary-container: #E8DEF8;
+  /* Primary palette */
+  --primary:                   #7c96f5;   /* ← template dark --primary-color */
+  --on-primary:                #0f172a;   /* ← template dark --bg            */
+  --primary-container:         #1e2d5e;   /* ← derived من primary-light dark */
+  --on-primary-container:      #c5d0fb;   /* ← light primary tint            */
 
-    --tertiary: #EFB8C8;
-    --on-tertiary: #492532;
-    --tertiary-container: #633B48;
-    --on-tertiary-container: #FFD8E4;
+  /* Secondary */
+  --secondary:                 #aabbd0;   /* ← template dark --text-muted    */
+  --on-secondary:              #0f172a;
+  --secondary-container:       #243352;   /* ← template dark --bg-muted      */
+  --on-secondary-container:    #e2e8f0;   /* ← template dark --text-secondary */
 
-    --surface: #141218;
-    --on-surface: #E6E1E5;
-    --on-surface-variant: #CAC4D0;
-    --surface-variant: #49454F;
-    --surface-container-lowest: #0F0D13;
-    --surface-container-low: #1D1B20;
-    --surface-container: #211F26;
-    --surface-container-high: #2B2930;
-    --surface-container-highest: #36343B;
-    --inverse-surface: #E6E1E5;
-    --inverse-on-surface: #322F35;
+  /* Tertiary (Accent) */
+  --tertiary:                  #34d399;   /* ← template dark --accent        */
+  --on-tertiary:               #06291f;   /* ← template dark --accent-fg     */
+  --tertiary-container:        #064e3b;   /* ← dark green container          */
+  --on-tertiary-container:     #a7f3d0;   /* ← light green on dark           */
 
-    --background: #141218;
-    --on-background: #E6E1E5;
+  /* Surfaces */
+  --surface:                   #0f172a;   /* ← template dark --bg            */
+  --on-surface:                #f1f5f9;   /* ← template dark --text          */
+  --on-surface-variant:        #aabbd0;   /* ← template dark --text-muted    */
+  --surface-variant:           #314868;   /* ← template dark --border        */
+  --surface-container-lowest:  #0a1120;   /* ← أغمق من --bg                  */
+  --surface-container-low:     #162235;   /* ← template dark --card          */
+  --surface-container:         #1a2740;   /* ← template dark --bg-subtle     */
+  --surface-container-high:    #243352;   /* ← template dark --bg-muted      */
+  --surface-container-highest: #2d3f5e;   /* ← بين bg-muted وborder-strong   */
+  --inverse-surface:           #f1f5f9;   /* ← template dark --text (فاتح)   */
+  --inverse-on-surface:        #162235;   /* ← template dark --card          */
 
+  /* Background */
+  --background:                #0f172a;   /* ← template dark --bg            */
+  --on-background:             #f1f5f9;   /* ← template dark --text          */
     --outline: #938F99;
     --outline-variant: #49454F;
 
