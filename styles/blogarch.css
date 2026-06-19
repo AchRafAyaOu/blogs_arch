@@ -1,9 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   BlogArch — v18pro | Clean Edition 2026
-   CDN: https://cdn.jsdelivr.net/gh/AchRafAyaOu/blogs_arch@main/styles/blogarch.css
-   ─ CSS Variables & dark mode are owned by the XML template (:root)
-   ─ This file: components, typography, utilities, page-specific styles
-   ══════════════════════════════════════════════════════════════ */
+   BlogArch ══════════════════════════════════════════════════════════════ */
 
 @layer reset, base, typography, components;
 
