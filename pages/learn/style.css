@@ -112,136 +112,35 @@ button, input, select { font-family: inherit; font-size: inherit; }
   --duration-slow:   350ms;
 }
 
-/* ── 2. Dark Mode — مكتفٍ ذاتياً ────────────────────────────
-   يُعيد تعريف جميع المتغيرات اللونية مباشرةً بقيم BlogArch
-   المظلمة، بحيث يعمل حتى لو لم يكن <b:skin> محملاً.
-   يُفعَّل عبر body[data-dark] من JS القالب.
+/* ── 2. Dark Mode ─────────────────────────────────────────────
+   يتابع body[data-dark] من JS القالب الرئيسي.
+   نُحدِّث فقط الحاويات اللونية (success/warning/danger)
+   لأن باقي الرموز تتحدث تلقائياً عبر BlogArch.
 ────────────────────────────────────────────────────────── */
-body[data-dark],
-body.dark-mode {
-  /* ── Core BlogArch dark palette ── */
-  --bg:             #0f172a;
-  --bg-elevated:    #162235;
-  --bg-subtle:      #1a2740;
-  --card:           #162235;
-  --border:         #314868;
-  --border-strong:  #3d586e;
-  --muted-bg:       #162235;
-  --text:           #f1f5f9;
-  --text-light:     #e2ecf6;
-  --text-soft:      #cbd8ea;
-  --text-secondary: #e2e8f0;
-  --text-muted:     #aabbd0;
-  --text-faint:     #7b92aa;
-  --primary-color:  #7c96f5;
-  --primary:        #7c96f5;
-  --primary-light:  rgba(99,130,255,.18);
-  --primary-hover:  #93a8f8;
-  --primary-dark:   #93a8f8;
-  --primary-soft:   rgba(124,150,245,.16);
-  --primary-ring:   rgba(124,150,245,.35);
-  --primary-rgb:    124,150,245;
-  --d-learn:        oklch(74% 0.16 215);
-
-  /* ── Shadows dark ── */
-  --shadow-sm: 0 1px 2px rgba(0,0,0,.30);
-  --shadow:    0 1px 3px rgba(0,0,0,.30);
-  --shadow-md: 0 4px 6px rgba(0,0,0,.32);
-  --shadow-lg: 0 10px 15px rgba(0,0,0,.40);
-  --shadow-xl: 0 20px 25px rgba(0,0,0,.50);
-  --shadow-1:  0 1px 2px rgba(0,0,0,.30);
-  --shadow-2:  0 1px 3px rgba(0,0,0,.30);
-  --shadow-3:  0 4px 6px rgba(0,0,0,.32);
-  --shadow-4:  0 10px 15px rgba(0,0,0,.40);
-  --shadow-5:  0 20px 25px rgba(0,0,0,.50);
-
-  /* ── Bridge aliases dark (Material-3 names) ── */
-  --surface:                   #0f172a;
-  --on-surface:                #f1f5f9;
-  --on-surface-variant:        #cbd8ea;
-  --surface-variant:           #1a2740;
-  --surface-container-lowest:  #162235;
-  --surface-container-low:     #1a2740;
-  --surface-container:         #1a2740;
-  --surface-container-high:    #314868;
-  --surface-container-highest: #314868;
-  --background:                #0f172a;
-  --on-background:             #f1f5f9;
-  --outline:                   #7b92aa;
-  --outline-variant:           #314868;
-  --primary-container:         rgba(99,130,255,.18);
-  --on-primary-container:      #b8c8fa;
-  --tertiary:                  oklch(74% 0.16 215);
-  --tertiary-container:        color-mix(in oklch,oklch(74% 0.16 215) 16%,#0f172a);
-  --on-tertiary-container:     oklch(74% 0.16 215);
-
-  /* ── Feedback containers dark ── */
-  --error-container:        rgba(239,68,68,.18);
-  --on-error-container:     #fca5a5;
-  --success-container:      rgba(52,211,153,.16);
-  --on-success-container:   #6ee7b7;
-  --warning-container:      rgba(252,211,77,.16);
-  --on-warning-container:   #fcd34d;
-  --danger-container:       rgba(239,68,68,.18);
-  --on-danger-container:    #fca5a5;
+body[data-dark] {
+  --error-container:          rgba(239,68,68,.18);
+  --on-error-container:       #fca5a5;
+  --success-container:        rgba(52,211,153,.16);
+  --on-success-container:     #6ee7b7;
+  --warning-container:        rgba(252,211,77,.16);
+  --on-warning-container:     #fcd34d;
+  --danger-container:         rgba(239,68,68,.18);
+  --on-danger-container:      #fca5a5;
+  --tertiary-container:       color-mix(in oklch,var(--d-learn,oklch(74% 0.16 215)) 16%,var(--bg,#0f172a));
+  --on-tertiary-container:    var(--d-learn, oklch(74% 0.16 215));
 }
 
-/* ── قبل تحميل JS — system prefers-color-scheme ── */
+/* قبل تحميل JS: media query للـ system preference */
 @media (prefers-color-scheme: dark) {
   body:not([data-dark]):not([data-light]) {
-    --bg:             #0f172a;
-    --bg-elevated:    #162235;
-    --bg-subtle:      #1a2740;
-    --card:           #162235;
-    --border:         #314868;
-    --border-strong:  #3d586e;
-    --muted-bg:       #162235;
-    --text:           #f1f5f9;
-    --text-light:     #e2ecf6;
-    --text-soft:      #cbd8ea;
-    --text-muted:     #aabbd0;
-    --primary-color:  #6d83f2;
-    --primary:        #6d83f2;
-    --primary-light:  rgba(99,130,255,.15);
-    --primary-hover:  #818cf8;
-    --primary-rgb:    109,131,242;
-    --d-learn:        oklch(74% 0.16 215);
-    --shadow-sm: 0 1px 2px rgba(0,0,0,.30);
-    --shadow:    0 1px 3px rgba(0,0,0,.30);
-    --shadow-md: 0 4px 6px rgba(0,0,0,.32);
-    --shadow-lg: 0 10px 15px rgba(0,0,0,.40);
-    --shadow-xl: 0 20px 25px rgba(0,0,0,.50);
-    --shadow-1:  0 1px 2px rgba(0,0,0,.30);
-    --shadow-2:  0 1px 3px rgba(0,0,0,.30);
-    --shadow-3:  0 4px 6px rgba(0,0,0,.32);
-    --shadow-4:  0 10px 15px rgba(0,0,0,.40);
-    --shadow-5:  0 20px 25px rgba(0,0,0,.50);
-    --surface:                   #0f172a;
-    --on-surface:                #f1f5f9;
-    --on-surface-variant:        #cbd8ea;
-    --surface-variant:           #1a2740;
-    --surface-container-lowest:  #162235;
-    --surface-container-low:     #1a2740;
-    --surface-container:         #1a2740;
-    --surface-container-high:    #314868;
-    --surface-container-highest: #314868;
-    --background:                #0f172a;
-    --on-background:             #f1f5f9;
-    --outline:                   #7b92aa;
-    --outline-variant:           #314868;
-    --primary-container:         rgba(99,130,255,.15);
-    --on-primary-container:      #b8c8fa;
-    --tertiary:                  oklch(74% 0.16 215);
-    --tertiary-container:        color-mix(in oklch,oklch(74% 0.16 215) 16%,#0f172a);
-    --on-tertiary-container:     oklch(74% 0.16 215);
-    --error-container:           rgba(239,68,68,.18);
-    --on-error-container:        #fca5a5;
-    --success-container:         rgba(52,211,153,.16);
-    --on-success-container:      #6ee7b7;
-    --warning-container:         rgba(252,211,77,.16);
-    --on-warning-container:      #fcd34d;
-    --danger-container:          rgba(239,68,68,.18);
-    --on-danger-container:       #fca5a5;
+    --error-container:        rgba(239,68,68,.18);
+    --on-error-container:     #fca5a5;
+    --success-container:      rgba(52,211,153,.16);
+    --on-success-container:   #6ee7b7;
+    --warning-container:      rgba(252,211,77,.16);
+    --on-warning-container:   #fcd34d;
+    --danger-container:       rgba(239,68,68,.18);
+    --on-danger-container:    #fca5a5;
   }
 }
 
