@@ -1,10 +1,4 @@
-/* ══════════════════════════════════════════════════════════════
-   BlogArch ══════════════════════════════════════════════════════════════ */
-
-@layer reset, base, typography, components;
-
-/* ══════════════════════════════════════════
-   RESET
+/* 
 ══════════════════════════════════════════ */
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -547,9 +541,10 @@ body[data-dark] .post-body h2, body[data-dark] .post-content h2 { color: var(--r
 }
 .post-body pre code { background: transparent; padding: 0; }
 .post-body a {
-  color: var(--accent); text-decoration: underline;
+  color: var(--primary-color); text-decoration: underline;
   text-decoration-thickness: 2px; text-underline-offset: 3px;
 }
+.post-body p { line-height: 1.9; margin-bottom: 1.2rem; }
 .post-body ul, .post-body ol { padding-inline-start: 1.35rem; margin-bottom: 1.35rem; }
 .post-body li { margin-bottom: 0.4rem; }
 
@@ -1242,6 +1237,24 @@ body[data-dark] .fin-footer { background: oklch(12% 0.018 245); border-color: ok
   transition: background .18s, transform .15s;
 }
 .mobile-drawer .nav-cta:hover { background: var(--primary-hover) !important; transform: translateY(-1px); }
+
+/* ══════════════════════════════════════════
+   MINI-CARD AVATAR FIX
+══════════════════════════════════════════ */
+/* Prevents vertical stretching on profile photos in mini-cards */
+.fin-mc-avatar {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  display: block;
+}
+.fin-mc-about-head {
+  display: flex; align-items: center; gap: 0.85rem;
+  margin-bottom: 0.85rem;
+}
 
 /* ══════════════════════════════════════════
    PRINT
