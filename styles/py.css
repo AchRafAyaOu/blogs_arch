@@ -1,58 +1,72 @@
-:root {
-  --python-bg: #f5f7f4;
-  --python-surface: #ffffff;
-  --python-surface-soft: #edf4ef;
-  --python-text: #193128;
-  --python-muted: #5f7168;
-  --python-border: #dce7df;
-  --python-primary: #287653;
-  --python-primary-dark: #1e5c40;
-  --python-accent: #b87922;
-  --python-code-bg: #12251f;
-  --python-code-top: #0c1b16;
-  --python-code-text: #e6f1e9;
-  --python-radius: 18px;
-  --python-shadow: 0 18px 45px -35px rgba(27, 71, 52, .55);
-  --python-font: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
-  --python-heading: "Cairo", "Segoe UI", sans-serif;
+/* ==================================================
+   python_lessons.css — نسخة معدلة وكاملة
+   متوافقة مع القالب العام وتعتمد على متغيراته
+================================================== */
+
+/* ==============================
+   1) ربط متغيرات بايثون بالقالب
+============================== */
+
+body {
+  /* الخلفيات */
+  --python-bg: var(--bg, #f5f7f4);
+  --python-surface: var(--card, #ffffff);
+  --python-surface-soft: var(--bg-subtle, #edf4ef);
+
+  /* النصوص */
+  --python-text: var(--text, #193128);
+  --python-muted: var(--text-muted, #5f7168);
+
+  /* الحدود */
+  --python-border: var(--border, #dce7df);
+
+  /* الألوان الرئيسية */
+  --python-primary: var(--accent, #287653);
+  --python-primary-dark: var(--accent-hover, #1e5c40);
+
+  /* الألوان الثانوية والدلالية */
+  --python-accent: var(--warning, #b87922);
+  --python-success: var(--success, #3a9b69);
+
+  /* صندوق الكود */
+  --python-code-bg: var(--bg-muted, #12251f);
+  --python-code-top: var(--bg-subtle, #0c1b16);
+  --python-code-text: var(--text, #e6f1e9);
+
+  /* الحواف والظلال */
+  --python-radius: var(--radius-lg, 18px);
+  --python-shadow: var(--shadow-lg, 0 18px 45px -35px rgb(27 71 52 / .55));
+
+  /* الخطوط */
+  --python-font: var(--font-body, "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif);
+  --python-heading: var(--font-ui, "Cairo", "Segoe UI", sans-serif);
   --python-mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
 }
 
-html[data-theme="dark"] {
-  color-scheme: dark;
-  --python-bg: #101b17;
-  --python-surface: #172820;
-  --python-surface-soft: #20392e;
-  --python-text: #eef7f0;
-  --python-muted: #b5cabe;
-  --python-border: #2d4b3d;
-  --python-primary: #72c69a;
-  --python-primary-dark: #a0dfbb;
-  --python-accent: #e0ad60;
-  --python-code-bg: #0b1713;
-  --python-code-top: #07100d;
-  --python-code-text: #e6f1e9;
-  --python-shadow: 0 18px 45px -35px rgba(0, 0, 0, .9);
-}
-
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme="light"]) {
-    color-scheme: dark;
-    --python-bg: #101b17;
-    --python-surface: #172820;
-    --python-surface-soft: #20392e;
-    --python-text: #eef7f0;
-    --python-muted: #b5cabe;
-    --python-border: #2d4b3d;
-    --python-primary: #72c69a;
-    --python-primary-dark: #a0dfbb;
-    --python-accent: #e0ad60;
-    --python-code-bg: #0b1713;
-    --python-code-top: #07100d;
-    --python-code-text: #e6f1e9;
-    --python-shadow: 0 18px 45px -35px rgba(0, 0, 0, .9);
+/* تحسين الخلفية الثانوية بلمسة خفيفة من اللون الرئيسي */
+@supports (background: color-mix(in srgb, red 10%, transparent)) {
+  body {
+    --python-surface-soft: color-mix(
+      in srgb,
+      var(--python-primary) 7%,
+      var(--python-surface)
+    );
   }
 }
+
+/* إذا أردت الإبقاء على صندوق الكود داكنًا دائمًا،
+   أزل التعليقات عن هذا الجزء */
+/*
+body {
+  --python-code-bg: #12251f;
+  --python-code-top: #0c1b16;
+  --python-code-text: #e6f1e9;
+}
+*/
+
+/* ==============================
+   2) الحاوية العامة للدروس
+============================== */
 
 .python-course-content {
   width: min(1100px, 94%);
@@ -60,6 +74,7 @@ html[data-theme="dark"] {
   color: var(--python-text);
   font-family: var(--python-font);
   line-height: 1.85;
+  direction: rtl;
 }
 
 .python-course-content *,
@@ -71,11 +86,31 @@ html[data-theme="dark"] {
 .python-course-content a {
   color: var(--python-primary);
   text-decoration: none;
+  transition: color .2s ease;
 }
 
 .python-course-content a:hover {
   color: var(--python-accent);
 }
+
+.python-course-content a:focus-visible {
+  outline: 2px solid var(--python-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* إصلاح مهم إذا كان القالب العام يزيل علامات القوائم */
+.python-course-content ul {
+  list-style: disc;
+}
+
+.python-course-content ol {
+  list-style: decimal;
+}
+
+/* ==============================
+   3) شريط التنقل العلوي
+============================== */
 
 .python-course-nav {
   display: flex;
@@ -104,6 +139,10 @@ html[data-theme="dark"] {
   font-size: .8rem;
 }
 
+/* ==============================
+   4) بطاقة الدرس
+============================== */
+
 .python-lesson {
   overflow: hidden;
   border: 1px solid var(--python-border);
@@ -114,8 +153,13 @@ html[data-theme="dark"] {
 
 .python-lesson__intro {
   padding: clamp(1.5rem, 4vw, 3.2rem);
+  background: var(--python-surface);
   background:
-    radial-gradient(500px 190px at 0% 0%, color-mix(in srgb, var(--python-primary) 13%, transparent), transparent 70%),
+    radial-gradient(
+      500px 190px at 0% 0%,
+      color-mix(in srgb, var(--python-primary) 13%, transparent),
+      transparent 70%
+    ),
     var(--python-surface);
 }
 
@@ -138,6 +182,7 @@ html[data-theme="dark"] {
 .python-lesson h3 {
   font-family: var(--python-heading);
   line-height: 1.5;
+  overflow-wrap: break-word;
 }
 
 .python-lesson h1 {
@@ -190,6 +235,10 @@ html[data-theme="dark"] {
   margin-top: .35rem;
 }
 
+/* ==============================
+   5) شبكة المصطلحات
+============================== */
+
 .python-terms {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -220,6 +269,10 @@ html[data-theme="dark"] {
   font-size: .82rem;
 }
 
+/* ==============================
+   6) صناديق التنبيهات
+============================== */
+
 .python-note,
 .python-warning,
 .python-success {
@@ -238,7 +291,7 @@ html[data-theme="dark"] {
 }
 
 .python-success {
-  border-inline-start: 4px solid #3a9b69;
+  border-inline-start: 4px solid var(--python-success);
 }
 
 .python-note strong,
@@ -249,12 +302,17 @@ html[data-theme="dark"] {
   color: var(--python-primary-dark);
 }
 
+/* ==============================
+   7) صندوق الكود
+============================== */
+
 .python-example {
   margin: 1.25rem 0 1.6rem;
   overflow: hidden;
+  border: 1px solid var(--python-border);
   border-radius: 14px;
   background: var(--python-code-bg);
-  box-shadow: 0 14px 28px -24px rgba(0, 0, 0, .7);
+  box-shadow: var(--shadow-md, 0 14px 28px -24px rgb(0 0 0 / .7));
   direction: ltr;
 }
 
@@ -263,7 +321,12 @@ html[data-theme="dark"] {
   justify-content: space-between;
   gap: 1rem;
   padding: .7rem 1rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--python-code-text) 16%, transparent);
+  border-bottom: 1px solid var(--python-border);
+  border-bottom: 1px solid color-mix(
+    in srgb,
+    var(--python-code-text) 16%,
+    transparent
+  );
   background: var(--python-code-top);
   color: var(--python-code-text);
   font-family: var(--python-mono);
@@ -275,10 +338,17 @@ html[data-theme="dark"] {
   margin: 0;
   padding: 1.1rem 1.2rem;
   color: var(--python-code-text);
-  font: .86rem/1.85 var(--python-mono);
+  font-family: var(--python-mono);
+  font-size: .86rem;
+  line-height: 1.85;
   text-align: left;
   white-space: pre;
+  tab-size: 2;
 }
+
+/* ==============================
+   8) الجداول
+============================== */
 
 .python-table-wrap {
   overflow-x: auto;
@@ -305,6 +375,10 @@ html[data-theme="dark"] {
   color: var(--python-primary-dark);
 }
 
+/* ==============================
+   9) الكود النصي القصير
+============================== */
+
 .python-table code,
 .python-lesson :not(pre) > code {
   padding: .12rem .35rem;
@@ -315,6 +389,10 @@ html[data-theme="dark"] {
   font-size: .88em;
   direction: ltr;
 }
+
+/* ==============================
+   10) قائمة التحقق
+============================== */
 
 .python-checklist {
   display: grid;
@@ -337,6 +415,10 @@ html[data-theme="dark"] {
   font-weight: 900;
 }
 
+/* ==============================
+   11) تذييل التنقل بين الدروس
+============================== */
+
 .python-lesson__footer-nav {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -353,6 +435,17 @@ html[data-theme="dark"] {
   border: 1px solid var(--python-border);
   border-radius: 10px;
   background: var(--python-surface);
+  transition: border-color .2s ease, background .2s ease;
+}
+
+.python-lesson__footer-nav a:hover {
+  border-color: var(--python-primary);
+  background: var(--python-surface);
+  background: color-mix(
+    in srgb,
+    var(--python-primary) 6%,
+    var(--python-surface)
+  );
 }
 
 .python-lesson__footer-nav a:last-child {
@@ -369,6 +462,10 @@ html[data-theme="dark"] {
 .python-lesson__footer-nav strong {
   font-size: .9rem;
 }
+
+/* ==============================
+   12) التجاوب
+============================== */
 
 @media (max-width: 620px) {
   .python-course-content {
